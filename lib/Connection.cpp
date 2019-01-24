@@ -125,6 +125,10 @@ void Connection::EventCallBack(const int& m_efd, struct epoll_event* m_events)
 	{
 		std::cout << "DoReceive " << std::endl;
 		DoReceive();
+
+		m_events->events = EPOLLOUT | EPOLLET;
+		epoll_ctl(m_efd, EPOLL_CTL_MOD, m_fd, m_events);
+		sleep(1);
 		return;
 	}
 
@@ -133,6 +137,11 @@ void Connection::EventCallBack(const int& m_efd, struct epoll_event* m_events)
 		std::cout << "DoSend " << std::endl;
 		
 		DoSend();
+
+		m_events->events = EPOLLIN | EPOLLET;
+
+		epoll_ctl(m_efd, EPOLL_CTL_MOD, m_fd, m_events);
+		sleep(1);
 		
 		return;
 	}

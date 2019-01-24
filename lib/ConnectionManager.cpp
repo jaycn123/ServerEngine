@@ -83,11 +83,12 @@ void ConnectionManager::AddEpollFd(bool enable_et)
 
 void ConnectionManager::AddEpollFd(int fd, bool enable_et)
 {
+	//EPOLLOUT
 	struct epoll_event ev;
 	ev.data.fd = fd;
 	if (enable_et)
 	{
-		ev.events = EPOLLIN | EPOLLOUT |EPOLLET;
+		ev.events = EPOLLIN|EPOLLET;
 	}
 	epoll_ctl(m_epfd, EPOLL_CTL_ADD, fd, &ev);
 	setnonblocking(fd);
@@ -173,25 +174,28 @@ void ConnectionManager::Run()
 				if (m_events[i].events&EPOLLIN)
 				{
 					m_ConnectionVec[m_ConnectionMap[sockfd] - 1]->EventCallBack(m_epfd, &(m_events[i]));
-					m_events[i].data.fd = sockfd;
-					//设置用于注测的写操作事件
-
-					m_events[i].events = EPOLLOUT | EPOLLET;
-					//修改sockfd上要处理的事件为EPOLLOUT
-
-					epoll_ctl(m_epfd,EPOLL_CTL_MOD,sockfd, &(m_events[i]));
+// 					m_events[i].data.fd = sockfd;
+// 					//设置用于注测的写操作事件
+// 
+// 					m_events[i].events = EPOLLOUT | EPOLLET;
+// 					//修改sockfd上要处理的事件为EPOLLOUT
+// 
+// 					epoll_ctl(m_epfd,EPOLL_CTL_MOD,sockfd, &(m_events[i]));
+// 					sleep(1);
 				}
 
 				if (m_events[i].events&EPOLLOUT)
 				{
 					m_ConnectionVec[m_ConnectionMap[sockfd] - 1]->EventCallBack(m_epfd, &(m_events[i]));
-					m_events[i].data.fd = sockfd;
-					//设置用于注测的读操作事件
 
-					m_events[i].events = EPOLLIN | EPOLLET;
-					//修改sockfd上要处理的事件为EPOLIN
-
-					epoll_ctl(m_epfd, EPOLL_CTL_MOD, sockfd, &(m_events[i]));
+// 					m_events[i].data.fd = sockfd;
+// 					//设置用于注测的读操作事件
+// 
+// 					m_events[i].events = EPOLLIN | EPOLLET;
+// 					//修改sockfd上要处理的事件为EPOLIN
+// 
+// 					epoll_ctl(m_epfd, EPOLL_CTL_MOD, sockfd, &(m_events[i]));
+// 					sleep(1);
 				}
 			}
 		}
