@@ -16,7 +16,7 @@
 using namespace std;
 
 #define PORT 9999
-#define BUFF_SIZE 170000000
+#define BUFF_SIZE 1 //70000000
 
 char m_sendBuff[BUFF_SIZE];
 int m_buffsize = 0;
@@ -43,8 +43,8 @@ int main(int argc, char* argv[])
 
 	servaddr.sin_port = htons((short)PORT);
 	servaddr.sin_family = AF_INET;
-	servaddr.sin_addr.s_addr = inet_addr("127.0.0.1"); //此处更改epoll服务器地址
-
+	servaddr.sin_addr.s_addr = inet_addr("119.23.13.79"); //此处更改epoll服务器地址
+	//127.0.0.1
 	if (connect(sockfd, (struct sockaddr*)&servaddr, sizeof(servaddr)) < 0) {
 		cout << "connect error" << endl;
 		return -1;

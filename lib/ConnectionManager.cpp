@@ -18,7 +18,8 @@ bool ConnectionManager::CreteSocket(xstring& ip, int32 port)
 	struct sockaddr_in serverAddr;
 	serverAddr.sin_family = PF_INET;
 	serverAddr.sin_port = htons(port);
-	serverAddr.sin_addr.s_addr = inet_addr(SERVER_IP);
+	//serverAddr.sin_addr.s_addr = inet_addr(SERVER_IP);
+	serverAddr.sin_addr.s_addr = htons(INADDR_ANY);
 	//创建监听socket
 	m_listener = socket(PF_INET, SOCK_STREAM, 0);
 	if (m_listener < 0)
