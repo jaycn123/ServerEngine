@@ -156,47 +156,31 @@ void ConnectionManager::Run()
 			{
 				struct sockaddr_in client_address;
 				socklen_t client_addrLength = sizeof(struct sockaddr_in);
-				int clientfd = accept(m_listener, (struct sockaddr*)&client_address, &client_addrLength);
-
-				if(clientfd < 0)
+				int clientfd = -1;
+				while ((clientfd = accept(m_listener, (struct sockaddr*)&client_address, &client_addrLength)) > 0)
 				{
-					printf("cleintfd: %d\n", clientfd);
-					continue;
+					if (clientfd < 0)
+					{
+						printf("cleintfd: %d\n", clientfd);
+						continue;
+					}
+
+					printf("client connection from: %s : % d(IP : port), clientfd = %d \n", inet_ntoa(client_address.sin_addr), ntohs(client_address.sin_port), clientfd);
+					printf("Add new clientfd = %d to epoll\n", clientfd);
+
+					AddNewConn(clientfd);
+
+					if (clientfd == -1)
+					{
+						if (errno != EAGAIN && errno != ECONNABORTED && errno != EPROTO && errno != EINTR)
+							perror("accept");
+					}
 				}
-
-				printf("client connection from: %s : % d(IP : port), clientfd = %d \n", inet_ntoa(client_address.sin_addr), ntohs(client_address.sin_port), clientfd);
-				printf("Add new clientfd = %d to epoll\n", clientfd);
-
-				AddNewConn(clientfd);
 			}
 			else
 			{
-				if (m_events[i].events&EPOLLIN)
-				{
-					m_ConnectionVec[m_ConnectionMap[sockfd] - 1]->EventCallBack(m_epfd, &(m_events[i]));
-// 					m_events[i].data.fd = sockfd;
-// 					//设置用于注测的写操作事件
-// 
-// 					m_events[i].events = EPOLLOUT | EPOLLET;
-// 					//修改sockfd上要处理的事件为EPOLLOUT
-// 
-// 					epoll_ctl(m_epfd,EPOLL_CTL_MOD,sockfd, &(m_events[i]));
-// 					sleep(1);
-				}
-
-				if (m_events[i].events&EPOLLOUT)
-				{
-					m_ConnectionVec[m_ConnectionMap[sockfd] - 1]->EventCallBack(m_epfd, &(m_events[i]));
-
-// 					m_events[i].data.fd = sockfd;
-// 					//设置用于注测的读操作事件
-// 
-// 					m_events[i].events = EPOLLIN | EPOLLET;
-// 					//修改sockfd上要处理的事件为EPOLIN
-// 
-// 					epoll_ctl(m_epfd, EPOLL_CTL_MOD, sockfd, &(m_events[i]));
-// 					sleep(1);
-				}
+				auto fun = [&](){ epoll_ctl(m_epfd, EPOLL_CTL_DEL, m_events[i].data.fd, &m_events[i]); FreeConnByConnid(m_ConnectionMap[sockfd] - 1); };
+				m_ConnectionVec[m_ConnectionMap[sockfd] - 1]->EventCallBack(m_epfd, &(m_events[i]), fun);
 			}
 		}
 	}
@@ -245,7 +229,6 @@ bool ConnectionManager::SendConnIDToClient(int32 fd, int32 connID)
 
 void ConnectionManager::AddNewConn(int32 fd)
 {
-	AddEpollFd(fd, true);
 	for (int32 i = 0; i < m_ConnectionVec.size(); ++i)
 	{
 		Connection* pConn = m_ConnectionVec.at(i);
@@ -258,6 +241,7 @@ void ConnectionManager::AddNewConn(int32 fd)
 			break;
 		}
 	}
+	AddEpollFd(fd, true);
 }
 
 Connection* ConnectionManager::GetConnByFd(int32 fd)
@@ -280,4 +264,14 @@ Connection* ConnectionManager::GetConnByConnid(int32 nConnid)
 		return nullptr;
 	}
 	return m_ConnectionVec[nConnid];
+}
+
+void ConnectionManager::FreeConnByConnid(int32 nConnid)
+{
+	if (nConnid >= m_ConnectionVec.size())
+	{
+		return;
+	}
+	//std::cout << "free nConnid : " << m_ConnectionVec[nConnid]->m_ConnID << std::endl;
+	m_ConnectionVec[nConnid]->SetConnStatus(false);
 }

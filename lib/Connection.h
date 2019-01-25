@@ -2,6 +2,7 @@
 #define _CONNECTION_H_
 #include "./Platform.h"
 #include "netpack.h"
+#include <functional>
 
 #define  NET_MSG_RECV				1
 #define  NET_MSG_SEND				2
@@ -13,6 +14,7 @@
 
 #define Hash_Map                    std::map
 
+typedef std::function<void(void)> func;
 
 class Connection
 {
@@ -47,7 +49,7 @@ public:
 
 	void    EventCallBack(uint32_t enents);
 
-	void	EventCallBack(const int& m_efd,struct epoll_event* m_events);
+	void	EventCallBack(const int& m_efd,struct epoll_event* m_events, func fun);
 
 	bool	IsConnectionOK();
 
@@ -75,7 +77,7 @@ public:
 
 	char    m_RecvBuf[RECV_BUF_SIZE];
 
-	uint32  m_offindex = 0;
+	uint32  m_RecvoffIndex = 0;
 
 	uint32  m_nRecvSize = 0;
 

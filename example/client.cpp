@@ -53,6 +53,11 @@ int main(int argc, char* argv[])
 
 	char target[] = "The Author: tao_627@aliyun.com";
 	memcpy(buffer, target, strlen(target));
+	while (1)
+	{
+		sleep(300);
+	}
+	return 0;
 
 	int i = 1;
 	int numC = 5000000;
@@ -111,16 +116,25 @@ int main(int argc, char* argv[])
 		m_sendoffindex = 0;
 	}
 	*/
-	sendMeaasge();
+	//sendMeaasge();
 	while (1)
 	{
-		memset(buffer, 0, sizeof(buffer));
-		int rlen = recv(sockfd, buffer, sizeof(buffer), 0);
-		if (rlen <= 0)
-			cout << " receive data from server fail " << strerror(errno) << endl;
-		cout << "receive data from server on success, data: [" << buffer << "]" << endl;
 		sendMeaasge();
 	}
+	close(sockfd);
+	return 0;
+	while (1)
+	{
+// 		memset(buffer, 0, sizeof(buffer));
+// 
+// 		int rlen = recv(sockfd, buffer, sizeof(buffer), 0);
+// 		if (rlen <= 0)
+// 			cout << " receive data from server fail " << strerror(errno) << endl;
+// 		cout << "receive data from server on success, data: [" << buffer << "]" << endl;
+		sendMeaasge();
+	}
+	
+
 	return 0;
 }
 

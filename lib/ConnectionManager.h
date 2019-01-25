@@ -7,6 +7,7 @@
 
 class ConnectionManager
 {
+	
 public:
 	ConnectionManager();
 
@@ -45,6 +46,8 @@ protected:
 	Connection* GetConnByFd(int32 fd);
 
 	Connection* GetConnByConnid(int32 nConnid);
+
+	void        FreeConnByConnid(int32 nConnid);
 
 private:
 

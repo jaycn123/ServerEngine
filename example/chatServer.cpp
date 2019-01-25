@@ -9,7 +9,7 @@ int main()
 	test.set_name("TEXT");
 	ConnectionManager conn;
 	conn.SetConnectionNum(1000);
-	xstring ip = "127.0.0.1";
+	xstring ip = "0.0.0.0";
 	if(!conn.CreteSocket(ip, 9999))
 	{
 		printf("create socket error \n");
