@@ -3,6 +3,8 @@
 
 #include "type_define.h"
 #include "netpack.h"
+#include "memoryPool.h"
+
 #include <functional>
 
 #define  NET_MSG_RECV				1

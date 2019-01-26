@@ -1,4 +1,8 @@
 ﻿#include "Connection.h"
+#include "messageQueue.h"
+#include "serviceBase.h"
+
+
 
 Connection::Connection()
 {
@@ -78,10 +82,14 @@ bool Connection::DoReceive()
 	char buffer[BUFFER_SIZE];
 	bzero(buffer,BUFFER_SIZE);
 
-	int tempLen = 0;
+	uint32 tempLen = 0;
 
 	while ((length = recv(m_fd, buffer, BUFFER_SIZE, 0)) > 0)
 	{
+		if (length <= 0)
+		{
+			std::cout << "length : " << length << std::endl;
+		}
 		tempLen += length;
 	
 		if ((m_nRecvSize + length) > RECV_BUF_SIZE)
@@ -124,12 +132,19 @@ bool Connection::DoReceive()
 				break;
 			}
 
-			NetPacket* msg = (NetPacket*)(m_RecvBuf + m_RecvoffIndex);
+			uint32 datalen = pHeader->wDataSize - sizeof(NetPacketHeader);
+
+			char* pData = MemoryManager::GetInstancePtr()->GetFreeMemoryArr(datalen);
+
+			memcpy(pData, m_RecvBuf + m_RecvoffIndex + sizeof(NetPacketHeader), datalen);
+
+			ServiceBase::GetInstancePtr()->AddNetPackToQueue(CNetPacket(m_ConnID, datalen, (uint32)pHeader->wOpcode, pData));
+			
 			m_RecvoffIndex += pHeader->wDataSize;
 		}
 	}
 
-	if (length <= 0)
+	if (tempLen <= 0)
 	{
 		return false;
 	}

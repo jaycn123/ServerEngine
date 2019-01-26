@@ -41,3 +41,9 @@ bool ServiceBase::StopNetWork()
 	m_ConnManager.Close();
 	return true;
 }
+
+bool ServiceBase::AddNetPackToQueue(CNetPacket data)
+{
+	m_NetPackArr[m_PackNum] = data;
+	m_PackNum++;
+}

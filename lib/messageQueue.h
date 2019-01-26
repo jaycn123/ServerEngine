@@ -15,6 +15,11 @@ struct IPacketDispatcher
 
 struct CNetPacket
 {
+	CNetPacket()
+	{
+
+	}
+
 	CNetPacket(uint32 connid, uint32 len, uint32 messid, char* pdata)
 	{
 		m_connId = connid;
@@ -22,9 +27,9 @@ struct CNetPacket
 		messId = messid;
 	}
 
-	uint32 m_connId;
-	uint32 m_len;
-	uint32 messId;
-	char* m_pData;
+	uint32     m_connId;
+	uint32     m_len;
+	uint32     messId;
+	char*      m_pData;
 };
 #endif

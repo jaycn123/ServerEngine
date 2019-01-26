@@ -23,7 +23,7 @@ struct  NetPacketHeader
 struct NetPacket
 {
 	NetPacketHeader     Header;               
-	char  Data[1024];
+	char*  pData;
 };
 
 #endif

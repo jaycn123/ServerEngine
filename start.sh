@@ -1,6 +1,6 @@
 #!/bin/bash
 
-MAX=4999
+MAX=50
 cd bin
 
 for ((i=0; i < MAX; i++))

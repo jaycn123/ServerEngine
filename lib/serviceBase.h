@@ -1,6 +1,8 @@
 #ifndef SERVICE_BASE_H
 #define SERVICE_BASE_H
 
+#define MAXPACKNUM 1000
+
 #include "messageQueue.h"
 #include "ConnectionManager.h"
 
@@ -18,10 +20,17 @@ public:
 
 	bool   StopNetWork();
 	
+	bool   AddNetPackToQueue(CNetPacket data);
+
 protected:
 
-	ConnectionManager m_ConnManager;
+	ConnectionManager  m_ConnManager;
 
+	CNetPacket         m_NetPackArr[MAXPACKNUM];
+
+	uint32             m_PackNum = 0;
+
+	uint32             m_ReadIndex = 0;
 };
 
 

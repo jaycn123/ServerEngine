@@ -73,8 +73,8 @@ typedef std::string         xstring;
 //#define CLIENT_IP "192.168.1.XXX"
 
 // server port
-#define SERVER_PORT 8888
-
+//#define SERVER_PORT 8888
+#define PORT 9997
 //epoll 支持的最大并发量
 #define EPOLL_SIZE 5000
 
