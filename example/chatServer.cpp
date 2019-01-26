@@ -8,7 +8,7 @@ int main()
 	test.set_id(100);
 	test.set_name("TEXT");
 	ConnectionManager conn;
-	conn.SetConnectionNum(1000);
+	conn.SetConnectionNum(10000);
 	xstring ip = "0.0.0.0";
 	if(!conn.CreteSocket(ip, 9999))
 	{
