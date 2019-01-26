@@ -9,7 +9,7 @@ class ServiceBase
 protected:
 	ServiceBase(void);
 
-	//virtual ~ServiceBase(void);
+	virtual ~ServiceBase(void);
 
 public:
 	static ServiceBase* GetInstancePtr();

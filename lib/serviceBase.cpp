@@ -5,6 +5,11 @@ ServiceBase::ServiceBase(void)
 
 }
 
+ServiceBase::~ServiceBase(void)
+{
+
+}
+
 ServiceBase* ServiceBase::GetInstancePtr()
 {
 	static ServiceBase serviceBase;
