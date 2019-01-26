@@ -24,31 +24,43 @@ int m_sendoffindex = 0;
 
 void sendMessage(char *pdata, int len);
 void sendMeaasge();
-int sockfd;
+
 int main(int argc, char* argv[])
 {
-	int on = 1;
-	char buffer[512] = { 0 };
-	struct sockaddr_in servaddr;
-	memset(&servaddr, 0, sizeof(servaddr));
+	int sockfd[5000] = { 0 };
+	for(int i = 0; i < 4999;i++)
+	{
+		
+		int on = 1;
+		char buffer[512] = { 0 };
+		struct sockaddr_in servaddr;
+		memset(&servaddr, 0, sizeof(servaddr));
 
-	if ((sockfd = socket(AF_INET, SOCK_STREAM, 0)) < 0) {
-		cout << "create socket fail" << endl;
-		return -1;
+		if ((sockfd[i] = socket(AF_INET, SOCK_STREAM, 0)) < 0) {
+			cout << "create socket fail" << endl;
+			return -1;
+		}
+		cout << "succeed to create client socket fd " << sockfd[i] << endl;
+
+		setsockopt(sockfd[i], SOL_SOCKET, SO_REUSEADDR, &on, sizeof(on));
+		cout << "set socket reuse by etsockopt" << endl;
+
+		servaddr.sin_port = htons((short)PORT);
+		servaddr.sin_family = AF_INET;
+		servaddr.sin_addr.s_addr = inet_addr("127.0.0.1"); //此处更改epoll服务器地址
+		//127.0.0.1
+		if (connect(sockfd[i], (struct sockaddr*)&servaddr, sizeof(servaddr)) < 0) {
+			cout << "connect error" << endl;
+			//return -1;
+		}
+		cout << "succeed to connect epoll server " << endl;
+		usleep(100);
 	}
-	cout << "succeed to create client socket fd " << sockfd << endl;
-
-	setsockopt(sockfd, SOL_SOCKET, SO_REUSEADDR, &on, sizeof(on));
-	cout << "set socket reuse by etsockopt" << endl;
-
-	servaddr.sin_port = htons((short)PORT);
-	servaddr.sin_family = AF_INET;
-	servaddr.sin_addr.s_addr = inet_addr("119.23.13.79"); //此处更改epoll服务器地址
-	//127.0.0.1
-	if (connect(sockfd, (struct sockaddr*)&servaddr, sizeof(servaddr)) < 0) {
-		cout << "connect error" << endl;
-		return -1;
+	while (1)
+	{
+		sleep(100);
 	}
+	/*
 	cout << "succeed to connect epoll server " << endl;
 
 	char target[] = "The Author: tao_627@aliyun.com";
@@ -95,7 +107,7 @@ int main(int argc, char* argv[])
 			cout << " numC :  " << numC << endl;
 		}
 		*/
-	}
+	
 	/*
 	for (int i = 0; i < 20; i++)
 	{
@@ -115,7 +127,7 @@ int main(int argc, char* argv[])
 		}
 		m_sendoffindex = 0;
 	}
-	*/
+	
 	//sendMeaasge();
 	while (1)
 	{
@@ -125,19 +137,21 @@ int main(int argc, char* argv[])
 	return 0;
 	while (1)
 	{
-// 		memset(buffer, 0, sizeof(buffer));
-// 
-// 		int rlen = recv(sockfd, buffer, sizeof(buffer), 0);
-// 		if (rlen <= 0)
-// 			cout << " receive data from server fail " << strerror(errno) << endl;
-// 		cout << "receive data from server on success, data: [" << buffer << "]" << endl;
-		sendMeaasge();
+		memset(buffer, 0, sizeof(buffer));
+
+		int rlen = recv(sockfd, buffer, sizeof(buffer), 0);
+		if (rlen <= 0)
+			cout << " receive data from server fail " << strerror(errno) << endl;
+		cout << "receive data from server on success, data: [" << buffer << "]" << endl;
+
 	}
 	
 
 	return 0;
-}
 
+	*/
+}
+/*
 void sendMessage(char *pdata,int len)
 {
 	//if ((m_buffsize + len) < BUFF_SIZE)
@@ -169,3 +183,4 @@ void sendMeaasge()
 		m_sendoffindex = 0;
 	}
 }
+*/
