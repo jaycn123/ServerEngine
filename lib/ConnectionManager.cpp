@@ -180,7 +180,7 @@ void ConnectionManager::Run()
 			}
 			else
 			{
-				auto fun = [&](){ epoll_ctl(m_epfd, EPOLL_CTL_DEL, m_events[i].data.fd, &m_events[i]); FreeConnByConnid(m_ConnectionMap[sockfd] - 1); };
+				auto fun = [&]() { epoll_ctl(m_epfd, EPOLL_CTL_DEL, m_events[i].data.fd, &m_events[i]); FreeConnByConnid(m_ConnectionMap[sockfd] - 1); close(m_events[i].data.fd); };
 				m_ConnectionVec[m_ConnectionMap[sockfd] - 1]->EventCallBack(m_epfd, &(m_events[i]), fun);
 			}
 		}

@@ -47,14 +47,14 @@ int main(int argc, char* argv[])
 
 		servaddr.sin_port = htons((short)PORT);
 		servaddr.sin_family = AF_INET;
-		servaddr.sin_addr.s_addr = inet_addr("127.0.0.1"); //此处更改epoll服务器地址
+		servaddr.sin_addr.s_addr = inet_addr("192.168.0.69"); //此处更改epoll服务器地址
 		//127.0.0.1
 		if (connect(sockfd[i], (struct sockaddr*)&servaddr, sizeof(servaddr)) < 0) {
 			cout << "connect error" << endl;
 			//return -1;
 		}
 		cout << "succeed to connect epoll server " << endl;
-		usleep(100);
+		usleep(200);
 	}
 	while (1)
 	{

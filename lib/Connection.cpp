@@ -142,6 +142,7 @@ void Connection::EventCallBack(const int& m_efd, struct epoll_event* m_events, f
 		std::cout << "DoReceive " << std::endl;
 		if (!DoReceive())
 		{
+			std::cout << "EventCallBack " << std::endl;
 			fun();
 		}
 		else
