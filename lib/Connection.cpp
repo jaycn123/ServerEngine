@@ -123,6 +123,7 @@ bool Connection::DoReceive()
 			{
 				break;
 			}
+
 			NetPacket* msg = (NetPacket*)(m_RecvBuf + m_RecvoffIndex);
 			m_RecvoffIndex += pHeader->wDataSize;
 		}

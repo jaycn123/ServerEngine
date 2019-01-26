@@ -1,4 +1,5 @@
 #include "ConnectionManager.h"
+#include "memoryPool.h"
 
 ConnectionManager::ConnectionManager()
 {
@@ -6,6 +7,7 @@ ConnectionManager::ConnectionManager()
 	m_epfd = -1;
 	m_threadPool.setMaxQueueSize(100000);
 	m_threadPool.start(3);
+	MemoryManager::GetInstancePtr()->MemoryPool_init();
 }
 
 ConnectionManager::~ConnectionManager()

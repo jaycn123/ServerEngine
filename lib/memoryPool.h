@@ -21,22 +21,34 @@ struct MemoryData
 struct MemoryPool
 {
 	MemoryData *m_tail = NULL;
+
 	MemoryData *m_hread = NULL;
+
 	MemoryData *m_freeData = NULL;
+
 	uint32_t m_len = 0;
+
 	uint32_t m_count = 0;
 
 	char* GetFreeMemory();
+
 	void CapacityMemory();
+
 	bool FreeMemory(char* addr);
+
 	void PrintMemoryStatus();
+
 	void PrintMemoryStatus2();
+
 	std::map<char*,char*>m_usedMemoryMap;
 };
 
 class MemoryManager
 {
 public:
+
+	void MemoryPool_init();
+
 	void MemoryPool_init(uint32_t colume_no, uint32_t block_len[], uint32_t block_count[]);
 
 	char* GetFreeMemoryArr(uint32_t nsize);

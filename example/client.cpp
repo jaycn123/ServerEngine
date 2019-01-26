@@ -27,8 +27,8 @@ void sendMeaasge();
 
 int main(int argc, char* argv[])
 {
-	int sockfd[5000] = { 0 };
-	for(int i = 0; i < 4999;i++)
+	int sockfd[1000] = { 0 };
+	for(int i = 0; i < 1000;i++)
 	{
 		
 		int on = 1;
@@ -40,21 +40,22 @@ int main(int argc, char* argv[])
 			cout << "create socket fail" << endl;
 			return -1;
 		}
-		cout << "succeed to create client socket fd " << sockfd[i] << endl;
+		//cout << "succeed to create client socket fd " << sockfd[i] << endl;
 
 		setsockopt(sockfd[i], SOL_SOCKET, SO_REUSEADDR, &on, sizeof(on));
-		cout << "set socket reuse by etsockopt" << endl;
+		//cout << "set socket reuse by etsockopt" << endl;
 
 		servaddr.sin_port = htons((short)PORT);
 		servaddr.sin_family = AF_INET;
-		servaddr.sin_addr.s_addr = inet_addr("192.168.0.69"); //此处更改epoll服务器地址
+		servaddr.sin_addr.s_addr = inet_addr("127.0.0.1"); //此处更改epoll服务器地址
 		//127.0.0.1
 		if (connect(sockfd[i], (struct sockaddr*)&servaddr, sizeof(servaddr)) < 0) {
 			cout << "connect error" << endl;
 			//return -1;
 		}
-		cout << "succeed to connect epoll server " << endl;
-		usleep(200);
+		
+		//cout << "succeed to connect epoll server " << endl;
+		//usleep(100);
 	}
 	while (1)
 	{

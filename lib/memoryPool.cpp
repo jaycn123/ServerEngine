@@ -23,7 +23,7 @@ void MemoryManager::MemoryPool_init(uint32_t colume_no, uint32_t block_len[], ui
 		pool.m_count = block_count[i];
 		pool.m_len = block_len[i];
 
-		std::cout << " init addr : " << &(*pool.m_hread) << std::endl;
+		//std::cout << " init addr : " << &(*pool.m_hread) << std::endl;
 
 		for (uint32_t j = 0; j < block_count[i] - 1; j++)
 		{
@@ -38,7 +38,7 @@ void MemoryManager::MemoryPool_init(uint32_t colume_no, uint32_t block_len[], ui
 			     
 			tempAddr += (block_len[i] + PTRSIZE);
 
-			std::cout << " init addr : " << &(*phread) << std::endl;
+		//	std::cout << " init addr : " << &(*phread) << std::endl;
 
 			if (j == (block_count[i] - 2))
 			{
@@ -59,6 +59,19 @@ void MemoryManager::MemoryPool_init(uint32_t colume_no, uint32_t block_len[], ui
 		*/
 	}
 	return;
+}
+
+void MemoryManager::MemoryPool_init()
+{
+	uint32_t initlen = 16;
+	uint32_t blockLen[10] = { 0 };
+	uint32_t blockCount[10] = { 0 };
+	for (uint32_t i = 0; i < 10; i++)
+	{
+		blockLen[i] = (initlen << (i + 1));
+		blockCount[i] = 100;
+	}
+	MemoryPool_init(10, blockLen, blockCount);
 }
 
 char* MemoryManager::GetFreeMemoryArr(uint32_t nsize)

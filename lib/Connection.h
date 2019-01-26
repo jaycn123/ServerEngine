@@ -1,6 +1,7 @@
 ﻿#ifndef _CONNECTION_H_
 #define _CONNECTION_H_
-#include "./Platform.h"
+
+#include "type_define.h"
 #include "netpack.h"
 #include <functional>
 

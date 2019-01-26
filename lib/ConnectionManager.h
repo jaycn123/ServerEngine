@@ -1,7 +1,7 @@
 #ifndef CONNECTION_H
 #define CONNECTION_H
 #include <iostream>
-#include "Platform.h"
+#include "type_define.h"
 #include "ThreadPool.h"
 #include "Connection.h"
 
