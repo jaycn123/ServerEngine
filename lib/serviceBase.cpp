@@ -77,20 +77,25 @@ void ServiceBase::ParsingLoop()
 {
 	while (true)
 	{
-		if (m_ReadIndex < m_PackNum)
 		{
 			AUTOMUTEX
 			ParsingNetPack();
 		}
-		usleep(1);
+		usleep(1000);
 	}
 }
 
 void ServiceBase::ParsingNetPack()
 {
+	if (m_PackNum != 0)
+	{
+		std::cout << "m_PackNum : " << m_PackNum << std::endl;
+	}
 	while (m_ReadIndex < m_PackNum)
 	{
 		m_pPacketDispatcher->DispatchPacket(&(m_NetPackArr[m_ReadIndex++]));
 	}
+	m_PackNum = 0;
+	m_ReadIndex = 0;
 }
 

@@ -86,10 +86,6 @@ bool Connection::DoReceive()
 
 	while ((length = recv(m_fd, buffer, BUFFER_SIZE, 0)) > 0)
 	{
-		if (length <= 0)
-		{
-			std::cout << "length : " << length << std::endl;
-		}
 		tempLen += length;
 	
 		if ((m_nRecvSize + length) > RECV_BUF_SIZE)
@@ -117,14 +113,12 @@ bool Connection::DoReceive()
 			if (pHeader == nullptr)
 			{
 				std::cout << " pHeader == nullptr " << std::endl;
-				getchar();
 				continue;
 			}
 
 			if (pHeader->wCode != NET_CODE)
 			{
 				std::cout << " pHeader->wCode != NET_CODE " << std::endl;
-				getchar();
 				break;
 			}
 			if (pHeader->wDataSize > (m_nRecvSize - m_RecvoffIndex))

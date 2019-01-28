@@ -5,3 +5,8 @@ message TestProto
     int32 id = 1;
     string name = 2;
 }
+
+message HeartBeatReq
+{
+	int32 connid = 1;
+}

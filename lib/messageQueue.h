@@ -16,6 +16,7 @@ struct CNetPacket
 		m_connId = connid;
 		m_len = len;
 		messId = messid;
+		m_pData = pdata;
 	}
 
 	uint32     m_connId;

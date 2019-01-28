@@ -34,6 +34,7 @@ void protobuf_AddDesc_test_2eproto();
 void protobuf_AssignDesc_test_2eproto();
 void protobuf_ShutdownFile_test_2eproto();
 
+class HeartBeatReq;
 class TestProto;
 
 // ===================================================================
@@ -130,6 +131,88 @@ class TestProto : public ::google::protobuf::Message /* @@protoc_insertion_point
   void InitAsDefaultInstance();
   static TestProto* default_instance_;
 };
+// -------------------------------------------------------------------
+
+class HeartBeatReq : public ::google::protobuf::Message /* @@protoc_insertion_point(class_definition:HeartBeatReq) */ {
+ public:
+  HeartBeatReq();
+  virtual ~HeartBeatReq();
+
+  HeartBeatReq(const HeartBeatReq& from);
+
+  inline HeartBeatReq& operator=(const HeartBeatReq& from) {
+    CopyFrom(from);
+    return *this;
+  }
+
+  static const ::google::protobuf::Descriptor* descriptor();
+  static const HeartBeatReq& default_instance();
+
+  void Swap(HeartBeatReq* other);
+
+  // implements Message ----------------------------------------------
+
+  inline HeartBeatReq* New() const { return New(NULL); }
+
+  HeartBeatReq* New(::google::protobuf::Arena* arena) const;
+  void CopyFrom(const ::google::protobuf::Message& from);
+  void MergeFrom(const ::google::protobuf::Message& from);
+  void CopyFrom(const HeartBeatReq& from);
+  void MergeFrom(const HeartBeatReq& from);
+  void Clear();
+  bool IsInitialized() const;
+
+  int ByteSize() const;
+  bool MergePartialFromCodedStream(
+      ::google::protobuf::io::CodedInputStream* input);
+  void SerializeWithCachedSizes(
+      ::google::protobuf::io::CodedOutputStream* output) const;
+  ::google::protobuf::uint8* InternalSerializeWithCachedSizesToArray(
+      bool deterministic, ::google::protobuf::uint8* output) const;
+  ::google::protobuf::uint8* SerializeWithCachedSizesToArray(::google::protobuf::uint8* output) const {
+    return InternalSerializeWithCachedSizesToArray(false, output);
+  }
+  int GetCachedSize() const { return _cached_size_; }
+  private:
+  void SharedCtor();
+  void SharedDtor();
+  void SetCachedSize(int size) const;
+  void InternalSwap(HeartBeatReq* other);
+  private:
+  inline ::google::protobuf::Arena* GetArenaNoVirtual() const {
+    return _internal_metadata_.arena();
+  }
+  inline void* MaybeArenaPtr() const {
+    return _internal_metadata_.raw_arena_ptr();
+  }
+  public:
+
+  ::google::protobuf::Metadata GetMetadata() const;
+
+  // nested types ----------------------------------------------------
+
+  // accessors -------------------------------------------------------
+
+  // optional int32 connid = 1;
+  void clear_connid();
+  static const int kConnidFieldNumber = 1;
+  ::google::protobuf::int32 connid() const;
+  void set_connid(::google::protobuf::int32 value);
+
+  // @@protoc_insertion_point(class_scope:HeartBeatReq)
+ private:
+
+  ::google::protobuf::internal::InternalMetadataWithArena _internal_metadata_;
+  bool _is_default_instance_;
+  ::google::protobuf::int32 connid_;
+  mutable int _cached_size_;
+  friend void  protobuf_AddDesc_test_2eproto();
+  friend void protobuf_AssignDesc_test_2eproto();
+  friend void protobuf_ShutdownFile_test_2eproto();
+
+  void InitAsDefaultInstance();
+  static HeartBeatReq* default_instance_;
+};
 // ===================================================================
 
 
@@ -196,7 +279,27 @@ inline void TestProto::set_allocated_name(::std::string* name) {
   // @@protoc_insertion_point(field_set_allocated:TestProto.name)
 }
 
+// -------------------------------------------------------------------
+
+// HeartBeatReq
+
+// optional int32 connid = 1;
+inline void HeartBeatReq::clear_connid() {
+  connid_ = 0;
+}
+inline ::google::protobuf::int32 HeartBeatReq::connid() const {
+  // @@protoc_insertion_point(field_get:HeartBeatReq.connid)
+  return connid_;
+}
+inline void HeartBeatReq::set_connid(::google::protobuf::int32 value) {
+  
+  connid_ = value;
+  // @@protoc_insertion_point(field_set:HeartBeatReq.connid)
+}
+
 #endif  // !PROTOBUF_INLINE_NOT_IN_HEADERS
+// -------------------------------------------------------------------
+
 
 // @@protoc_insertion_point(namespace_scope)
 

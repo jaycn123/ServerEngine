@@ -5,13 +5,14 @@
 #include "netpack.h"
 #include "memoryPool.h"
 
+
 #include <functional>
 
 #define  NET_MSG_RECV				1
 #define  NET_MSG_SEND				2
 #define  NET_MSG_CONNECT			3
 
-#define RECV_BUF_SIZE               10240
+#define RECV_BUF_SIZE               102400
 
 #define BUFFER_SIZE                 1024
 

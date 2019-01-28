@@ -46,7 +46,10 @@ bool CGameService::DispatchPacket(CNetPacket* pNetPacket)
 
 bool CGameService::OnMsgWatchHeartBeatReq(CNetPacket* pNetPacket)
 {
-	std::cout << "OnMsgWatchHeartBeatReq" << std::endl;
+	HeartBeatReq Req;
+	Req.ParsePartialFromArray(pNetPacket->m_pData, pNetPacket->m_len);
+	std::cout << (void*)pNetPacket->m_pData << std::endl;
+	std::cout << "OnMsgWatchHeartBeatReq : " << Req.connid() << std::endl;
 }
 
 int main()

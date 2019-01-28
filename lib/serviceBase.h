@@ -7,7 +7,7 @@
 #include "type_define.h"
 #include "../lib/serviceBase.h"
 
-#define MAXPACKNUM 15
+#define MAXPACKNUM 9999999
 #define AUTOMUTEX std::lock_guard<std::mutex> lock(m_mutex);
 
 

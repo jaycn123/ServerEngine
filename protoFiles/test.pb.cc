@@ -22,6 +22,9 @@ namespace {
 const ::google::protobuf::Descriptor* TestProto_descriptor_ = NULL;
 const ::google::protobuf::internal::GeneratedMessageReflection*
   TestProto_reflection_ = NULL;
+const ::google::protobuf::Descriptor* HeartBeatReq_descriptor_ = NULL;
+const ::google::protobuf::internal::GeneratedMessageReflection*
+  HeartBeatReq_reflection_ = NULL;
 
 }  // namespace
 
@@ -49,6 +52,21 @@ void protobuf_AssignDesc_test_2eproto() {
       sizeof(TestProto),
       GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(TestProto, _internal_metadata_),
       GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(TestProto, _is_default_instance_));
+  HeartBeatReq_descriptor_ = file->message_type(1);
+  static const int HeartBeatReq_offsets_[1] = {
+    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(HeartBeatReq, connid_),
+  };
+  HeartBeatReq_reflection_ =
+    ::google::protobuf::internal::GeneratedMessageReflection::NewGeneratedMessageReflection(
+      HeartBeatReq_descriptor_,
+      HeartBeatReq::default_instance_,
+      HeartBeatReq_offsets_,
+      -1,
+      -1,
+      -1,
+      sizeof(HeartBeatReq),
+      GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(HeartBeatReq, _internal_metadata_),
+      GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(HeartBeatReq, _is_default_instance_));
 }
 
 namespace {
@@ -64,6 +82,8 @@ void protobuf_RegisterTypes(const ::std::string&) {
   protobuf_AssignDescriptorsOnce();
   ::google::protobuf::MessageFactory::InternalRegisterGeneratedMessage(
       TestProto_descriptor_, &TestProto::default_instance());
+  ::google::protobuf::MessageFactory::InternalRegisterGeneratedMessage(
+      HeartBeatReq_descriptor_, &HeartBeatReq::default_instance());
 }
 
 }  // namespace
@@ -71,6 +91,8 @@ void protobuf_RegisterTypes(const ::std::string&) {
 void protobuf_ShutdownFile_test_2eproto() {
   delete TestProto::default_instance_;
   delete TestProto_reflection_;
+  delete HeartBeatReq::default_instance_;
+  delete HeartBeatReq_reflection_;
 }
 
 void protobuf_AddDesc_test_2eproto() GOOGLE_ATTRIBUTE_COLD;
@@ -82,11 +104,14 @@ void protobuf_AddDesc_test_2eproto() {
 
   ::google::protobuf::DescriptorPool::InternalAddGeneratedFile(
     "\n\ntest.proto\"%\n\tTestProto\022\n\n\002id\030\001 \001(\005\022\014\n"
-    "\004name\030\002 \001(\tb\006proto3", 59);
+    "\004name\030\002 \001(\t\"\036\n\014HeartBeatReq\022\016\n\006connid\030\001 "
+    "\001(\005b\006proto3", 91);
   ::google::protobuf::MessageFactory::InternalRegisterGeneratedFile(
     "test.proto", &protobuf_RegisterTypes);
   TestProto::default_instance_ = new TestProto();
+  HeartBeatReq::default_instance_ = new HeartBeatReq();
   TestProto::default_instance_->InitAsDefaultInstance();
+  HeartBeatReq::default_instance_->InitAsDefaultInstance();
   ::google::protobuf::internal::OnShutdown(&protobuf_ShutdownFile_test_2eproto);
 }
 
@@ -430,6 +455,244 @@ void TestProto::clear_name() {
   }
   name_.SetAllocatedNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), name);
   // @@protoc_insertion_point(field_set_allocated:TestProto.name)
+}
+
+#endif  // PROTOBUF_INLINE_NOT_IN_HEADERS
+
+// ===================================================================
+
+#if !defined(_MSC_VER) || _MSC_VER >= 1900
+const int HeartBeatReq::kConnidFieldNumber;
+#endif  // !defined(_MSC_VER) || _MSC_VER >= 1900
+
+HeartBeatReq::HeartBeatReq()
+  : ::google::protobuf::Message(), _internal_metadata_(NULL) {
+  SharedCtor();
+  // @@protoc_insertion_point(constructor:HeartBeatReq)
+}
+
+void HeartBeatReq::InitAsDefaultInstance() {
+  _is_default_instance_ = true;
+}
+
+HeartBeatReq::HeartBeatReq(const HeartBeatReq& from)
+  : ::google::protobuf::Message(),
+    _internal_metadata_(NULL) {
+  SharedCtor();
+  MergeFrom(from);
+  // @@protoc_insertion_point(copy_constructor:HeartBeatReq)
+}
+
+void HeartBeatReq::SharedCtor() {
+    _is_default_instance_ = false;
+  _cached_size_ = 0;
+  connid_ = 0;
+}
+
+HeartBeatReq::~HeartBeatReq() {
+  // @@protoc_insertion_point(destructor:HeartBeatReq)
+  SharedDtor();
+}
+
+void HeartBeatReq::SharedDtor() {
+  if (this != default_instance_) {
+  }
+}
+
+void HeartBeatReq::SetCachedSize(int size) const {
+  GOOGLE_SAFE_CONCURRENT_WRITES_BEGIN();
+  _cached_size_ = size;
+  GOOGLE_SAFE_CONCURRENT_WRITES_END();
+}
+const ::google::protobuf::Descriptor* HeartBeatReq::descriptor() {
+  protobuf_AssignDescriptorsOnce();
+  return HeartBeatReq_descriptor_;
+}
+
+const HeartBeatReq& HeartBeatReq::default_instance() {
+  if (default_instance_ == NULL) protobuf_AddDesc_test_2eproto();
+  return *default_instance_;
+}
+
+HeartBeatReq* HeartBeatReq::default_instance_ = NULL;
+
+HeartBeatReq* HeartBeatReq::New(::google::protobuf::Arena* arena) const {
+  HeartBeatReq* n = new HeartBeatReq;
+  if (arena != NULL) {
+    arena->Own(n);
+  }
+  return n;
+}
+
+void HeartBeatReq::Clear() {
+// @@protoc_insertion_point(message_clear_start:HeartBeatReq)
+  connid_ = 0;
+}
+
+bool HeartBeatReq::MergePartialFromCodedStream(
+    ::google::protobuf::io::CodedInputStream* input) {
+#define DO_(EXPRESSION) if (!GOOGLE_PREDICT_TRUE(EXPRESSION)) goto failure
+  ::google::protobuf::uint32 tag;
+  // @@protoc_insertion_point(parse_start:HeartBeatReq)
+  for (;;) {
+    ::std::pair< ::google::protobuf::uint32, bool> p = input->ReadTagWithCutoff(127);
+    tag = p.first;
+    if (!p.second) goto handle_unusual;
+    switch (::google::protobuf::internal::WireFormatLite::GetTagFieldNumber(tag)) {
+      // optional int32 connid = 1;
+      case 1: {
+        if (tag == 8) {
+          DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
+                   ::google::protobuf::int32, ::google::protobuf::internal::WireFormatLite::TYPE_INT32>(
+                 input, &connid_)));
+
+        } else {
+          goto handle_unusual;
+        }
+        if (input->ExpectAtEnd()) goto success;
+        break;
+      }
+
+      default: {
+      handle_unusual:
+        if (tag == 0 ||
+            ::google::protobuf::internal::WireFormatLite::GetTagWireType(tag) ==
+            ::google::protobuf::internal::WireFormatLite::WIRETYPE_END_GROUP) {
+          goto success;
+        }
+        DO_(::google::protobuf::internal::WireFormatLite::SkipField(input, tag));
+        break;
+      }
+    }
+  }
+success:
+  // @@protoc_insertion_point(parse_success:HeartBeatReq)
+  return true;
+failure:
+  // @@protoc_insertion_point(parse_failure:HeartBeatReq)
+  return false;
+#undef DO_
+}
+
+void HeartBeatReq::SerializeWithCachedSizes(
+    ::google::protobuf::io::CodedOutputStream* output) const {
+  // @@protoc_insertion_point(serialize_start:HeartBeatReq)
+  // optional int32 connid = 1;
+  if (this->connid() != 0) {
+    ::google::protobuf::internal::WireFormatLite::WriteInt32(1, this->connid(), output);
+  }
+
+  // @@protoc_insertion_point(serialize_end:HeartBeatReq)
+}
+
+::google::protobuf::uint8* HeartBeatReq::InternalSerializeWithCachedSizesToArray(
+    bool deterministic, ::google::protobuf::uint8* target) const {
+  // @@protoc_insertion_point(serialize_to_array_start:HeartBeatReq)
+  // optional int32 connid = 1;
+  if (this->connid() != 0) {
+    target = ::google::protobuf::internal::WireFormatLite::WriteInt32ToArray(1, this->connid(), target);
+  }
+
+  // @@protoc_insertion_point(serialize_to_array_end:HeartBeatReq)
+  return target;
+}
+
+int HeartBeatReq::ByteSize() const {
+// @@protoc_insertion_point(message_byte_size_start:HeartBeatReq)
+  int total_size = 0;
+
+  // optional int32 connid = 1;
+  if (this->connid() != 0) {
+    total_size += 1 +
+      ::google::protobuf::internal::WireFormatLite::Int32Size(
+        this->connid());
+  }
+
+  GOOGLE_SAFE_CONCURRENT_WRITES_BEGIN();
+  _cached_size_ = total_size;
+  GOOGLE_SAFE_CONCURRENT_WRITES_END();
+  return total_size;
+}
+
+void HeartBeatReq::MergeFrom(const ::google::protobuf::Message& from) {
+// @@protoc_insertion_point(generalized_merge_from_start:HeartBeatReq)
+  if (GOOGLE_PREDICT_FALSE(&from == this)) {
+    ::google::protobuf::internal::MergeFromFail(__FILE__, __LINE__);
+  }
+  const HeartBeatReq* source = 
+      ::google::protobuf::internal::DynamicCastToGenerated<const HeartBeatReq>(
+          &from);
+  if (source == NULL) {
+  // @@protoc_insertion_point(generalized_merge_from_cast_fail:HeartBeatReq)
+    ::google::protobuf::internal::ReflectionOps::Merge(from, this);
+  } else {
+  // @@protoc_insertion_point(generalized_merge_from_cast_success:HeartBeatReq)
+    MergeFrom(*source);
+  }
+}
+
+void HeartBeatReq::MergeFrom(const HeartBeatReq& from) {
+// @@protoc_insertion_point(class_specific_merge_from_start:HeartBeatReq)
+  if (GOOGLE_PREDICT_FALSE(&from == this)) {
+    ::google::protobuf::internal::MergeFromFail(__FILE__, __LINE__);
+  }
+  if (from.connid() != 0) {
+    set_connid(from.connid());
+  }
+}
+
+void HeartBeatReq::CopyFrom(const ::google::protobuf::Message& from) {
+// @@protoc_insertion_point(generalized_copy_from_start:HeartBeatReq)
+  if (&from == this) return;
+  Clear();
+  MergeFrom(from);
+}
+
+void HeartBeatReq::CopyFrom(const HeartBeatReq& from) {
+// @@protoc_insertion_point(class_specific_copy_from_start:HeartBeatReq)
+  if (&from == this) return;
+  Clear();
+  MergeFrom(from);
+}
+
+bool HeartBeatReq::IsInitialized() const {
+
+  return true;
+}
+
+void HeartBeatReq::Swap(HeartBeatReq* other) {
+  if (other == this) return;
+  InternalSwap(other);
+}
+void HeartBeatReq::InternalSwap(HeartBeatReq* other) {
+  std::swap(connid_, other->connid_);
+  _internal_metadata_.Swap(&other->_internal_metadata_);
+  std::swap(_cached_size_, other->_cached_size_);
+}
+
+::google::protobuf::Metadata HeartBeatReq::GetMetadata() const {
+  protobuf_AssignDescriptorsOnce();
+  ::google::protobuf::Metadata metadata;
+  metadata.descriptor = HeartBeatReq_descriptor_;
+  metadata.reflection = HeartBeatReq_reflection_;
+  return metadata;
+}
+
+#if PROTOBUF_INLINE_NOT_IN_HEADERS
+// HeartBeatReq
+
+// optional int32 connid = 1;
+void HeartBeatReq::clear_connid() {
+  connid_ = 0;
+}
+ ::google::protobuf::int32 HeartBeatReq::connid() const {
+  // @@protoc_insertion_point(field_get:HeartBeatReq.connid)
+  return connid_;
+}
+ void HeartBeatReq::set_connid(::google::protobuf::int32 value) {
+  
+  connid_ = value;
+  // @@protoc_insertion_point(field_set:HeartBeatReq.connid)
 }
 
 #endif  // PROTOBUF_INLINE_NOT_IN_HEADERS
