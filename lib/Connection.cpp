@@ -138,8 +138,8 @@ bool Connection::DoReceive()
 
 			memcpy(pData, m_RecvBuf + m_RecvoffIndex + sizeof(NetPacketHeader), datalen);
 
-			ServiceBase::GetInstancePtr()->AddNetPackToQueue(CNetPacket(m_ConnID, datalen, (uint32)pHeader->wOpcode, pData));
-			
+			ServiceBase::GetInstancePtr()->AddNetPackToQueue(m_ConnID, datalen, (uint32)pHeader->wOpcode, pData);
+
 			m_RecvoffIndex += pHeader->wDataSize;
 		}
 	}
@@ -158,7 +158,6 @@ void Connection::EventCallBack(const int& m_efd, struct epoll_event* m_events, f
 		std::cout << "DoReceive " << std::endl;
 		if (!DoReceive())
 		{
-			std::cout << "EventCallBack " << std::endl;
 			fun();
 		}
 		else

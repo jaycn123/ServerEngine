@@ -17,7 +17,6 @@
 
 #define Hash_Map                    std::map
 
-typedef std::function<void(void)> func;
 
 class Connection
 {

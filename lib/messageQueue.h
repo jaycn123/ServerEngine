@@ -2,15 +2,6 @@
 #define MESSAGEQUEUE_H
 #include "type_define.h"
 
-struct IPacketDispatcher
-{
-	/*
-	virtual bool DispatchPacket(NetPacket* pNetPacket) = 0;
-	virtual bool OnSecondTimer() = 0;
-	virtual bool OnCloseConnect(CConnection* pConnection) = 0;
-	virtual bool OnNewConnect(CConnection* pConnection) = 0;
-	*/
-};
 
 
 struct CNetPacket
@@ -31,5 +22,17 @@ struct CNetPacket
 	uint32     m_len;
 	uint32     messId;
 	char*      m_pData;
+
 };
+
+struct IPacketDispatcher
+{
+	virtual bool DispatchPacket(CNetPacket* pNetPacket) = 0;
+	/*
+	virtual bool OnSecondTimer() = 0;
+	virtual bool OnCloseConnect(CConnection* pConnection) = 0;
+	virtual bool OnNewConnect(CConnection* pConnection) = 0;
+	*/
+};
+
 #endif

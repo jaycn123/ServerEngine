@@ -43,6 +43,9 @@
 #include <netdb.h>
 #include <dirent.h>
 #include <google/protobuf/message.h>  //pb
+#include <thread>
+#include <functional>
+
 
 using namespace std;
 //using namespace std::placeholders;
@@ -66,6 +69,9 @@ typedef int					int32;
 typedef unsigned int		uint32;
 typedef int					BOOL;
 typedef std::string         xstring;
+
+
+typedef std::function<void(void)> func;
 
 #define SERVER_IP "127.0.0.1"
 
@@ -121,6 +127,5 @@ template <int x> struct static_assert_test {};
 #define CHECKERR_AND_CONTINUE(x)  { if ((x) == false) { ERROR("Check Error"); continue;}  }
 
 #define CHECKERR_AND_RETURN_VALUE(x,ret)  { if ((x) == false) { ERROR("Check Error"); return ret;}  }
-
 
 #endif

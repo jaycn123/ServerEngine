@@ -113,9 +113,13 @@ int main(int argc, char* argv[])
 	}
 	cout << " sendMeaasge  " << endl;
 	sendMeaasge();
+	close(sockfd);
+	return 0;
 	while (1)
 	{
 		sendMeaasge();
+		close(sockfd);
+		return 0;
 	}
 	close(sockfd);
 	return 0;

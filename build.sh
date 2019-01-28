@@ -8,5 +8,6 @@ g++ -g -c ./lib/*.cpp -std=c++17
 mv *.o libso
 rm ./bin/* -rf
 g++ -g -o bin/chatServer example/chatServer.cpp ./protoFiles/*.o ./libso/*.o  -lpthread  -lprotobuf -std=c++17 
+#g++ -g -c example/chatServer.cpp  ./protoFiles/*.o ./libso/*.o  -lpthread  -lprotobuf -std=c++17
 g++ ./example/client.cpp -o ./bin/epoll_client
-./bin/chatServer
+#./bin/chatServer
