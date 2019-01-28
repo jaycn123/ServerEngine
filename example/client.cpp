@@ -12,6 +12,7 @@
 #include <sys/socket.h>
 #include <unistd.h>
 #include "../lib/type_define.h"
+#include "../protoFiles/test.pb.h"
 
 #define NET_PACKET_DATA_SIZE 1024
 #define NET_CODE 0x2766
@@ -73,87 +74,43 @@ int main(int argc, char* argv[])
 	}
 
 	cout << "succeed to connect epoll server " << endl;
-	
-	int i = 1;
-	int numC = 5000000;
-	while (numC > 0)
-	{
-		numC--;
-		//i++;
-		NetPacket msg;
-		msg.Header.wConnId = 1;
-		msg.Header.wOpcode = SENDDATA;
-		msg.Header.wCode = NET_CODE;
-		std::string tempstr = std::to_string(i);
-		if (numC == 0)
-		{
-			tempstr = "10";
-		}
 
-		memcpy(msg.Data, tempstr.c_str(), tempstr.length());
-		msg.Header.wDataSize = tempstr.length() + sizeof(NetPacketHeader);
+	NetPacket msg;
+	msg.Header.wConnId = 1;
+	msg.Header.wOpcode = SENDDATA;
+	msg.Header.wCode = NET_CODE;
 
-		//memcpy(buffer, (char*)&msg, sizeof(NetPacketHeader) + tempstr.length());
 
-		sendMessage((char*)&msg, msg.Header.wDataSize);
+	HeartBeatReq sendPack;
+	sendPack.set_connid(100);
 
-		/*
-		int wlen = send(sockfd, buffer, sizeof(NetPacketHeader) + tempstr.length(), 0);
-		if (wlen <= 0)
-		{
-			cout << " send data to server fail " << strerror(errno) << endl;
-		}
-		//cout << "send data to server on success, data: [" << wlen << "]" << endl;
-		//sleep(1);
-		if (numC % 100000 == 0)
-		{
-			cout << " numC :  " << numC << endl;
-		}
-		*/
-	}
-	cout << " sendMeaasge  " << endl;
-	sendMeaasge();
-	close(sockfd);
-	return 0;
+	char szBuff[102400] = { 0 };
+	std::cout << sendPack.ByteSize() << std::endl;
+	sendPack.SerializePartialToArray(szBuff, sendPack.GetCachedSize());
+	memcpy(msg.Data, szBuff, sendPack.ByteSize());
+	char temp[1024] = { 0 };
+	memcpy(temp, szBuff, sendPack.ByteSize());
+
+	bzero(szBuff, 102400);
+	msg.Header.wDataSize = sendPack.GetCachedSize() + sizeof(NetPacketHeader);
+	memcpy(szBuff, (char*)&msg, sendPack.GetCachedSize() + sizeof(NetPacketHeader));
+
+	std::cout << "msg.Header.wDataSize : " << msg.Header.wDataSize << std::endl;
+
+	int wlen = send(sockfd, szBuff, msg.Header.wDataSize, 0);
+
+
+	HeartBeatReq Req;
+	std::cout << Req.ParsePartialFromArray(temp, sendPack.GetCachedSize()) << std::endl;
+	std::cout << "OnMsgWatchHeartBeatReq : " << Req.connid() << std::endl;
+
+
 	while (1)
 	{
-		sendMeaasge();
-		close(sockfd);
-		return 0;
+		sleep(1);
 	}
+
 	close(sockfd);
 	return 0;
-
-}
-
-void sendMessage(char *pdata,int len)
-{
-	//if ((m_buffsize + len) < BUFF_SIZE)
-	{
-		memcpy(m_sendBuff + m_buffsize, pdata, len);
-		m_buffsize += len;
-		//cout << "buffsize : " << m_buffsize << std::endl;
-	}
-}
-
-void sendMeaasge()
-{
-	for (int i = 0; i < 1; i++)
-	{
-		cout << "buffsize : " << m_buffsize << std::endl;
-
-		while (m_sendoffindex < m_buffsize)
-		{
-			int wlen = send(sockfd, m_sendBuff + m_sendoffindex, m_buffsize, 0);
-			if (wlen <= 0)
-			{
-				std::cout << "len : " << wlen << std::endl;
-				cout << " send data to server fail " << strerror(errno) << endl;
-				break;
-			}
-			m_sendoffindex += wlen;
-			std::cout << "len : " << wlen << " : " << m_sendoffindex << std::endl;
-		}
-		m_sendoffindex = 0;
-	}
+	
 }
