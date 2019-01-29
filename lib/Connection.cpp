@@ -83,7 +83,7 @@ bool Connection::DoReceive()
 	bzero(buffer,BUFFER_SIZE);
 
 	uint32 tempLen = 0;
-
+	std::cout << "m_fd : " << m_fd << std::endl;
 	while ((length = recv(m_fd, buffer, BUFFER_SIZE, 0)) > 0)
 	{
 		tempLen += length;
@@ -112,13 +112,11 @@ bool Connection::DoReceive()
 			NetPacketHeader* pHeader = (NetPacketHeader*)(m_RecvBuf + m_RecvoffIndex);
 			if (pHeader == nullptr)
 			{
-				std::cout << " pHeader == nullptr " << std::endl;
 				continue;
 			}
 
 			if (pHeader->wCode != NET_CODE)
 			{
-				std::cout << " pHeader->wCode != NET_CODE " << std::endl;
 				break;
 			}
 			if (pHeader->wDataSize > (m_nRecvSize - m_RecvoffIndex))
@@ -149,13 +147,14 @@ void Connection::EventCallBack(const int& m_efd, struct epoll_event* m_events, f
 {
 	if (m_events->events & EPOLLIN)
 	{
-		std::cout << "DoReceive " << std::endl;
 		if (!DoReceive())
 		{
+			std::cout << "call back " << std::endl;
 			fun();
 		}
 		else
 		{
+			std::cout << "EPOLLOUT " << std::endl;
 			m_events->events = EPOLLOUT | EPOLLET;
 			epoll_ctl(m_efd, EPOLL_CTL_MOD, m_fd, m_events);
 		}

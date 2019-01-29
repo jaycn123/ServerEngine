@@ -19,7 +19,7 @@ public:
 
 	void        AddEpollFd(bool enable_et = false);
 
-	void        AddEpollFd(int fd, bool enable_et);
+	void        AddEpollFd(int fd, Connection* pConn, bool enable_et);
 
 	void        sendBroadcastmessage(int32 clientfd);
 
@@ -64,8 +64,6 @@ private:
 	Looptask m_Looptask;
 
 	std::vector<Connection*>m_ConnectionVec;
-
-	std::map<int32, int32>m_ConnectionMap;
 
 };
 

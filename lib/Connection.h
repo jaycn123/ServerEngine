@@ -50,8 +50,6 @@ public:
 
 	bool	DoReceive();
 
-	void    EventCallBack(uint32_t enents);
-
 	void	EventCallBack(const int& m_efd,struct epoll_event* m_events, func fun);
 
 	bool	IsConnectionOK();

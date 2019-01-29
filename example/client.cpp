@@ -99,14 +99,9 @@ int main(int argc, char* argv[])
 
 	int wlen = send(sockfd, szBuff, msg.Header.wDataSize, 0);
 
-
-	HeartBeatReq Req;
-	std::cout << Req.ParsePartialFromArray(temp, sendPack.GetCachedSize()) << std::endl;
-	std::cout << "OnMsgWatchHeartBeatReq : " << Req.connid() << std::endl;
-
-
 	while (1)
 	{
+		int wlen = send(sockfd, szBuff, msg.Header.wDataSize, 0);
 		sleep(1);
 	}
 

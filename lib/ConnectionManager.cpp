@@ -84,11 +84,10 @@ void ConnectionManager::AddEpollFd(bool enable_et)
 	setnonblocking(m_listener);
 }
 
-void ConnectionManager::AddEpollFd(int fd, bool enable_et)
+void ConnectionManager::AddEpollFd(int fd,Connection* pConn, bool enable_et)
 {
-	//EPOLLOUT
 	struct epoll_event ev;
-	ev.data.fd = fd;
+	ev.data.ptr = pConn;
 	if (enable_et)
 	{
 		ev.events = EPOLLIN|EPOLLET;
@@ -154,7 +153,6 @@ void ConnectionManager::Run()
 		{
 			int sockfd = m_events[i].data.fd;
 
-			//新用户连接
 			if (m_events[i].data.fd == m_listener)
 			{
 				struct sockaddr_in client_address;
@@ -182,8 +180,9 @@ void ConnectionManager::Run()
 			}
 			else
 			{
-				auto fun = [&]() { epoll_ctl(m_epfd, EPOLL_CTL_DEL, m_events[i].data.fd, &m_events[i]); FreeConnByConnid(m_ConnectionMap[sockfd] - 1); close(m_events[i].data.fd); };
-				m_ConnectionVec[m_ConnectionMap[sockfd] - 1]->EventCallBack(m_epfd, &(m_events[i]), fun);
+				Connection* connTemp = (Connection*)(m_events[i].data.ptr);
+				auto fun = [&]() { epoll_ctl(m_epfd, EPOLL_CTL_DEL, m_events[i].data.fd, &m_events[i]); FreeConnByConnid(connTemp->GetConnectionID()); close(connTemp->GetFd()); };
+				connTemp->EventCallBack(m_epfd, &(m_events[i]), fun);
 			}
 		}
 	}
@@ -197,6 +196,10 @@ void ConnectionManager::SetConnectionNum(int32 nMaxCons)
 		Connection* pConn = new Connection();
 		pConn->SetConnectionID(i + 1);
 		m_ConnectionVec[i] = pConn;
+		if (i == 0)
+		{
+			std::cout << (void*)pConn << std::endl;
+		}
 	}
 }
 
@@ -238,13 +241,11 @@ void ConnectionManager::AddNewConn(int32 fd)
 		if (!pConn->GetConnStatus())
 		{
 			pConn->SetSocket(fd);
+			AddEpollFd(fd, pConn, true);
 			std::cout << "connid : " <<pConn->GetConnectionID() << std::endl;
-			m_ConnectionMap[fd] = pConn->GetConnectionID();
-			//SendConnIDToClient(fd, pConn->GetConnectionID());
 			break;
 		}
 	}
-	AddEpollFd(fd, true);
 }
 
 Connection* ConnectionManager::GetConnByFd(int32 fd)
@@ -275,6 +276,6 @@ void ConnectionManager::FreeConnByConnid(int32 nConnid)
 	{
 		return;
 	}
-	//std::cout << "free nConnid : " << m_ConnectionVec[nConnid]->m_ConnID << std::endl;
-	m_ConnectionVec[nConnid]->SetConnStatus(false);
+	std::cout << "free nConnid : " << nConnid << std::endl;
+	m_ConnectionVec[nConnid - 1]->SetConnStatus(false);
 }

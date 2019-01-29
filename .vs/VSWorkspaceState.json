@@ -1,9 +1,7 @@
 {
   "ExpandedNodes": [
-    "",
-    "\\example",
-    "\\lib"
+    ""
   ],
-  "SelectedNode": "\\lib\\Connection.cpp",
+  "SelectedNode": "\\lib",
   "PreviewInSolutionExplorer": false
 }
