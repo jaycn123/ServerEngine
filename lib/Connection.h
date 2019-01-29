@@ -51,7 +51,7 @@ public:
 			    
 	bool	    DoReceive();
 			    
-	void	    EventCallBack(const int& m_efd,struct epoll_event* m_events, func fun);
+	void	    EventCallBack(const int& m_efd,func fun);
 			    
 	bool	    IsConnectionOK();
 			    
@@ -63,10 +63,15 @@ public:
 
 	SendStatus  DoSend();
 
-	int32   GetFd();
+	int32       GetFd();
 
+	void        SetEpollEv(struct epoll_event* ev);
+
+	struct epoll_event* GetEpollEv();
 	
 public:
+
+	struct epoll_event*     m_events;
 
 	int32	                m_fd;
 			                

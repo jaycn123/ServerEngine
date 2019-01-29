@@ -188,7 +188,7 @@ void ConnectionManager::Run()
 			{
 				Connection* connTemp = (Connection*)(m_events[i].data.ptr);
 				auto fun = [&]() { epoll_ctl(m_epfd, EPOLL_CTL_DEL, m_events[i].data.fd, &m_events[i]); FreeConnByConnid(connTemp->GetConnectionID()); close(connTemp->GetFd()); };
-				connTemp->EventCallBack(m_epfd, &(m_events[i]), fun);
+				connTemp->EventCallBack(m_epfd,fun);
 			}
 		}
 	}
@@ -201,6 +201,7 @@ void ConnectionManager::SetConnectionNum(int32 nMaxCons)
 	{
 		Connection* pConn = new Connection();
 		pConn->SetConnectionID(i + 1);
+		pConn->SetEpollEv(&(m_events[i]));
 		m_ConnectionVec[i] = pConn;
 	}
 }
@@ -265,6 +266,9 @@ bool ConnectionManager::sendMessageByConnID(uint32 connid, uint32 msgid, const c
 	std::cout << "3333333" << std::endl;
 	pConn->SendBuffer(msg);
 	*/
+	struct epoll_event* tevent = pConn->GetEpollEv();
+	tevent->events = EPOLLOUT | EPOLLET;
+	epoll_ctl(m_epfd, EPOLL_CTL_MOD, pConn->GetSocket(), tevent);
 }
 
 void ConnectionManager::AddNewConn(int32 fd)
