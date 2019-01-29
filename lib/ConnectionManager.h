@@ -8,10 +8,14 @@
 class ConnectionManager
 {
 	
-public:
-	ConnectionManager();
+protected:
+	ConnectionManager(void);
 
-	~ConnectionManager();
+	~ConnectionManager(void);
+
+public:
+
+	static ConnectionManager* GetInstancePtr();
 
 	bool		CreteSocket(xstring& ip, int32 port);
 
@@ -38,6 +42,8 @@ public:
 	bool        CanExit();
 
 	bool		SendConnIDToClient(int32 fd, int32 connID);
+
+	bool        sendMessageByConnID(uint32 connid, uint32 msgid, const char* pData, uint32 dwLen);
 
 protected:
 

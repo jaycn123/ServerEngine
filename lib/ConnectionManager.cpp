@@ -1,7 +1,7 @@
 #include "ConnectionManager.h"
 #include "memoryPool.h"
 
-ConnectionManager::ConnectionManager()
+ConnectionManager::ConnectionManager(void)
 {
 	m_listener = -1;
 	m_epfd = -1;
@@ -10,9 +10,15 @@ ConnectionManager::ConnectionManager()
 	MemoryManager::GetInstancePtr()->MemoryPool_init();
 }
 
-ConnectionManager::~ConnectionManager()
+ConnectionManager::~ConnectionManager(void)
 {
 
+}
+
+ConnectionManager* ConnectionManager::GetInstancePtr()
+{
+	static ConnectionManager connectionManager;
+	return &connectionManager;
 }
 
 bool ConnectionManager::CreteSocket(xstring& ip, int32 port)
@@ -196,10 +202,6 @@ void ConnectionManager::SetConnectionNum(int32 nMaxCons)
 		Connection* pConn = new Connection();
 		pConn->SetConnectionID(i + 1);
 		m_ConnectionVec[i] = pConn;
-		if (i == 0)
-		{
-			std::cout << (void*)pConn << std::endl;
-		}
 	}
 }
 
@@ -233,6 +235,38 @@ bool ConnectionManager::SendConnIDToClient(int32 fd, int32 connID)
 	*/
 }
 
+bool ConnectionManager::sendMessageByConnID(uint32 connid, uint32 msgid, const char* pData, uint32 dwLen)
+{
+	Connection* pConn = GetConnByConnid(connid);
+	if (pConn == nullptr)
+	{
+		return false;
+	}
+	
+	char* pMemData = MemoryManager::GetInstancePtr()->GetFreeMemoryArr(dwLen + sizeof(NetPacketHeader));
+	NetPacket msg;
+	msg.Header.wOpcode = SENDDATA;
+	msg.Header.wCode = NET_CODE;
+	msg.Header.wDataSize = dwLen + sizeof(NetPacketHeader);
+	memcpy(pMemData, (char*)(&msg), sizeof(NetPacketHeader));
+	memcpy(pMemData + sizeof(NetPacketHeader), pData, dwLen);
+	pConn->SendBuffer((NetPacket*)pMemData);
+	
+
+	/*
+	char* pMemData = MemoryManager::GetInstancePtr()->GetFreeMemoryArr(dwLen + sizeof(NetPacket));
+	NetPacket* msg = (NetPacket*)pMemData;
+	msg->Header.wOpcode = SENDDATA;
+	msg->Header.wCode = NET_CODE;
+	msg->Header.wDataSize = dwLen + sizeof(NetPacketHeader);
+	std::cout << "3333333" << std::endl;
+	memcpy(msg->pData, pData, dwLen);
+
+	std::cout << "3333333" << std::endl;
+	pConn->SendBuffer(msg);
+	*/
+}
+
 void ConnectionManager::AddNewConn(int32 fd)
 {
 	for (int32 i = 0; i < m_ConnectionVec.size(); ++i)
@@ -263,6 +297,7 @@ Connection* ConnectionManager::GetConnByFd(int32 fd)
 
 Connection* ConnectionManager::GetConnByConnid(int32 nConnid)
 {
+	nConnid -= 1;
 	if (nConnid >= m_ConnectionVec.size())
 	{
 		return nullptr;

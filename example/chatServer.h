@@ -29,6 +29,9 @@ public:
 	//*********************消息处理定义开始******************************
 	bool OnMsgWatchHeartBeatReq(CNetPacket* pNetPacket);
 	//*********************消息处理定义结束******************************
+
+	void testSendProtobuf(uint32 connid);
+
 };
 
 #endif

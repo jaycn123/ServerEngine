@@ -1,15 +1,12 @@
 #ifndef SERVICE_BASE_H
 #define SERVICE_BASE_H
 
-#include <mutex>
 #include "messageQueue.h"
 #include "ConnectionManager.h"
 #include "type_define.h"
 #include "../lib/serviceBase.h"
 
 #define MAXPACKNUM 9999999
-#define AUTOMUTEX std::lock_guard<std::mutex> lock(m_mutex);
-
 
 #define PROCESS_MESSAGE_ITEMEX(dwMsgID, Func) \
 		case dwMsgID:{\
@@ -38,6 +35,8 @@ public:
 	
 	bool   AddNetPackToQueue(uint32 connid, uint32 len, uint32 messid, char* pdata);
 
+	bool   SendMsgProtoBuf(uint32 dwConnID, uint32 dwMsgID,const google::protobuf::Message& pdata);
+
 protected:
 
 	void   StartThreadParsing();
@@ -51,8 +50,6 @@ protected:
 
 
 	IPacketDispatcher *            m_pPacketDispatcher;
-
-	ConnectionManager              m_ConnManager;
 
 	CNetPacket                     m_NetPackArr[MAXPACKNUM];
 

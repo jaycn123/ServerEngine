@@ -45,7 +45,7 @@
 #include <google/protobuf/message.h>  //pb
 #include <thread>
 #include <functional>
-
+#include <mutex>
 
 using namespace std;
 //using namespace std::placeholders;
@@ -127,5 +127,16 @@ template <int x> struct static_assert_test {};
 #define CHECKERR_AND_CONTINUE(x)  { if ((x) == false) { ERROR("Check Error"); continue;}  }
 
 #define CHECKERR_AND_RETURN_VALUE(x,ret)  { if ((x) == false) { ERROR("Check Error"); return ret;}  }
+
+
+
+#define AUTOMUTEX std::lock_guard<std::mutex> lock(m_mutex);
+
+enum SendStatus
+{
+	SendComplete = 1,
+	SendPart = 2,
+	SendError = 3,
+};
 
 #endif

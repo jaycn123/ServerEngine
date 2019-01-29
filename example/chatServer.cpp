@@ -50,6 +50,15 @@ bool CGameService::OnMsgWatchHeartBeatReq(CNetPacket* pNetPacket)
 	Req.ParsePartialFromArray(pNetPacket->m_pData, pNetPacket->m_len);
 	
 	std::cout << "OnMsgWatchHeartBeatReq : " << Req.connid() << std::endl;
+	testSendProtobuf(pNetPacket->m_connId);
+
+}
+
+void CGameService::testSendProtobuf(uint32 connid)
+{
+	HeartBeatReq Req;
+	Req.set_connid(555);
+	ServiceBase::GetInstancePtr()->SendMsgProtoBuf(connid, 1, Req);
 }
 
 int main()

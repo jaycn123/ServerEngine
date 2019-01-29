@@ -15,9 +15,8 @@ enum NetMessage
 struct  NetPacketHeader
 {
 	uint32          wDataSize = 0;
-	NetMessage      wOpcode = SENDDATA;
+	uint32          wOpcode = SENDDATA;
 	uint32          wCode = NET_CODE;
-	uint32          wConnId = 0;
 };
 
 struct NetPacket

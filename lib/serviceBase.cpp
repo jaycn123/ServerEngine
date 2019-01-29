@@ -24,15 +24,15 @@ bool ServiceBase::StartNetWork(uint32 port, uint32 maxConnNum, IPacketDispatcher
 	}
 	m_pPacketDispatcher = pDispather;
 
-	m_ConnManager.SetConnectionNum(maxConnNum);
+	ConnectionManager::GetInstancePtr()->SetConnectionNum(maxConnNum);
 	xstring ip = "0.0.0.0";
-	if (!m_ConnManager.CreteSocket(ip, port))
+	if (!ConnectionManager::GetInstancePtr()->CreteSocket(ip, port))
 	{
 		printf("create socket error \n");
 		return false;
 	}
 
-	if (!m_ConnManager.CreateEpollEvent())
+	if (!ConnectionManager::GetInstancePtr()->CreateEpollEvent())
 	{
 		printf("create CreateEpollEvent error \n");
 		return false;
@@ -43,13 +43,13 @@ bool ServiceBase::StartNetWork(uint32 port, uint32 maxConnNum, IPacketDispatcher
 bool ServiceBase::Run()
 {
 	StartThreadParsing();
-	m_ConnManager.Run();
+	ConnectionManager::GetInstancePtr()->Run();
 }
 
 bool ServiceBase::StopNetWork()
 {
 	printf(" LOOP EXIT!!! \n");
-	m_ConnManager.Close();
+	ConnectionManager::GetInstancePtr()->Close();
 	return true;
 }
 
@@ -65,6 +65,20 @@ bool ServiceBase::AddNetPackToQueue(uint32 connid, uint32 len, uint32 messid, ch
 		AUTOMUTEX
 		m_NetPackQueue.push(std::move(CNetPacket(connid, len, messid, pdata)));
 	}
+}
+
+bool ServiceBase::SendMsgProtoBuf(uint32 dwConnID, uint32 dwMsgID, const google::protobuf::Message& pdata)
+{
+	char szBuff[102400] = { 0 };
+
+	if(pdata.ByteSize() > 102400)
+	{
+		return false;
+	}
+
+	pdata.SerializePartialToArray(szBuff, pdata.GetCachedSize());
+
+	ConnectionManager::GetInstancePtr()->sendMessageByConnID(dwConnID, dwMsgID, szBuff, pdata.GetCachedSize());
 }
 
 void ServiceBase::StartThreadParsing()

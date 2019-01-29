@@ -26,9 +26,8 @@ enum NetMessage
 struct  NetPacketHeader
 {
 	uint32          wDataSize = 0;
-	NetMessage      wOpcode = SENDDATA;
+	uint32          wOpcode = SENDDATA;
 	uint32          wCode = NET_CODE;
-	uint32          wConnId = 0;
 };
 
 struct NetPacket
@@ -48,38 +47,13 @@ char m_sendBuff[BUFF_SIZE];
 int m_buffsize = 0;
 int m_sendoffindex = 0;
 
-void sendMessage(char *pdata, int len);
-void sendMeaasge();
 int sockfd = 0;
-int main(int argc, char* argv[])
+
+void sendMessage()
 {
-	int on = 1;
-	struct sockaddr_in servaddr;
-	memset(&servaddr, 0, sizeof(servaddr));
-
-	if ((sockfd = socket(AF_INET, SOCK_STREAM, 0)) < 0) {
-		cout << "create socket fail" << endl;
-		return -1;
-	}
-
-	setsockopt(sockfd, SOL_SOCKET, SO_REUSEADDR, &on, sizeof(on));
-
-	servaddr.sin_port = htons((short)PORT);
-	servaddr.sin_family = AF_INET;
-	servaddr.sin_addr.s_addr = inet_addr("127.0.0.1"); //此处更改epoll服务器地址
-
-	if (connect(sockfd, (struct sockaddr*)&servaddr, sizeof(servaddr)) < 0) {
-		cout << "connect error" << endl;
-		return -1;
-	}
-
-	cout << "succeed to connect epoll server " << endl;
-
 	NetPacket msg;
-	msg.Header.wConnId = 1;
 	msg.Header.wOpcode = SENDDATA;
 	msg.Header.wCode = NET_CODE;
-
 
 	HeartBeatReq sendPack;
 	sendPack.set_connid(100);
@@ -104,7 +78,44 @@ int main(int argc, char* argv[])
 		int wlen = send(sockfd, szBuff, msg.Header.wDataSize, 0);
 		sleep(1);
 	}
+}
 
+int main(int argc, char* argv[])
+{
+	int on = 1;
+	struct sockaddr_in servaddr;
+	memset(&servaddr, 0, sizeof(servaddr));
+
+	if ((sockfd = socket(AF_INET, SOCK_STREAM, 0)) < 0) {
+		cout << "create socket fail" << endl;
+		return -1;
+	}
+
+	setsockopt(sockfd, SOL_SOCKET, SO_REUSEADDR, &on, sizeof(on));
+
+	servaddr.sin_port = htons((short)PORT);
+	servaddr.sin_family = AF_INET;
+	servaddr.sin_addr.s_addr = inet_addr("127.0.0.1"); //此处更改epoll服务器地址
+
+	if (connect(sockfd, (struct sockaddr*)&servaddr, sizeof(servaddr)) < 0) {
+		cout << "connect error" << endl;
+		return -1;
+	}
+
+	cout << "succeed to connect epoll server " << endl;
+
+	std::thread t(sendMessage);
+	t.detach();
+
+	char revcbuff[1024];
+	bzero(revcbuff, 1024);
+
+	while(1)
+	{
+		int len = recv(sockfd, revcbuff,1024,0);
+		std::cout << "recv : " << len << std::endl;
+		sleep(1);
+	}
 	close(sockfd);
 	return 0;
 	
