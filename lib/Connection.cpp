@@ -178,8 +178,6 @@ bool Connection::DoReceiveEx()
 		}
 
 		length = recv(m_fd, m_RecvBuf + m_nRecvSize, BUFFER_SIZE - m_nRecvSize, 0);
-		std::cout << " xxxxxxxxxxxxxxxxx " << length << std::endl;
-		std::cout << " connid :  " << this->m_ConnID << std::endl;
 		if (length > 0)
 		{
 			m_nRecvSize += length;
@@ -229,7 +227,6 @@ bool Connection::DoReceiveEx()
 			}
 			if (errno == EAGAIN)
 			{
-				std::cout << "errno == EAGAIN" << std::endl;
 				return true;
 			}
 		}
@@ -241,7 +238,6 @@ void Connection::EventCallBack(const int& m_efd,func fun)
 {
 	if (m_events->events & EPOLLIN)
 	{
-		std::cout << "EPOLLIN" << std::endl;
 
 		if (!DoReceiveEx())
 		{
@@ -253,7 +249,6 @@ void Connection::EventCallBack(const int& m_efd,func fun)
 
 	if (m_events->events & EPOLLOUT)
 	{
-		std::cout << "EPOLLOUT" << std::endl;
 		switch (DoSend())
 		{
 		case SendComplete:
@@ -273,7 +268,7 @@ void Connection::EventCallBack(const int& m_efd,func fun)
 
 		return;
 	}
-	std::cout << "cxxxxxx" << std::endl;
+	std::cout << "xxxxxxxxxxxxxxxxxxxxxx" << std::endl;
 }
 
 bool Connection::IsConnectionOK()
