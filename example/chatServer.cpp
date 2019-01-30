@@ -57,7 +57,7 @@ bool CGameService::OnMsgWatchHeartBeatReq(CNetPacket* pNetPacket)
 void CGameService::testSendProtobuf(uint32 connid)
 {
 	HeartBeatReq Req;
-	Req.set_connid(555);
+	Req.set_connid(666);
 	ServiceBase::GetInstancePtr()->SendMsgProtoBuf(connid, 1, Req);
 }
 

@@ -4,7 +4,6 @@
 #include "messageQueue.h"
 #include "ConnectionManager.h"
 #include "type_define.h"
-#include "../lib/serviceBase.h"
 
 #define MAXPACKNUM 9999999
 

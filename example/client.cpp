@@ -71,12 +71,92 @@ void sendMessage()
 
 	std::cout << "msg.Header.wDataSize : " << msg.Header.wDataSize << std::endl;
 
-	int wlen = send(sockfd, szBuff, msg.Header.wDataSize, 0);
-
 	while (1)
 	{
 		int wlen = send(sockfd, szBuff, msg.Header.wDataSize, 0);
 		sleep(1);
+	}
+}
+#define BUFFER_SIZE 102400
+#define RECV_BUF_SIZE 102400
+char                    m_RecvBuf[RECV_BUF_SIZE];
+
+uint32                  m_RecvOffIndex = 0;
+
+uint32                  m_nRecvSize = 0;
+
+uint32                  m_tempCount = 0;
+
+
+
+void DoRecv()
+{
+	long long length = 0;
+	char buffer[BUFFER_SIZE];
+	bzero(buffer, BUFFER_SIZE);
+
+	uint32 tempLen = 0;
+	while ((length = recv(sockfd, buffer, BUFFER_SIZE, 0)) > 0)
+	{
+		tempLen += length;
+
+		if ((m_nRecvSize + length) > RECV_BUF_SIZE)
+		{
+			if ((m_nRecvSize - m_RecvOffIndex) > 0)
+			{
+				memmove(m_RecvBuf, m_RecvBuf + m_RecvOffIndex, m_nRecvSize - m_RecvOffIndex);
+				m_nRecvSize = m_nRecvSize - m_RecvOffIndex;
+				m_RecvOffIndex = 0;
+			}
+			else
+			{
+				bzero(m_RecvBuf, RECV_BUF_SIZE);
+				m_RecvOffIndex = 0;
+				m_nRecvSize = 0;
+			}
+		}
+
+		memcpy(m_RecvBuf + m_nRecvSize, buffer, length);
+		m_nRecvSize += length;
+
+		while ((m_nRecvSize - m_RecvOffIndex) >= sizeof(NetPacketHeader))
+		{
+
+			NetPacketHeader* pHeader = (NetPacketHeader*)(m_RecvBuf + m_RecvOffIndex);
+			if (pHeader == nullptr)
+			{
+				continue;
+			}
+
+			if (pHeader->wCode != NET_CODE)
+			{
+				getchar();
+				break;
+			}
+			if (pHeader->wDataSize > (m_nRecvSize - m_RecvOffIndex))
+			{
+
+				getchar();
+				break;
+			}
+
+			uint32 datalen = pHeader->wDataSize - sizeof(NetPacketHeader);
+
+			//char* pData = MemoryManager::GetInstancePtr()->GetFreeMemoryArr(datalen);
+
+			char data[102400];
+			bzero(data, 102400);
+			memcpy(data, m_RecvBuf + m_RecvOffIndex + sizeof(NetPacketHeader), datalen);
+
+			HeartBeatReq Req;
+			Req.ParsePartialFromArray(data, datalen);
+
+			std::cout << "Req : " << Req.connid() <<std::endl;
+
+			//ServiceBase::GetInstancePtr()->AddNetPackToQueue(m_ConnID, datalen, (uint32)pHeader->wOpcode, pData);
+
+			m_RecvOffIndex += pHeader->wDataSize;
+		}
 	}
 }
 
@@ -104,17 +184,22 @@ int main(int argc, char* argv[])
 
 	cout << "succeed to connect epoll server " << endl;
 
-	std::thread t(sendMessage);
-	t.detach();
+ 	std::thread t(sendMessage);
+ 	t.detach();
 
 	char revcbuff[1024];
 	bzero(revcbuff, 1024);
 
 	while(1)
 	{
-		int len = recv(sockfd, revcbuff,1024,0);
-		std::cout << "recv : " << len << std::endl;
-		sleep(1);
+// 		int len = recv(sockfd, revcbuff,1024,0);
+// 		std::cout << "recv : " << len << std::endl;
+// 		if (len == 0)
+// 		{
+// 			close(sockfd);
+// 			return 0;
+// 		}
+		DoRecv();
 	}
 	close(sockfd);
 	return 0;

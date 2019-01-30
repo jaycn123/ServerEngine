@@ -95,7 +95,6 @@ void ServiceBase::ParsingLoop()
 			AUTOMUTEX
 			ParsingNetPack();
 		}
-		usleep(1000);
 	}
 }
 
@@ -105,9 +104,12 @@ void ServiceBase::ParsingNetPack()
 	{
 		std::cout << "m_PackNum : " << m_PackNum << std::endl;
 	}
+
 	while (m_ReadIndex < m_PackNum)
 	{
-		m_pPacketDispatcher->DispatchPacket(&(m_NetPackArr[m_ReadIndex++]));
+		m_pPacketDispatcher->DispatchPacket(&(m_NetPackArr[m_ReadIndex]));
+		MemoryManager::GetInstancePtr()->FreeMemoryArr(m_NetPackArr[m_ReadIndex].m_len, m_NetPackArr[m_ReadIndex].m_pData);
+		m_ReadIndex++;
 	}
 	m_PackNum = 0;
 	m_ReadIndex = 0;

@@ -4,6 +4,7 @@
 
 
 
+
 Connection::Connection()
 {
 	SetConnStatus(false);
@@ -148,28 +149,16 @@ void Connection::EventCallBack(const int& m_efd,func fun)
 {
 	if (m_events->events & EPOLLIN)
 	{
-		std::cout << "call back " << std::endl;
 		if (!DoReceive())
 		{
-			std::cout << "call back " << std::endl;
 			fun();
 		}
-		else
-		{
-			/*
-			std::cout << "EPOLLOUT " << std::endl;
-			m_events->events = EPOLLOUT | EPOLLET;
-			epoll_ctl(m_efd, EPOLL_CTL_MOD, m_fd, m_events);
-			*/
-		}
-		
+	
 		return;
 	}
 
 	if (m_events->events & EPOLLOUT)
 	{
-		std::cout << "DoSend " << std::endl;
-
 		switch (DoSend())
 		{
 		case SendComplete:
@@ -209,18 +198,28 @@ bool Connection::Clear()
 bool Connection::SendBuffer(NetPacket* pBuff)
 {
 	AUTOMUTEX
-	memcpy(m_SendBuf, (char*)pBuff, pBuff->Header.wDataSize);
-	m_nSendSize += pBuff->Header.wDataSize;
+	m_SendPackQueue.push(pBuff);
 
-	std::cout << "pBuff->Header.wDataSize : " <<pBuff->Header.wDataSize << std::endl;
-	std::cout << "m_nSendSize : " << m_nSendSize << std::endl;
+//	memcpy(m_SendBuf, (char*)pBuff, pBuff->Header.wDataSize);
+//	m_nSendSize += pBuff->Header.wDataSize;
+
 	return true;
 }
 
 SendStatus Connection::DoSend()
 {
+
+	NetPacket* pBuff = nullptr;
 	AUTOMUTEX
-	if(m_SendOffIndex < m_nSendSize)
+	while (!m_SendPackQueue.empty())
+	{
+		pBuff = m_SendPackQueue.front();
+		memcpy(m_SendBuf, (char*)pBuff, pBuff->Header.wDataSize);
+		m_nSendSize += pBuff->Header.wDataSize;
+		m_SendPackQueue.pop();
+	}
+
+	while(m_SendOffIndex < m_nSendSize)
 	{
 		int wlen = send(m_fd, m_SendBuf, m_nSendSize, 0);
 		if (wlen == 0)
@@ -230,13 +229,16 @@ SendStatus Connection::DoSend()
 
 		m_SendOffIndex += wlen;
 	}
+
 	if (m_SendOffIndex == m_nSendSize)
 	{
 		m_nSendSize = 0;
 		m_SendOffIndex = 0;
 		return SendComplete;
 	}
+
 	return SendPart;
+	
 }
 
 int32 Connection::GetFd()

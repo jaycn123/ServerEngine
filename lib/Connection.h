@@ -5,7 +5,6 @@
 #include "netpack.h"
 #include "memoryPool.h"
 
-
 #include <functional>
 
 #define  NET_MSG_RECV				1
@@ -95,7 +94,7 @@ public:
 
 	uint32                  m_nSendSize = 0;
 
-	std::queue<NetPacket>   m_SendPackQueue;
+	std::queue<NetPacket*>   m_SendPackQueue;
 
 	std::mutex              m_mutex;
 
