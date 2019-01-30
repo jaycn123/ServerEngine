@@ -74,10 +74,10 @@ void sendMessage()
 	while (1)
 	{
 		int wlen = send(sockfd, szBuff, msg.Header.wDataSize, 0);
-		sleep(1);
+	//	sleep(1);
 	}
 }
-#define BUFFER_SIZE 102400
+#define BUFFER_SIZE 1024
 #define RECV_BUF_SIZE 102400
 char                    m_RecvBuf[RECV_BUF_SIZE];
 
@@ -98,7 +98,11 @@ void DoRecv()
 	uint32 tempLen = 0;
 	while ((length = recv(sockfd, buffer, BUFFER_SIZE, 0)) > 0)
 	{
+		if (errno == EAGAIN)
+			break;
+
 		tempLen += length;
+		
 
 		if ((m_nRecvSize + length) > RECV_BUF_SIZE)
 		{
@@ -130,13 +134,14 @@ void DoRecv()
 
 			if (pHeader->wCode != NET_CODE)
 			{
+				std::cout << "pHeader->wCode != NET_CODE" << std::endl;
+				std::cout << "m_RecvOffIndex : " << m_RecvOffIndex << std::endl;
+				std::cout << "m_nRecvSize : " << m_nRecvSize << std::endl;
 				getchar();
 				break;
 			}
 			if (pHeader->wDataSize > (m_nRecvSize - m_RecvOffIndex))
 			{
-
-				getchar();
 				break;
 			}
 
@@ -190,17 +195,11 @@ int main(int argc, char* argv[])
 	char revcbuff[1024];
 	bzero(revcbuff, 1024);
 
-	while(1)
-	{
-// 		int len = recv(sockfd, revcbuff,1024,0);
-// 		std::cout << "recv : " << len << std::endl;
-// 		if (len == 0)
-// 		{
-// 			close(sockfd);
-// 			return 0;
-// 		}
-		DoRecv();
-	}
+ 	while(1)
+ 	{
+  	
+ 		DoRecv();
+ 	}
 	close(sockfd);
 	return 0;
 	

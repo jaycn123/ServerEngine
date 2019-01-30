@@ -47,7 +47,7 @@ public:
 
 protected:
 
-	void        AddNewConn(int32 fd);
+	Connection*        AddNewConn(int32 fd);
 
 	Connection* GetConnByFd(int32 fd);
 

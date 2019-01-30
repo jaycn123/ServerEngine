@@ -49,6 +49,8 @@ public:
 	bool	    ExtractBuffer();
 			    
 	bool	    DoReceive();
+
+	bool	    DoReceiveEx();
 			    
 	void	    EventCallBack(const int& m_efd,func fun);
 			    

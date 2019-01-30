@@ -81,10 +81,23 @@ bool Connection::DoReceive()
 	char buffer[BUFFER_SIZE];
 	bzero(buffer,BUFFER_SIZE);
 
-	uint32 tempLen = 0;
+	//uint32 tempLen = 0;
+
+	std::cout << "DoReceive  " << std::endl;
 	while ((length = recv(m_fd, buffer, BUFFER_SIZE, 0)) > 0)
 	{
-		tempLen += length;
+		std::cout << "len : " << length << std::endl;
+		if (errno == EAGAIN)
+		{
+			//std::cout << "EAGAIN" << std::endl;
+			return true;
+		}
+		if (length == 0)
+		{
+			return false;
+		}
+
+		//tempLen += length;
 	
 		if ((m_nRecvSize + length) > RECV_BUF_SIZE)
 		{
@@ -111,18 +124,19 @@ bool Connection::DoReceive()
 			NetPacketHeader* pHeader = (NetPacketHeader*)(m_RecvBuf + m_RecvOffIndex);
 			if (pHeader == nullptr)
 			{
+				std::cout << "pHeader == nullptr" << std::endl;
+				getchar();
 				continue;
 			}
 
 			if (pHeader->wCode != NET_CODE)
 			{
+				std::cout << "pHeader->wCode" << std::endl;
 				getchar();
 				break;
 			}
 			if (pHeader->wDataSize > (m_nRecvSize - m_RecvOffIndex))
 			{
-
-				getchar();
 				break;
 			}
 
@@ -137,10 +151,88 @@ bool Connection::DoReceive()
 			m_RecvOffIndex += pHeader->wDataSize;
 		}
 	}
+	return true;
+}
 
-	if (tempLen <= 0)
+bool Connection::DoReceiveEx()
+{
+	char buffer[BUFFER_SIZE];
+	bzero(buffer, BUFFER_SIZE);
+	int32 length = 0;
+	while (true)
 	{
-		return false;
+		if (BUFFER_SIZE == m_nRecvSize)
+		{
+			if ((m_nRecvSize - m_RecvOffIndex) > 0)
+			{
+				memmove(m_RecvBuf, m_RecvBuf + m_RecvOffIndex, m_nRecvSize - m_RecvOffIndex);
+				m_nRecvSize = m_nRecvSize - m_RecvOffIndex;
+				m_RecvOffIndex = 0;
+			}
+			else
+			{
+				bzero(m_RecvBuf, RECV_BUF_SIZE);
+				m_RecvOffIndex = 0;
+				m_nRecvSize = 0;
+			}
+		}
+
+		length = recv(m_fd, m_RecvBuf + m_nRecvSize, BUFFER_SIZE - m_nRecvSize, 0);
+		std::cout << " xxxxxxxxxxxxxxxxx " << length << std::endl;
+		std::cout << " connid :  " << this->m_ConnID << std::endl;
+		if (length > 0)
+		{
+			m_nRecvSize += length;
+
+			while ((m_nRecvSize - m_RecvOffIndex) >= sizeof(NetPacketHeader))
+			{
+				NetPacketHeader* pHeader = (NetPacketHeader*)(m_RecvBuf + m_RecvOffIndex);
+				if (pHeader == nullptr)
+				{
+					std::cout << "pHeader == nullptr" << std::endl;
+					getchar();
+					continue;
+				}
+
+				if (pHeader->wCode != NET_CODE)
+				{
+					std::cout << "pHeader->wCode" << std::endl;
+
+					std::cout << "length : " << length << std::endl;
+					std::cout << "m_nRecvSize : "<< m_nRecvSize<<std::endl;
+					std::cout << "m_RecvOffIndex : " << m_RecvOffIndex <<std::endl;
+
+					getchar();
+					break;
+				}
+				if (pHeader->wDataSize > (m_nRecvSize - m_RecvOffIndex))
+				{
+					break;
+				}
+
+				uint32 datalen = pHeader->wDataSize - sizeof(NetPacketHeader);
+
+				char* pData = MemoryManager::GetInstancePtr()->GetFreeMemoryArr(datalen);
+
+				memcpy(pData, m_RecvBuf + m_RecvOffIndex + sizeof(NetPacketHeader), datalen);
+
+				ServiceBase::GetInstancePtr()->AddNetPackToQueue(m_ConnID, datalen, (uint32)pHeader->wOpcode, pData);
+
+				m_RecvOffIndex += pHeader->wDataSize;
+			}
+		}
+		else
+		{
+			if (length == 0)
+			{
+				return false;
+			}
+			if (errno == EAGAIN)
+			{
+				std::cout << "errno == EAGAIN" << std::endl;
+				return true;
+			}
+		}
 	}
 	return true;
 }
@@ -149,16 +241,19 @@ void Connection::EventCallBack(const int& m_efd,func fun)
 {
 	if (m_events->events & EPOLLIN)
 	{
-		if (!DoReceive())
+		std::cout << "EPOLLIN" << std::endl;
+
+		if (!DoReceiveEx())
 		{
 			fun();
 		}
-	
+
 		return;
 	}
 
 	if (m_events->events & EPOLLOUT)
 	{
+		std::cout << "EPOLLOUT" << std::endl;
 		switch (DoSend())
 		{
 		case SendComplete:
@@ -178,6 +273,7 @@ void Connection::EventCallBack(const int& m_efd,func fun)
 
 		return;
 	}
+	std::cout << "cxxxxxx" << std::endl;
 }
 
 bool Connection::IsConnectionOK()

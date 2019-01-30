@@ -80,7 +80,7 @@ typedef std::function<void(void)> func;
 
 // server port
 //#define SERVER_PORT 8888
-#define PORT 9998
+#define PORT 8888
 //epoll 支持的最大并发量
 #define EPOLL_SIZE 5000
 

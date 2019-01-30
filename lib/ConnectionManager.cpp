@@ -172,11 +172,11 @@ void ConnectionManager::Run()
 						continue;
 					}
 
-					printf("client connection from: %s : % d(IP : port), clientfd = %d \n", inet_ntoa(client_address.sin_addr), ntohs(client_address.sin_port), clientfd);
-					printf("Add new clientfd = %d to epoll\n", clientfd);
+					//printf("client connection from: %s : % d(IP : port), clientfd = %d \n", inet_ntoa(client_address.sin_addr), ntohs(client_address.sin_port), clientfd);
+					//printf("Add new clientfd = %d to epoll\n", clientfd);
 
-					AddNewConn(clientfd);
-
+					AddNewConn(clientfd)->SetEpollEv(&m_events[i]);
+				
 					if (clientfd == -1)
 					{
 						if (errno != EAGAIN && errno != ECONNABORTED && errno != EPROTO && errno != EINTR)
@@ -187,7 +187,7 @@ void ConnectionManager::Run()
 			else
 			{
 				Connection* connTemp = (Connection*)(m_events[i].data.ptr);
-				auto fun = [&]() { epoll_ctl(m_epfd, EPOLL_CTL_DEL, m_events[i].data.fd, &m_events[i]); FreeConnByConnid(connTemp->GetConnectionID()); close(connTemp->GetFd()); };
+				auto fun = [&]() { epoll_ctl(m_epfd, EPOLL_CTL_DEL, m_events[i].data.fd, &m_events[i]); FreeConnByConnid(connTemp->GetConnectionID()); close(connTemp->GetFd()); std::cout << "Func" << std::endl; };
 				connTemp->EventCallBack(m_epfd,fun);
 			}
 		}
@@ -201,7 +201,6 @@ void ConnectionManager::SetConnectionNum(int32 nMaxCons)
 	{
 		Connection* pConn = new Connection();
 		pConn->SetConnectionID(i + 1);
-		pConn->SetEpollEv(&(m_events[i]));
 		m_ConnectionVec[i] = pConn;
 	}
 }
@@ -260,7 +259,7 @@ bool ConnectionManager::sendMessageByConnID(uint32 connid, uint32 msgid, const c
 	epoll_ctl(m_epfd, EPOLL_CTL_MOD, pConn->GetSocket(), tevent);
 }
 
-void ConnectionManager::AddNewConn(int32 fd)
+Connection* ConnectionManager::AddNewConn(int32 fd)
 {
 	for (int32 i = 0; i < m_ConnectionVec.size(); ++i)
 	{
@@ -270,7 +269,7 @@ void ConnectionManager::AddNewConn(int32 fd)
 			pConn->SetSocket(fd);
 			AddEpollFd(fd, pConn, true);
 			std::cout << "connid : " <<pConn->GetConnectionID() << std::endl;
-			break;
+			return pConn;
 		}
 	}
 }
@@ -304,6 +303,6 @@ void ConnectionManager::FreeConnByConnid(int32 nConnid)
 	{
 		return;
 	}
-	std::cout << "free nConnid : " << nConnid << std::endl;
+//	std::cout << "free nConnid : " << nConnid << std::endl;
 	m_ConnectionVec[nConnid - 1]->SetConnStatus(false);
 }
