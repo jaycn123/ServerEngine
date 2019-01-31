@@ -305,7 +305,7 @@ SendStatus Connection::DoSend()
 		m_SendPackQueue.pop();
 	}
 
-	while(m_SendOffIndex < m_nSendSize)
+	if(m_SendOffIndex < m_nSendSize)
 	{
 		int wlen = send(m_fd, m_SendBuf, m_nSendSize, 0);
 		if (wlen == 0)

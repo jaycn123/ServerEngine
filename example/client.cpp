@@ -49,6 +49,8 @@ int m_sendoffindex = 0;
 
 int sockfd = 0;
 
+std::mutex m_mutex;
+
 void sendMessage()
 {
 	NetPacket msg;
@@ -73,8 +75,9 @@ void sendMessage()
 
 	while (1)
 	{
+		AUTOMUTEX
 		int wlen = send(sockfd, szBuff, msg.Header.wDataSize, 0);
-		sleep(1);
+		usleep(2500);
 	}
 }
 #define BUFFER_SIZE 1024
@@ -92,82 +95,91 @@ uint32                  m_tempCount = 0;
 bool DoReceiveEx()
 {
 	int32 length = 0;
-	while (true)
+
+	if (RECV_BUF_SIZE == m_nRecvSize)
 	{
-		if (RECV_BUF_SIZE == m_nRecvSize)
+		if ((m_nRecvSize - m_RecvOffIndex) > 0)
 		{
-			if ((m_nRecvSize - m_RecvOffIndex) > 0)
-			{
-				memmove(m_RecvBuf, m_RecvBuf + m_RecvOffIndex, m_nRecvSize - m_RecvOffIndex);
-				m_nRecvSize = m_nRecvSize - m_RecvOffIndex;
-				m_RecvOffIndex = 0;
-			}
-			else
-			{
-				bzero(m_RecvBuf, RECV_BUF_SIZE);
-				m_RecvOffIndex = 0;
-				m_nRecvSize = 0;
-			}
-		}
-
-		length = recv(sockfd, m_RecvBuf + m_nRecvSize, RECV_BUF_SIZE - m_nRecvSize, 0);
-		if (length > 0)
-		{
-			m_nRecvSize += length;
-
-			while ((m_nRecvSize - m_RecvOffIndex) >= sizeof(NetPacketHeader))
-			{
-				NetPacketHeader* pHeader = (NetPacketHeader*)(m_RecvBuf + m_RecvOffIndex);
-				if (pHeader == nullptr)
-				{
-					std::cout << "pHeader == nullptr" << std::endl;
-					getchar();
-					continue;
-				}
-
-				if (pHeader->wCode != NET_CODE)
-				{
-					std::cout << "pHeader->wCode" << std::endl;
-
-					std::cout << "length : " << length << std::endl;
-					std::cout << "m_nRecvSize : " << m_nRecvSize << std::endl;
-					std::cout << "m_RecvOffIndex : " << m_RecvOffIndex << std::endl;
-
-					getchar();
-					break;
-				}
-				if (pHeader->wDataSize > (m_nRecvSize - m_RecvOffIndex))
-				{
-					break;
-				}
-
-				uint32 datalen = pHeader->wDataSize - sizeof(NetPacketHeader);
-
-				char data[102400];
-				bzero(data, 102400);
-				memcpy(data, m_RecvBuf + m_RecvOffIndex + sizeof(NetPacketHeader), datalen);
-
-				HeartBeatReq Req;
-				Req.ParsePartialFromArray(data, datalen);
-
-				std::cout << "Req : " << Req.connid() << std::endl;
-
-				m_RecvOffIndex += pHeader->wDataSize;
-			}
+			memmove(m_RecvBuf, m_RecvBuf + m_RecvOffIndex, m_nRecvSize - m_RecvOffIndex);
+			m_nRecvSize = m_nRecvSize - m_RecvOffIndex;
+			m_RecvOffIndex = 0;
 		}
 		else
 		{
-			if (length == 0)
-			{
-				return false;
-			}
-			if (errno == EAGAIN)
-			{
-				return true;
-			}
+			bzero(m_RecvBuf, RECV_BUF_SIZE);
+			m_RecvOffIndex = 0;
+			m_nRecvSize = 0;
 		}
 	}
-	return true;
+
+	std::cout << "m_nRecvSize : " << m_nRecvSize << std::endl;
+
+	{
+		//AUTOMUTEX
+		length = recv(sockfd, m_RecvBuf + m_nRecvSize, RECV_BUF_SIZE - m_nRecvSize, 0);
+	}
+
+	std::cout << "length : " << std::endl;
+
+	if (length > 0)
+	{
+		m_nRecvSize += length;
+
+		while ((m_nRecvSize - m_RecvOffIndex) >= sizeof(NetPacketHeader))
+		{
+			NetPacketHeader* pHeader = (NetPacketHeader*)(m_RecvBuf + m_RecvOffIndex);
+			if (pHeader == nullptr)
+			{
+				std::cout << "pHeader == nullptr" << std::endl;
+				getchar();
+				continue;
+			}
+
+			if (pHeader->wCode != NET_CODE)
+			{
+				std::cout << "pHeader->wCode" << std::endl;
+
+				std::cout << "length : " << length << std::endl;
+				std::cout << "m_nRecvSize : " << m_nRecvSize << std::endl;
+				std::cout << "m_RecvOffIndex : " << m_RecvOffIndex << std::endl;
+
+				getchar();
+				break;
+			}
+			if (pHeader->wDataSize > (m_nRecvSize - m_RecvOffIndex))
+			{
+				break;
+			}
+
+			uint32 datalen = pHeader->wDataSize - sizeof(NetPacketHeader);
+
+			char data[102400];
+			bzero(data, 102400);
+			memcpy(data, m_RecvBuf + m_RecvOffIndex + sizeof(NetPacketHeader), datalen);
+
+			HeartBeatReq Req;
+			Req.ParsePartialFromArray(data, datalen);
+
+			std::cout << "Req : " << Req.connid() << std::endl;
+
+			m_RecvOffIndex += pHeader->wDataSize;
+		}
+	}
+	else
+	{
+		if (length == 0)
+		{
+			std::cout << "length : ===0 " << std::endl;
+			return false;
+		}
+		if (errno == EAGAIN)
+		{
+			std::cout << "length : EAGAIN" << std::endl;
+			return true;
+		}
+	}
+	
+	
 }
 
 int main(int argc, char* argv[])
@@ -202,8 +214,9 @@ int main(int argc, char* argv[])
 
  	while(1)
  	{
-  	
+		std::cout << "DoReceiveEx" << std::endl;
 		DoReceiveEx();
+		usleep(2500);
  	}
 	close(sockfd);
 	return 0;
