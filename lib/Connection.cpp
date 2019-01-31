@@ -307,7 +307,8 @@ SendStatus Connection::DoSend()
 
 	if(m_SendOffIndex < m_nSendSize)
 	{
-		int wlen = send(m_fd, m_SendBuf, m_nSendSize, 0);
+		int	wlen = send(m_fd, m_SendBuf, m_nSendSize, 0);
+		
 		if (wlen == 0)
 		{
 			return SendError;

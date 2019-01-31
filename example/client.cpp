@@ -73,9 +73,11 @@ void sendMessage()
 
 	std::cout << "msg.Header.wDataSize : " << msg.Header.wDataSize << std::endl;
 
+	int wlen = send(sockfd, szBuff, msg.Header.wDataSize, 0);
+	return;
 	while (1)
 	{
-		AUTOMUTEX
+		//AUTOMUTEX
 		int wlen = send(sockfd, szBuff, msg.Header.wDataSize, 0);
 		usleep(2500);
 	}

@@ -51,7 +51,9 @@ bool CGameService::OnMsgWatchHeartBeatReq(CNetPacket* pNetPacket)
 
 	std::cout << "OnMsgWatchHeartBeatReq : " << Req.connid() << std::endl;
 	std::cout << "MsgFrom : " << pNetPacket->m_connId << std::endl << std::endl;
+
 	testSendProtobuf(pNetPacket->m_connId);
+	
 	//testSendProtobuf(pNetPacket->m_connId);
 }
 
