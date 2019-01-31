@@ -6,9 +6,12 @@
 #include <iostream>
 #include <unordered_map>
 #include <string.h>
+#include <mutex>
 
 #define FREEMEMORY MemoryManager::GetInstancePtr()->FreeMemory(sizeof(this),(char*)this);
 #define PTRSIZE 8
+
+#define AUTOMUTEX std::lock_guard<std::mutex> lock(m_mutex);
 
 struct MemoryData
 {
@@ -85,6 +88,7 @@ private:
 
 	std::vector<uint32_t>m_indexVec;
 
+	std::mutex m_mutex;
 };
 
 #endif

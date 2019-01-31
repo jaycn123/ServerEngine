@@ -60,7 +60,6 @@ protected:
 
 	std::mutex                     m_mutex;
 
-	//std::map <uint32, func>        m_regregisteredFunMap;
 };
 
 

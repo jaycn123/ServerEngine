@@ -74,7 +74,7 @@ void sendMessage()
 	while (1)
 	{
 		int wlen = send(sockfd, szBuff, msg.Header.wDataSize, 0);
-	//	sleep(1);
+		sleep(1);
 	}
 }
 #define BUFFER_SIZE 1024
@@ -89,22 +89,12 @@ uint32                  m_tempCount = 0;
 
 
 
-void DoRecv()
+bool DoReceiveEx()
 {
-	long long length = 0;
-	char buffer[BUFFER_SIZE];
-	bzero(buffer, BUFFER_SIZE);
-
-	uint32 tempLen = 0;
-	while ((length = recv(sockfd, buffer, BUFFER_SIZE, 0)) > 0)
+	int32 length = 0;
+	while (true)
 	{
-		if (errno == EAGAIN)
-			break;
-
-		tempLen += length;
-		
-
-		if ((m_nRecvSize + length) > RECV_BUF_SIZE)
+		if (RECV_BUF_SIZE == m_nRecvSize)
 		{
 			if ((m_nRecvSize - m_RecvOffIndex) > 0)
 			{
@@ -120,49 +110,64 @@ void DoRecv()
 			}
 		}
 
-		memcpy(m_RecvBuf + m_nRecvSize, buffer, length);
-		m_nRecvSize += length;
-
-		while ((m_nRecvSize - m_RecvOffIndex) >= sizeof(NetPacketHeader))
+		length = recv(sockfd, m_RecvBuf + m_nRecvSize, RECV_BUF_SIZE - m_nRecvSize, 0);
+		if (length > 0)
 		{
+			m_nRecvSize += length;
 
-			NetPacketHeader* pHeader = (NetPacketHeader*)(m_RecvBuf + m_RecvOffIndex);
-			if (pHeader == nullptr)
+			while ((m_nRecvSize - m_RecvOffIndex) >= sizeof(NetPacketHeader))
 			{
-				continue;
-			}
+				NetPacketHeader* pHeader = (NetPacketHeader*)(m_RecvBuf + m_RecvOffIndex);
+				if (pHeader == nullptr)
+				{
+					std::cout << "pHeader == nullptr" << std::endl;
+					getchar();
+					continue;
+				}
 
-			if (pHeader->wCode != NET_CODE)
+				if (pHeader->wCode != NET_CODE)
+				{
+					std::cout << "pHeader->wCode" << std::endl;
+
+					std::cout << "length : " << length << std::endl;
+					std::cout << "m_nRecvSize : " << m_nRecvSize << std::endl;
+					std::cout << "m_RecvOffIndex : " << m_RecvOffIndex << std::endl;
+
+					getchar();
+					break;
+				}
+				if (pHeader->wDataSize > (m_nRecvSize - m_RecvOffIndex))
+				{
+					break;
+				}
+
+				uint32 datalen = pHeader->wDataSize - sizeof(NetPacketHeader);
+
+				char data[102400];
+				bzero(data, 102400);
+				memcpy(data, m_RecvBuf + m_RecvOffIndex + sizeof(NetPacketHeader), datalen);
+
+				HeartBeatReq Req;
+				Req.ParsePartialFromArray(data, datalen);
+
+				std::cout << "Req : " << Req.connid() << std::endl;
+
+				m_RecvOffIndex += pHeader->wDataSize;
+			}
+		}
+		else
+		{
+			if (length == 0)
 			{
-				std::cout << "pHeader->wCode != NET_CODE" << std::endl;
-				std::cout << "m_RecvOffIndex : " << m_RecvOffIndex << std::endl;
-				std::cout << "m_nRecvSize : " << m_nRecvSize << std::endl;
-				getchar();
-				break;
+				return false;
 			}
-			if (pHeader->wDataSize > (m_nRecvSize - m_RecvOffIndex))
+			if (errno == EAGAIN)
 			{
-				break;
+				return true;
 			}
-
-			uint32 datalen = pHeader->wDataSize - sizeof(NetPacketHeader);
-
-			//char* pData = MemoryManager::GetInstancePtr()->GetFreeMemoryArr(datalen);
-
-			char data[102400];
-			bzero(data, 102400);
-			memcpy(data, m_RecvBuf + m_RecvOffIndex + sizeof(NetPacketHeader), datalen);
-
-			HeartBeatReq Req;
-			Req.ParsePartialFromArray(data, datalen);
-
-			std::cout << "Req : " << Req.connid() <<std::endl;
-
-			//ServiceBase::GetInstancePtr()->AddNetPackToQueue(m_ConnID, datalen, (uint32)pHeader->wOpcode, pData);
-
-			m_RecvOffIndex += pHeader->wDataSize;
 		}
 	}
+	return true;
 }
 
 int main(int argc, char* argv[])
@@ -198,7 +203,7 @@ int main(int argc, char* argv[])
  	while(1)
  	{
   	
- 		DoRecv();
+		DoReceiveEx();
  	}
 	close(sockfd);
 	return 0;

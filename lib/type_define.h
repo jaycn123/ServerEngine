@@ -109,6 +109,8 @@ typedef std::function<void(void)> func;
 #define HOUR				3600
 #define ONE_DAY				86400
 
+#define NowTime             uint32(time(0))
+
 template <bool x> struct STATIC_ASSERTION_FAILURE;
 template <> struct STATIC_ASSERTION_FAILURE<true> { enum {value = 1};};
 template <int x> struct static_assert_test {};

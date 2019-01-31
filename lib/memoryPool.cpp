@@ -76,6 +76,7 @@ void MemoryManager::MemoryPool_init()
 
 char* MemoryManager::GetFreeMemoryArr(uint32_t nsize)
 {
+	AUTOMUTEX
 	if (nsize <= 8)
 	{
 		return m_arr[0].GetFreeMemory();
@@ -155,6 +156,7 @@ bool MemoryManager::FreeMemoryArr2(uint32_t nsize, char *addr)
 
 bool MemoryManager::FreeMemoryArr(uint32_t nsize, char *addr)
 {
+	AUTOMUTEX
 	if (nsize <= 8)
 	{
 		return m_arr[0].FreeMemory(addr);
@@ -341,6 +343,8 @@ void MemoryPool::PrintMemoryStatus()
 		temp = temp->m_pNext;
 		
 	}
+	std::cout << "-------------------------------- " << std::endl;
+	
 	//PrintMemoryStatus2();
 }
 

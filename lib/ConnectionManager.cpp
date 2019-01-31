@@ -243,7 +243,6 @@ bool ConnectionManager::sendMessageByConnID(uint32 connid, uint32 msgid, const c
 		return false;
 	}
 
-
 	char* pMemData = MemoryManager::GetInstancePtr()->GetFreeMemoryArr(dwLen + sizeof(NetPacketHeader));
 	NetPacket msg;
 	msg.Header.wOpcode = SENDDATA;
@@ -253,7 +252,6 @@ bool ConnectionManager::sendMessageByConnID(uint32 connid, uint32 msgid, const c
 	memcpy(pMemData + sizeof(NetPacketHeader), pData, dwLen);
 	pConn->SendBuffer((NetPacket*)pMemData);
 	
-
 	struct epoll_event* tevent = pConn->GetEpollEv();
 	tevent->events = EPOLLOUT | EPOLLET;
 	epoll_ctl(m_epfd, EPOLL_CTL_MOD, pConn->GetSocket(), tevent);

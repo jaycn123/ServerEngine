@@ -156,12 +156,10 @@ bool Connection::DoReceive()
 
 bool Connection::DoReceiveEx()
 {
-	char buffer[BUFFER_SIZE];
-	bzero(buffer, BUFFER_SIZE);
 	int32 length = 0;
 	while (true)
 	{
-		if (BUFFER_SIZE == m_nRecvSize)
+		if (RECV_BUF_SIZE == m_nRecvSize)
 		{
 			if ((m_nRecvSize - m_RecvOffIndex) > 0)
 			{
@@ -177,7 +175,7 @@ bool Connection::DoReceiveEx()
 			}
 		}
 
-		length = recv(m_fd, m_RecvBuf + m_nRecvSize, BUFFER_SIZE - m_nRecvSize, 0);
+		length = recv(m_fd, m_RecvBuf + m_nRecvSize, RECV_BUF_SIZE - m_nRecvSize, 0);
 		if (length > 0)
 		{
 			m_nRecvSize += length;
@@ -288,24 +286,21 @@ bool Connection::Clear()
 
 bool Connection::SendBuffer(NetPacket* pBuff)
 {
-	AUTOMUTEX
-	m_SendPackQueue.push(pBuff);
-
-//	memcpy(m_SendBuf, (char*)pBuff, pBuff->Header.wDataSize);
-//	m_nSendSize += pBuff->Header.wDataSize;
-
+	{
+		AUTOMUTEX
+		m_SendPackQueue.push(pBuff);
+	}
 	return true;
 }
 
 SendStatus Connection::DoSend()
 {
-
 	NetPacket* pBuff = nullptr;
 	AUTOMUTEX
 	while (!m_SendPackQueue.empty())
 	{
 		pBuff = m_SendPackQueue.front();
-		memcpy(m_SendBuf, (char*)pBuff, pBuff->Header.wDataSize);
+		memcpy(m_SendBuf + m_nSendSize, (char*)pBuff, pBuff->Header.wDataSize);
 		m_nSendSize += pBuff->Header.wDataSize;
 		m_SendPackQueue.pop();
 	}
