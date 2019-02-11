@@ -60,6 +60,7 @@ protected:
 
 	std::mutex                     m_mutex;
 
+	uint32                         m_checkConnStatus = 0;
 };
 
 

@@ -95,6 +95,12 @@ void ServiceBase::ParsingLoop()
 			AUTOMUTEX
 			ParsingNetPack();
 		}
+		m_checkConnStatus++;
+		if (m_checkConnStatus >= 5)
+		{
+			m_checkConnStatus = 0;
+			ConnectionManager::GetInstancePtr()->CheckConntionAvalible();
+		}
 		usleep(2500);
 	}
 }

@@ -142,7 +142,6 @@ void ConnectionManager::Start()
 
 void ConnectionManager::Run()
 {
-	printf("to Run !!!!!!\n");
 	while (1)
 	{
 		//epoll_events_count表示就绪事件的数目
@@ -255,6 +254,23 @@ bool ConnectionManager::sendMessageByConnID(uint32 connid, uint32 msgid, const c
 	struct epoll_event* tevent = pConn->GetEpollEv();
 	tevent->events = EPOLLOUT | EPOLLET;
 	epoll_ctl(m_epfd, EPOLL_CTL_MOD, pConn->GetSocket(), tevent);
+}
+
+void ConnectionManager::CheckConntionAvalible()
+{
+	uint64 curTime = NowTime;
+	for (int32 i = 0; i < m_ConnectionVec.size(); ++i)
+	{
+		Connection* pConn = m_ConnectionVec.at(i);
+		if (pConn->GetConnStatus())
+		{
+			if (curTime > (pConn->m_lastRecvTime + 10))
+			{
+				epoll_ctl(m_epfd, EPOLL_CTL_DEL, pConn->GetSocket(), &m_events[pConn->GetConnectionID() -1]);
+				FreeConnByConnid(pConn->GetConnectionID()); close(pConn->GetFd());
+			}
+		}
+	}
 }
 
 Connection* ConnectionManager::AddNewConn(int32 fd)

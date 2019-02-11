@@ -45,16 +45,17 @@ public:
 
 	bool        sendMessageByConnID(uint32 connid, uint32 msgid, const char* pData, uint32 dwLen);
 
+	void        CheckConntionAvalible();
 protected:
 
 	Connection*        AddNewConn(int32 fd);
 
-	Connection* GetConnByFd(int32 fd);
-
-	Connection* GetConnByConnid(int32 nConnid);
-
-	void        FreeConnByConnid(int32 nConnid);
-
+	Connection*        GetConnByFd(int32 fd);
+				       
+	Connection*        GetConnByConnid(int32 nConnid);
+				       
+	void               FreeConnByConnid(int32 nConnid);
+				       
 private:
 
 	int32 m_listener;

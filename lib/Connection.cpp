@@ -47,6 +47,7 @@ void Connection::SetConnStatus(bool status)
 void Connection::SetConnectionID(int32 dwConnID)
 {
 	m_ConnID = dwConnID;
+	m_lastRecvTime = NowTime;
 }
 
 void Connection::SetConnectionData(int64 dwData)
@@ -156,6 +157,7 @@ bool Connection::DoReceive()
 
 bool Connection::DoReceiveEx()
 {
+	m_lastRecvTime = NowTime;
 	int32 length = 0;
 	while (true)
 	{
@@ -236,7 +238,6 @@ void Connection::EventCallBack(const int& m_efd,func fun)
 {
 	if (m_events->events & EPOLLIN)
 	{
-
 		if (!DoReceiveEx())
 		{
 			fun();
