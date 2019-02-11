@@ -186,8 +186,42 @@ void ConnectionManager::Run()
 			else
 			{
 				Connection* connTemp = (Connection*)(m_events[i].data.ptr);
-				auto fun = [&]() { epoll_ctl(m_epfd, EPOLL_CTL_DEL, connTemp->GetSocket(), &m_events[i]); FreeConnByConnid(connTemp->GetConnectionID()); close(connTemp->GetFd()); };
-				connTemp->EventCallBack(m_epfd,fun);
+				std::cout << "connid : " << connTemp->GetConnectionID() << std::endl;
+				auto fun = [&]() { epoll_ctl(m_epfd, EPOLL_CTL_DEL, connTemp->GetSocket(), &m_events[i]); FreeConnByConnid(connTemp->GetConnectionID()); close(connTemp->GetFd()); std::cout << "close" << std::endl; };
+				//connTemp->EventCallBack(m_epfd,fun);
+
+				if (m_events[i].events & EPOLLIN)
+				{
+					std::cout << "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb : " << connTemp->GetConnectionID() << std::endl;
+					if (!connTemp->DoReceiveEx())
+					{
+						fun();
+					}
+				}
+
+				if (m_events[i].events & EPOLLOUT)
+				{
+					switch (connTemp->DoSend())
+					{
+
+					case SendComplete:
+						std::cout << "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa : "<< connTemp->GetConnectionID() <<std::endl;
+						m_events[i].events = EPOLLIN | EPOLLET;
+						epoll_ctl(m_epfd, EPOLL_CTL_MOD, connTemp->GetFd(), &m_events[i]);
+						break;
+
+					case SendPart:
+						std::cout << "cccccccccccccccccccccccccccccccccccccccccccccccccccc : "<< connTemp->GetConnectionID() << std::endl;
+						m_events[i].events = EPOLLOUT | EPOLLET;
+						epoll_ctl(m_epfd, EPOLL_CTL_MOD, connTemp->GetFd(), &m_events[i]);
+						break;
+
+					case SendError:
+						std::cout << "zxzxzxzxzxzxzxzxzxzxzxzxzxzxzxzxzxzxzxzxzxzxzxzxzxzx : "<< connTemp->GetConnectionID() << std::endl;
+						fun();
+						break;
+					}
+				}
 			}
 		}
 	}
@@ -258,6 +292,7 @@ bool ConnectionManager::sendMessageByConnID(uint32 connid, uint32 msgid, const c
 
 void ConnectionManager::CheckConntionAvalible()
 {
+	return;
 	uint64 curTime = NowTime;
 	for (int32 i = 0; i < m_ConnectionVec.size(); ++i)
 	{
@@ -282,7 +317,7 @@ Connection* ConnectionManager::AddNewConn(int32 fd)
 		{
 			pConn->SetSocket(fd);
 			AddEpollFd(fd, pConn, true);
-			std::cout << "connid : " <<pConn->GetConnectionID() << std::endl;
+			std::cout << "new connid : " <<pConn->GetConnectionID() << std::endl;
 			return pConn;
 		}
 	}

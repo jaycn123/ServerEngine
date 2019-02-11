@@ -71,13 +71,15 @@ void sendMessage()
 	msg.Header.wDataSize = sendPack.GetCachedSize() + sizeof(NetPacketHeader);
 	memcpy(szBuff, (char*)&msg, sendPack.GetCachedSize() + sizeof(NetPacketHeader));
 
-	std::cout << "msg.Header.wDataSize : " << msg.Header.wDataSize << std::endl;
+	//std::cout << "msg.Header.wDataSize : " << msg.Header.wDataSize << std::endl;
 
-//	while (1)
+	while (1)
 	{
 		//AUTOMUTEX
 		int wlen = send(sockfd, szBuff, msg.Header.wDataSize, 0);
-		usleep(2500);
+		std::cout << "send len  : " << wlen << std::endl;
+		usleep(70000);
+		//sleep(1);
 	}
 }
 #define BUFFER_SIZE 1024

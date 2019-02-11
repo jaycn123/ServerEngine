@@ -242,7 +242,6 @@ void Connection::EventCallBack(const int& m_efd,func fun)
 		{
 			fun();
 		}
-
 		return;
 	}
 
@@ -251,23 +250,26 @@ void Connection::EventCallBack(const int& m_efd,func fun)
 		switch (DoSend())
 		{
 		case SendComplete:
+			std::cout << "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa" << std::endl;
 			m_events->events = EPOLLIN | EPOLLET;
 			epoll_ctl(m_efd, EPOLL_CTL_MOD, m_fd, m_events);
 			break;
 
 		case SendPart:
+			std::cout << "cccccccccccccccccccccccccccccccccccccccccccccccccccc" << std::endl;
 			m_events->events = EPOLLOUT | EPOLLET;
 			epoll_ctl(m_efd, EPOLL_CTL_MOD, m_fd, m_events);
 			break;
 
 		case SendError:
+			getchar();
+			std::cout << "zxzxzxzxzxzxzxzxzxzxzxzxzxzxzxzxzxzxzxzxzxzxzxzxzxzx" << std::endl;
 			fun();
 			break;
 		}
 
 		return;
 	}
-	std::cout << "xxxxxxxxxxxxxxxxxxxxxx" << std::endl;
 }
 
 bool Connection::IsConnectionOK()
