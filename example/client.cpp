@@ -77,8 +77,8 @@ void sendMessage()
 	{
 		//AUTOMUTEX
 		int wlen = send(sockfd, szBuff, msg.Header.wDataSize, 0);
-		std::cout << "send len  : " << wlen << std::endl;
-		usleep(70000);
+		//std::cout << "send len  : " << wlen << std::endl;
+		usleep(100);
 		//sleep(1);
 	}
 }

@@ -174,7 +174,7 @@ void ConnectionManager::Run()
 					//printf("client connection from: %s : % d(IP : port), clientfd = %d \n", inet_ntoa(client_address.sin_addr), ntohs(client_address.sin_port), clientfd);
 					//printf("Add new clientfd = %d to epoll\n", clientfd);
 
-					AddNewConn(clientfd)->SetEpollEv(&m_events[i]);
+					AddNewConn(clientfd);
 				
 					if (clientfd == -1)
 					{
@@ -188,40 +188,7 @@ void ConnectionManager::Run()
 				Connection* connTemp = (Connection*)(m_events[i].data.ptr);
 				std::cout << "connid : " << connTemp->GetConnectionID() << std::endl;
 				auto fun = [&]() { epoll_ctl(m_epfd, EPOLL_CTL_DEL, connTemp->GetSocket(), &m_events[i]); FreeConnByConnid(connTemp->GetConnectionID()); close(connTemp->GetFd()); std::cout << "close" << std::endl; };
-				//connTemp->EventCallBack(m_epfd,fun);
-
-				if (m_events[i].events & EPOLLIN)
-				{
-					std::cout << "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb : " << connTemp->GetConnectionID() << std::endl;
-					if (!connTemp->DoReceiveEx())
-					{
-						fun();
-					}
-				}
-
-				if (m_events[i].events & EPOLLOUT)
-				{
-					switch (connTemp->DoSend())
-					{
-
-					case SendComplete:
-						std::cout << "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa : "<< connTemp->GetConnectionID() <<std::endl;
-						m_events[i].events = EPOLLIN | EPOLLET;
-						epoll_ctl(m_epfd, EPOLL_CTL_MOD, connTemp->GetFd(), &m_events[i]);
-						break;
-
-					case SendPart:
-						std::cout << "cccccccccccccccccccccccccccccccccccccccccccccccccccc : "<< connTemp->GetConnectionID() << std::endl;
-						m_events[i].events = EPOLLOUT | EPOLLET;
-						epoll_ctl(m_epfd, EPOLL_CTL_MOD, connTemp->GetFd(), &m_events[i]);
-						break;
-
-					case SendError:
-						std::cout << "zxzxzxzxzxzxzxzxzxzxzxzxzxzxzxzxzxzxzxzxzxzxzxzxzxzx : "<< connTemp->GetConnectionID() << std::endl;
-						fun();
-						break;
-					}
-				}
+				connTemp->EventCallBack(m_epfd, &(m_events[i]),fun);
 			}
 		}
 	}
@@ -285,9 +252,11 @@ bool ConnectionManager::sendMessageByConnID(uint32 connid, uint32 msgid, const c
 	memcpy(pMemData + sizeof(NetPacketHeader), pData, dwLen);
 	pConn->SendBuffer((NetPacket*)pMemData);
 	
-	struct epoll_event* tevent = pConn->GetEpollEv();
-	tevent->events = EPOLLOUT | EPOLLET;
-	epoll_ctl(m_epfd, EPOLL_CTL_MOD, pConn->GetSocket(), tevent);
+	struct epoll_event en;
+	en.data.ptr = pConn;
+	en.events = EPOLLOUT | EPOLLET;
+	epoll_ctl(m_epfd, EPOLL_CTL_MOD, pConn->GetSocket(), &en);
+	
 }
 
 void ConnectionManager::CheckConntionAvalible()
@@ -308,7 +277,7 @@ void ConnectionManager::CheckConntionAvalible()
 	}
 }
 
-Connection* ConnectionManager::AddNewConn(int32 fd)
+void ConnectionManager::AddNewConn(int32 fd)
 {
 	for (int32 i = 0; i < m_ConnectionVec.size(); ++i)
 	{
@@ -318,7 +287,7 @@ Connection* ConnectionManager::AddNewConn(int32 fd)
 			pConn->SetSocket(fd);
 			AddEpollFd(fd, pConn, true);
 			std::cout << "new connid : " <<pConn->GetConnectionID() << std::endl;
-			return pConn;
+			break;
 		}
 	}
 }

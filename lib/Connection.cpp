@@ -234,9 +234,9 @@ bool Connection::DoReceiveEx()
 	return true;
 }
 
-void Connection::EventCallBack(const int& m_efd,func fun)
+void Connection::EventCallBack(const int& m_efd, struct epoll_event* pEv, func fun)
 {
-	if (m_events->events & EPOLLIN)
+	if (pEv->events & EPOLLIN)
 	{
 		if (!DoReceiveEx())
 		{
@@ -245,27 +245,34 @@ void Connection::EventCallBack(const int& m_efd,func fun)
 		return;
 	}
 
-	if (m_events->events & EPOLLOUT)
+	if (pEv->events & EPOLLOUT)
 	{
 		switch (DoSend())
 		{
 		case SendComplete:
-			std::cout << "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa" << std::endl;
-			m_events->events = EPOLLIN | EPOLLET;
-			epoll_ctl(m_efd, EPOLL_CTL_MOD, m_fd, m_events);
+		{
+			struct epoll_event en;
+			en.data.ptr = this;
+			en.events = EPOLLIN | EPOLLET;
+			epoll_ctl(m_efd, EPOLL_CTL_MOD, GetFd(), &en);
 			break;
+		}
 
 		case SendPart:
-			std::cout << "cccccccccccccccccccccccccccccccccccccccccccccccccccc" << std::endl;
-			m_events->events = EPOLLOUT | EPOLLET;
-			epoll_ctl(m_efd, EPOLL_CTL_MOD, m_fd, m_events);
+		{
+			struct epoll_event en;
+			en.data.ptr = this;
+			en.events = EPOLLOUT | EPOLLET;
+			epoll_ctl(m_efd, EPOLL_CTL_MOD, GetFd(), &en);
 			break;
-
+		}
 		case SendError:
+		{
 			getchar();
 			std::cout << "zxzxzxzxzxzxzxzxzxzxzxzxzxzxzxzxzxzxzxzxzxzxzxzxzxzx" << std::endl;
 			fun();
 			break;
+		}
 		}
 
 		return;
@@ -334,14 +341,4 @@ SendStatus Connection::DoSend()
 int32 Connection::GetFd()
 {
 	return m_fd;
-}
-
-void Connection::SetEpollEv(struct epoll_event* ev)
-{
-	m_events = ev;
-}
-
-struct epoll_event* Connection::GetEpollEv()
-{
-	return m_events;
 }
