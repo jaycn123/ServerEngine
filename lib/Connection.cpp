@@ -327,13 +327,19 @@ SendStatus Connection::DoSend()
 		m_SendOffIndex += wlen;
 	}
 
-	if (m_SendOffIndex >= m_nSendSize)
+	if (m_SendOffIndex == m_nSendSize)
 	{
 		m_nSendSize = 0;
 		m_SendOffIndex = 0;
 		return SendComplete;
 	}
-
+	else
+	{
+		if (m_SendOffIndex > m_nSendSize)
+		{
+			return SendError;
+		}
+	}
 	return SendPart;
 	
 }
