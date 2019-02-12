@@ -78,85 +78,6 @@ bool Connection::ExtractBuffer()
 
 bool Connection::DoReceive()
 {
-	long long length = 0;
-	char buffer[BUFFER_SIZE];
-	bzero(buffer,BUFFER_SIZE);
-
-	//uint32 tempLen = 0;
-
-	std::cout << "DoReceive  " << std::endl;
-	while ((length = recv(m_fd, buffer, BUFFER_SIZE, 0)) > 0)
-	{
-		std::cout << "len : " << length << std::endl;
-		if (errno == EAGAIN)
-		{
-			//std::cout << "EAGAIN" << std::endl;
-			return true;
-		}
-		if (length == 0)
-		{
-			return false;
-		}
-
-		//tempLen += length;
-	
-		if ((m_nRecvSize + length) > RECV_BUF_SIZE)
-		{
-			if ((m_nRecvSize - m_RecvOffIndex) > 0)
-			{
-				memmove(m_RecvBuf, m_RecvBuf + m_RecvOffIndex, m_nRecvSize - m_RecvOffIndex);
-				m_nRecvSize = m_nRecvSize - m_RecvOffIndex;
-				m_RecvOffIndex = 0;
-			}
-			else
-			{
-				bzero(m_RecvBuf, RECV_BUF_SIZE);
-				m_RecvOffIndex = 0;
-				m_nRecvSize = 0;
-			}
-		}
-
-		memcpy(m_RecvBuf + m_nRecvSize, buffer, length);
-		m_nRecvSize += length;
-
-		while ((m_nRecvSize - m_RecvOffIndex) >= sizeof(NetPacketHeader))
-		{
-
-			NetPacketHeader* pHeader = (NetPacketHeader*)(m_RecvBuf + m_RecvOffIndex);
-			if (pHeader == nullptr)
-			{
-				std::cout << "pHeader == nullptr" << std::endl;
-				getchar();
-				continue;
-			}
-
-			if (pHeader->wCode != NET_CODE)
-			{
-				std::cout << "pHeader->wCode" << std::endl;
-				getchar();
-				break;
-			}
-			if (pHeader->wDataSize > (m_nRecvSize - m_RecvOffIndex))
-			{
-				break;
-			}
-
-			uint32 datalen = pHeader->wDataSize - sizeof(NetPacketHeader);
-
-			char* pData = MemoryManager::GetInstancePtr()->GetFreeMemoryArr(datalen);
-
-			memcpy(pData, m_RecvBuf + m_RecvOffIndex + sizeof(NetPacketHeader), datalen);
-
-			ServiceBase::GetInstancePtr()->AddNetPackToQueue(m_ConnID, datalen, (uint32)pHeader->wOpcode, pData);
-
-			m_RecvOffIndex += pHeader->wDataSize;
-		}
-	}
-	return true;
-}
-
-bool Connection::DoReceiveEx()
-{
 	m_lastRecvTime = NowTime;
 	int32 length = 0;
 	while (true)
@@ -238,7 +159,7 @@ void Connection::EventCallBack(const int& m_efd, struct epoll_event* pEv, func f
 {
 	if (pEv->events & EPOLLIN)
 	{
-		if (!DoReceiveEx())
+		if (!DoReceive())
 		{
 			fun();
 		}
