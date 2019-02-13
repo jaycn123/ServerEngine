@@ -261,7 +261,6 @@ bool ConnectionManager::sendMessageByConnID(uint32 connid, uint32 msgid, const c
 
 void ConnectionManager::CheckConntionAvalible()
 {
-	return;
 	uint64 curTime = NowTime;
 	for (int32 i = 0; i < m_ConnectionVec.size(); ++i)
 	{
@@ -279,6 +278,7 @@ void ConnectionManager::CheckConntionAvalible()
 
 void ConnectionManager::AddNewConn(int32 fd)
 {
+
 	for (int32 i = 0; i < m_ConnectionVec.size(); ++i)
 	{
 		Connection* pConn = m_ConnectionVec.at(i);
