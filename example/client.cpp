@@ -78,7 +78,7 @@ void sendMessage()
 		//AUTOMUTEX
 		int wlen = send(sockfd, szBuff, msg.Header.wDataSize, 0);
 		//std::cout << "send len  : " << wlen << std::endl;
-		usleep(90000);
+		usleep(100);
 		//sleep(1);
 	}
 }
@@ -197,9 +197,9 @@ int main(int argc, char* argv[])
 
 	setsockopt(sockfd, SOL_SOCKET, SO_REUSEADDR, &on, sizeof(on));
 
-	servaddr.sin_port = htons((short)PORT);
+	servaddr.sin_port = htons((short)9999);
 	servaddr.sin_family = AF_INET;
-	servaddr.sin_addr.s_addr = inet_addr("127.0.0.1"); //此处更改epoll服务器地址
+	servaddr.sin_addr.s_addr = inet_addr("101.37.12.228"); //此处更改epoll服务器地址
 
 	if (connect(sockfd, (struct sockaddr*)&servaddr, sizeof(servaddr)) < 0) {
 		cout << "connect error" << endl;
