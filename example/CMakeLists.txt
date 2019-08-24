@@ -7,10 +7,11 @@ cmake_minimum_required (VERSION 3.8)
 aux_source_directory(. DIR_SRCS)
 
 add_executable (serverd "chatServer.cpp" "chatServer.h")
+add_executable (client "client.cpp")
 
 # 将源代码添加到此项目的可执行文件。
 target_link_libraries(serverd proto)
-
 target_link_libraries(serverd engine)
 
+target_link_libraries(client proto)
 # TODO: 如有需要，请添加测试并安装目标。
