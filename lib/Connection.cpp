@@ -227,18 +227,23 @@ bool Connection::SendBuffer(NetPacket* pBuff)
 SendStatus Connection::DoSend()
 {
 	NetPacket* pBuff = nullptr;
-	AUTOMUTEX
-	while (!m_SendPackQueue.empty())
+
+	if (m_nSendSize == 0)
 	{
-		pBuff = m_SendPackQueue.front();
-		memcpy(m_SendBuf + m_nSendSize, (char*)pBuff, pBuff->Header.wDataSize);
-		m_nSendSize += pBuff->Header.wDataSize;
-		m_SendPackQueue.pop();
+		AUTOMUTEX
+		while (!m_SendPackQueue.empty())
+		{
+			pBuff = m_SendPackQueue.front();
+			memcpy(m_SendBuf + m_nSendSize, (char*)pBuff, pBuff->Header.wDataSize);
+			m_nSendSize += pBuff->Header.wDataSize;
+			m_SendPackQueue.pop();
+			break;
+		}
 	}
 
 	if(m_SendOffIndex < m_nSendSize)
 	{
-		int	wlen = send(m_fd, m_SendBuf, m_nSendSize, 0);
+		int	wlen = send(m_fd, m_SendBuf + m_SendOffIndex, m_nSendSize - m_SendOffIndex, 0);
 		
 		if (wlen <= 0)
 		{

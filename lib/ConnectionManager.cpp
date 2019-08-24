@@ -142,7 +142,7 @@ void ConnectionManager::Start()
 
 void ConnectionManager::Run()
 {
-	while (1)
+	while (true)
 	{
 		//epoll_events_count表示就绪事件的数目
 		int epoll_events_count = epoll_wait(m_epfd, m_events, EPOLL_SIZE, -1);

@@ -94,6 +94,7 @@ public:
 	std::mutex              m_mutex;
 
 	uint64                  m_lastRecvTime = 0;
+
 };
 
 #endif
