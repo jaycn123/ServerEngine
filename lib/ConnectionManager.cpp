@@ -274,7 +274,9 @@ void ConnectionManager::CheckConntionAvalible()
 
 				epoll_ctl(m_epfd, EPOLL_CTL_DEL, pConn->GetSocket(), &m_events[pConn->GetConnectionID() -1]);
 
-				FreeConnByConnid(pConn->GetConnectionID()); close(pConn->GetFd());
+				FreeConnByConnid(pConn->GetConnectionID()); 
+
+				close(pConn->GetFd());
 			}
 		}
 	}
