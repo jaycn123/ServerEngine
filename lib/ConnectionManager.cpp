@@ -186,8 +186,8 @@ void ConnectionManager::Run()
 			else
 			{
 				Connection* connTemp = (Connection*)(m_events[i].data.ptr);
-				std::cout << "connid : " << connTemp->GetConnectionID() << std::endl;
-				auto fun = [&]() { epoll_ctl(m_epfd, EPOLL_CTL_DEL, connTemp->GetSocket(), &m_events[i]); FreeConnByConnid(connTemp->GetConnectionID()); close(connTemp->GetFd()); std::cout << "close" << std::endl; };
+				//std::cout << "connid : " << connTemp->GetConnectionID() << std::endl;
+				auto fun = [&]() {std::cout << "close fd " << std::endl; ; epoll_ctl(m_epfd, EPOLL_CTL_DEL, connTemp->GetSocket(), &m_events[i]); FreeConnByConnid(connTemp->GetConnectionID()); close(connTemp->GetFd()); std::cout << "close" << std::endl; };
 				connTemp->EventCallBack(m_epfd, &(m_events[i]),fun);
 			}
 		}
@@ -207,6 +207,7 @@ void ConnectionManager::SetConnectionNum(int32 nMaxCons)
 
 void ConnectionManager::Close()
 {
+	std::cout << "ConnectionManager::Close()" << std::endl;
 	close(m_listener); //关闭socket
 	close(m_epfd);    //关闭内核
 }
@@ -269,7 +270,10 @@ void ConnectionManager::CheckConntionAvalible()
 		{
 			if (curTime > (pConn->m_lastRecvTime + 10))
 			{
+				std::cout << "CheckConntionAvalible" << std::endl;
+
 				epoll_ctl(m_epfd, EPOLL_CTL_DEL, pConn->GetSocket(), &m_events[pConn->GetConnectionID() -1]);
+
 				FreeConnByConnid(pConn->GetConnectionID()); close(pConn->GetFd());
 			}
 		}

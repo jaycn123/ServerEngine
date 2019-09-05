@@ -65,6 +65,8 @@ bool ServiceBase::AddNetPackToQueue(uint32 connid, uint32 len, uint32 messid, ch
 		AUTOMUTEX
 		m_NetPackQueue.push(std::move(CNetPacket(connid, len, messid, pdata)));
 	}
+
+	return true;
 }
 
 bool ServiceBase::SendMsgProtoBuf(uint32 dwConnID, uint32 dwMsgID, const google::protobuf::Message& pdata)
@@ -109,9 +111,8 @@ void ServiceBase::ParsingNetPack()
 {
 	if (m_PackNum > 0)
 	{
-	//	std::cout << "m_PackNum : " << m_PackNum << std::endl;
+		std::cout << "m_PackNum : " << m_PackNum << std::endl;
 	}
-
 	while (m_ReadIndex < m_PackNum)
 	{
 		m_pPacketDispatcher->DispatchPacket(&(m_NetPackArr[m_ReadIndex]));

@@ -51,34 +51,39 @@ int sockfd = 0;
 
 std::mutex m_mutex;
 
+uint32_t tempCount = 100;
+
 void sendMessage()
 {
-	NetPacket msg;
-	msg.Header.wOpcode = SENDDATA;
-	msg.Header.wCode = NET_CODE;
-
-	HeartBeatReq sendPack;
-	sendPack.set_connid(100);
-
-	char szBuff[102400] = { 0 };
-	std::cout << sendPack.ByteSize() << std::endl;
-	sendPack.SerializePartialToArray(szBuff, sendPack.GetCachedSize());
-	memcpy(msg.Data, szBuff, sendPack.ByteSize());
-	char temp[1024] = { 0 };
-	memcpy(temp, szBuff, sendPack.ByteSize());
-
-	bzero(szBuff, 102400);
-	msg.Header.wDataSize = sendPack.GetCachedSize() + sizeof(NetPacketHeader);
-	memcpy(szBuff, (char*)&msg, sendPack.GetCachedSize() + sizeof(NetPacketHeader));
 
 	//std::cout << "msg.Header.wDataSize : " << msg.Header.wDataSize << std::endl;
 
-	while (1)
+	for (uint32_t i = 0; i < 100000;i++)
 	{
+		NetPacket msg;
+		msg.Header.wOpcode = SENDDATA;
+		msg.Header.wCode = NET_CODE;
+
+		HeartBeatReq sendPack;
+		sendPack.set_connid(i+1);
+
+		char szBuff[102400] = { 0 };
+		sendPack.ByteSize();
+		//std::cout << sendPack.ByteSize() << std::endl;
+		sendPack.SerializePartialToArray(szBuff, sendPack.GetCachedSize());
+		memcpy(msg.Data, szBuff, sendPack.ByteSize());
+		char temp[1024] = { 0 };
+		memcpy(temp, szBuff, sendPack.ByteSize());
+		bzero(szBuff, 102400);
+		msg.Header.wDataSize = sendPack.GetCachedSize() + sizeof(NetPacketHeader);
+		memcpy(szBuff, (char*)&msg, sendPack.GetCachedSize() + sizeof(NetPacketHeader));
+
+		std::cout << "msg.Header.wDataSize : " << msg.Header.wDataSize << "sendPack.connid : " << sendPack.connid() << std::endl;
+
 		//AUTOMUTEX
 		int wlen = send(sockfd, szBuff, msg.Header.wDataSize, 0);
 		//std::cout << "send len  : " << wlen << std::endl;
-		usleep(100);
+		//usleep(100);
 		//sleep(1);
 	}
 }
@@ -197,10 +202,10 @@ int main(int argc, char* argv[])
 
 	setsockopt(sockfd, SOL_SOCKET, SO_REUSEADDR, &on, sizeof(on));
 
-	servaddr.sin_port = htons((short)9999);
+	servaddr.sin_port = htons((short)8888);
 	servaddr.sin_family = AF_INET;
-	servaddr.sin_addr.s_addr = inet_addr("101.37.12.228"); //此处更改epoll服务器地址
-
+	//servaddr.sin_addr.s_addr = inet_addr("101.37.12.228"); //此处更改epoll服务器地址
+	servaddr.sin_addr.s_addr = inet_addr("127.0.0.1"); 
 	if (connect(sockfd, (struct sockaddr*)&servaddr, sizeof(servaddr)) < 0) {
 		cout << "connect error" << endl;
 		return -1;
@@ -216,8 +221,8 @@ int main(int argc, char* argv[])
 
  	while(1)
  	{
-		std::cout << "DoReceiveEx" << std::endl;
-		DoReceiveEx();
+		//std::cout << "DoReceiveEx" << std::endl;
+	//	DoReceiveEx();
 		usleep(2500);
  	}
 	close(sockfd);

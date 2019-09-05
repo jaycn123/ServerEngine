@@ -1,6 +1,7 @@
 ﻿#include "Connection.h"
 #include "messageQueue.h"
 #include "serviceBase.h"
+#include "../protoFiles/test.pb.h"
 
 
 
@@ -95,6 +96,7 @@ bool Connection::DoReceive()
 				bzero(m_RecvBuf, RECV_BUF_SIZE);
 				m_RecvOffIndex = 0;
 				m_nRecvSize = 0;
+				std::cout << "发送完成 ----------" << std::endl;
 			}
 		}
 
@@ -124,10 +126,13 @@ bool Connection::DoReceive()
 					getchar();
 					break;
 				}
+
 				if (pHeader->wDataSize > (m_nRecvSize - m_RecvOffIndex))
 				{
 					break;
 				}
+
+				std::cout << "m_nRecvSize-------------" << m_nRecvSize << std::endl;
 
 				uint32 datalen = pHeader->wDataSize - sizeof(NetPacketHeader);
 
@@ -155,11 +160,112 @@ bool Connection::DoReceive()
 	return true;
 }
 
+bool Connection::DoReceiveEx()
+{
+	m_lastRecvTime = NowTime;
+	int32 length = 0;
+	while (true)
+	{
+		if (RECV_BUF_SIZE == m_nRecvSize)
+		{
+			if ((m_nRecvSize - m_RecvOffIndex) > 0)
+			{
+				memmove(m_RecvBuf, m_RecvBuf + m_RecvOffIndex, m_nRecvSize - m_RecvOffIndex);
+				m_nRecvSize = m_nRecvSize - m_RecvOffIndex;
+				m_RecvOffIndex = 0;
+
+
+				std::cout <<"m_nRecvSize : " << m_nRecvSize << " m_RecvOffIndex : " << m_RecvOffIndex << std::endl;
+				std::cout << "清理数据 ----------" << std::endl;
+			}
+			else
+			{
+				bzero(m_RecvBuf, RECV_BUF_SIZE);
+				m_RecvOffIndex = 0;
+				m_nRecvSize = 0;
+				std::cout << "发送完成 ----------" << std::endl;
+			}
+		}
+
+		length = recv(m_fd, m_RecvBuf + m_nRecvSize, RECV_BUF_SIZE - m_nRecvSize, 0);
+		if (length == 0)
+		{
+			std::cout << "recv leng : " << length << std::endl;
+		}
+		if (length > 0)
+		{
+			m_nRecvSize += length;
+			while ((m_nRecvSize - m_RecvOffIndex) >= sizeof(NetPacketHeader))
+			{
+				NetPacketHeader* pHeader = (NetPacketHeader*)(m_RecvBuf + m_RecvOffIndex);
+				if (pHeader == nullptr)
+				{
+					std::cout << "pHeader == nullptr" << std::endl;
+					getchar();
+					continue;
+				}
+
+				if (pHeader->wCode != NET_CODE)
+				{
+					std::cout << "pHeader->wCode" << std::endl;
+
+					std::cout << "length : " << length << std::endl;
+					std::cout << "m_nRecvSize : " << m_nRecvSize << std::endl;
+					std::cout << "m_RecvOffIndex : " << m_RecvOffIndex << std::endl;
+
+					getchar();
+					break;
+				}
+
+				if (pHeader->wDataSize > (m_nRecvSize - m_RecvOffIndex))
+				{
+					break;
+				}
+
+				//std::cout << "m_nRecvSize-------------" << m_nRecvSize << " length : " << length << std::endl;
+
+				uint32 datalen = pHeader->wDataSize - sizeof(NetPacketHeader);
+
+				char* pData = MemoryManager::GetInstancePtr()->GetFreeMemoryArr(datalen);
+				//std::cout << "pData addr " << static_cast<const void *>(pData) << endl;
+				//char recvbuff[1024] = { 0 };
+				//memcpy(recvbuff, m_RecvBuf + m_RecvOffIndex + sizeof(NetPacketHeader), datalen);
+				memcpy(pData, m_RecvBuf + m_RecvOffIndex + sizeof(NetPacketHeader), datalen);
+
+				/*
+				HeartBeatReq Req;
+				Req.ParsePartialFromArray(recvbuff, datalen);
+
+				std::cout << "OnMsgWatchHeartBeatReq : " << Req.connid() << std::endl;
+				*/
+				ServiceBase::GetInstancePtr()->AddNetPackToQueue(m_ConnID, datalen, (uint32)pHeader->wOpcode, pData);
+
+				m_RecvOffIndex += pHeader->wDataSize;
+			}
+		}
+		else
+		{
+			if (length == -1 && errno != EAGAIN)
+			{
+				perror("read error");
+				getchar();
+				return false;
+			}
+			else 
+			{
+				return true;
+			}
+		}
+	}
+	return true;
+
+}
+
 void Connection::EventCallBack(const int& m_efd, struct epoll_event* pEv, func fun)
 {
 	if (pEv->events & EPOLLIN)
 	{
-		if (!DoReceive())
+		if (!DoReceiveEx())
 		{
 			fun();
 		}

@@ -7,11 +7,8 @@ void MemoryManager::MemoryPool_init(uint32_t colume_no, uint32_t block_len[], ui
 	{
 		MemoryPool pool;
 		char * tempAddr = (char*)malloc((PTRSIZE + block_len[i]) * block_count[i]);
-		uint32_t alen = block_len[i] * block_count[i];
-
 		pool.m_hread = (MemoryData *)malloc(sizeof(MemoryData));
 		pool.m_hread->m_pAddr = tempAddr;
-		//memset(pool.m_hread->m_pAddr,0, block_len[i] + PTRSIZE);
 		bzero(pool.m_hread->m_pAddr, block_len[i] + PTRSIZE);
 		pool.m_hread->m_pNext = NULL;
 		pool.m_hread->m_isUsed = false;
@@ -38,7 +35,7 @@ void MemoryManager::MemoryPool_init(uint32_t colume_no, uint32_t block_len[], ui
 			     
 			tempAddr += (block_len[i] + PTRSIZE);
 
-		//	std::cout << " init addr : " << &(*phread) << std::endl;
+			//std::cout << " init addr : " << &(*phread) << std::endl;
 
 			if (j == (block_count[i] - 2))
 			{
@@ -63,13 +60,13 @@ void MemoryManager::MemoryPool_init(uint32_t colume_no, uint32_t block_len[], ui
 
 void MemoryManager::MemoryPool_init()
 {
-	uint32_t initlen = 16;
+	uint32_t initlen = 2;
 	uint32_t blockLen[10] = { 0 };
 	uint32_t blockCount[10] = { 0 };
 	for (uint32_t i = 0; i < 10; i++)
 	{
 		blockLen[i] = (initlen << (i + 1));
-		blockCount[i] = 100;
+		blockCount[i] = 10;
 	}
 	MemoryPool_init(10, blockLen, blockCount);
 }
@@ -277,9 +274,10 @@ MemoryManager* MemoryManager::GetInstancePtr()
 
 char* MemoryPool::GetFreeMemory()
 {
+	//PrintMemoryStatus();
 	char* pAddr = m_freeData->m_pAddr;
-	//std::cout <<"GetFreeMemory : " <<&(*m_freeData)<< std::endl;
-	//m_freeData->m_isUsed = true;
+	//std::cout <<"GetFreeMemory : " <<&(*m_freeData) <<" m_freeData->m_isUsed : "<< m_freeData->m_isUsed << std::endl;
+	m_freeData->m_isUsed = true;
 	CapacityMemory();
 	uint64_t* ptr =(uint64_t*)m_freeData->m_pAddr;
 	ptr[0] = (uint64_t)m_freeData;
@@ -317,20 +315,11 @@ bool MemoryPool::FreeMemory(char* addr)
 	uint64_t * ptr1 = (uint64_t *)(addr - 8);
 	MemoryData *m_node = (MemoryData *)(ptr1[0]);
 	//std::cout << "FreeMemory : " << (void*)m_node << std::endl;
-	//m_node->m_isUsed = false;
-	m_freeData->m_pNext = m_freeData;
+	m_node->m_isUsed = false;
+	m_node->m_pNext = m_freeData;
 	m_freeData = m_node;
-
 	//PrintMemoryStatus();
 	return true;
-	/*
-	uint64_t * ptr1 = (uint64_t *)(addr - 8);
-	MemoryData *m_node = (MemoryData *)(ptr1[0]);
-	m_node->m_pNext = NULL;
-	m_tail->m_pNext = m_node;
-	m_tail = m_node;
-	return true;
-	*/
 }
 
 void MemoryPool::PrintMemoryStatus()
@@ -338,8 +327,8 @@ void MemoryPool::PrintMemoryStatus()
 	MemoryData* temp = m_hread;
 	for (uint32_t i = 0; i < m_count; i++)
 	{
-		std::cout << "PrintMemoryStatus : " << &(*temp) << std::endl;
-		std::cout << temp->m_isUsed<< std::endl;
+		//std::cout << "PrintMemoryStatus : " << &(*temp) << std::endl;
+		std::cout << i<<" xxxxx " <<temp->m_isUsed<< std::endl;
 		temp = temp->m_pNext;
 		
 	}

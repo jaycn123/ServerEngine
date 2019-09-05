@@ -11,7 +11,7 @@
 #define  NET_MSG_SEND				2
 #define  NET_MSG_CONNECT			3
 
-#define RECV_BUF_SIZE               102400
+#define RECV_BUF_SIZE               1024 * 1000
 
 #define SEND_BUF_SIZE               102400
 
@@ -49,6 +49,8 @@ public:
 	bool	    ExtractBuffer();
 			    
 	bool	    DoReceive();
+
+	bool	    DoReceiveEx();
 			    
 	void	    EventCallBack(const int& m_efd, struct epoll_event* pEv,func fun);
 			    
