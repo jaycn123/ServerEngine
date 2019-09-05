@@ -187,7 +187,7 @@ void ConnectionManager::Run()
 			{
 				Connection* connTemp = (Connection*)(m_events[i].data.ptr);
 				//std::cout << "connid : " << connTemp->GetConnectionID() << std::endl;
-				auto fun = [&]() {std::cout << "close fd " << std::endl; ; epoll_ctl(m_epfd, EPOLL_CTL_DEL, connTemp->GetSocket(), &m_events[i]); FreeConnByConnid(connTemp->GetConnectionID()); close(connTemp->GetFd()); std::cout << "close" << std::endl; };
+				auto fun = [&]() { epoll_ctl(m_epfd, EPOLL_CTL_DEL, connTemp->GetSocket(), &m_events[i]); FreeConnByConnid(connTemp->GetConnectionID()); close(connTemp->GetFd()); };
 				connTemp->EventCallBack(m_epfd, &(m_events[i]),fun);
 			}
 		}
@@ -325,6 +325,6 @@ void ConnectionManager::FreeConnByConnid(int32 nConnid)
 	{
 		return;
 	}
-//	std::cout << "free nConnid : " << nConnid << std::endl;
+	std::cout << "free nConnid : " << nConnid << std::endl;
 	m_ConnectionVec[nConnid - 1]->SetConnStatus(false);
 }

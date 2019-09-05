@@ -93,16 +93,17 @@ void ServiceBase::ParsingLoop()
 {
 	while (true)
 	{
-		{
-			AUTOMUTEX
-			ParsingNetPack();
-		}
 		m_checkConnStatus++;
 		if (m_checkConnStatus >= 5)
 		{
 			m_checkConnStatus = 0;
-			ConnectionManager::GetInstancePtr()->CheckConntionAvalible();
+		//	ConnectionManager::GetInstancePtr()->CheckConntionAvalible();  //  有bug  处理数据太大 连接超时
 		}
+		{
+			AUTOMUTEX
+			ParsingNetPack();
+		}
+		
 		usleep(2500);
 	}
 }

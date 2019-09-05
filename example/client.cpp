@@ -58,7 +58,7 @@ void sendMessage()
 
 	//std::cout << "msg.Header.wDataSize : " << msg.Header.wDataSize << std::endl;
 
-	for (uint32_t i = 0; i < 100000;i++)
+	for (uint32_t i = 0; i < 1000000;i++)
 	{
 		NetPacket msg;
 		msg.Header.wOpcode = SENDDATA;
@@ -84,7 +84,7 @@ void sendMessage()
 		int wlen = send(sockfd, szBuff, msg.Header.wDataSize, 0);
 		//std::cout << "send len  : " << wlen << std::endl;
 		//usleep(100);
-		//sleep(1);
+		sleep(1);
 	}
 }
 #define BUFFER_SIZE 1024

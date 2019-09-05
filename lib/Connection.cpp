@@ -162,7 +162,6 @@ bool Connection::DoReceive()
 
 bool Connection::DoReceiveEx()
 {
-	m_lastRecvTime = NowTime;
 	int32 length = 0;
 	while (true)
 	{
@@ -190,8 +189,11 @@ bool Connection::DoReceiveEx()
 		length = recv(m_fd, m_RecvBuf + m_nRecvSize, RECV_BUF_SIZE - m_nRecvSize, 0);
 		if (length == 0)
 		{
-			std::cout << "recv leng : " << length << std::endl;
+			std::cout << "recv leng : " << length << std::endl; 
+			//client close conn
+			return false;
 		}
+
 		if (length > 0)
 		{
 			m_nRecvSize += length;
@@ -253,10 +255,14 @@ bool Connection::DoReceiveEx()
 			}
 			else 
 			{
+				m_lastRecvTime = NowTime;
+
 				return true;
 			}
 		}
 	}
+	m_lastRecvTime = NowTime;
+
 	return true;
 
 }

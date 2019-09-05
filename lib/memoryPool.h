@@ -86,6 +86,10 @@ private:
 	std::vector<uint32_t>m_indexVec;
 
 	std::mutex m_mutex;
+
+	//≤‚ ‘”√
+	uint32_t useCount = 0;
+	uint32_t freeCount = 0;
 };
 
 #endif

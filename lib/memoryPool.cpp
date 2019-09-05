@@ -74,7 +74,7 @@ void MemoryManager::MemoryPool_init()
 char* MemoryManager::GetFreeMemoryArr(uint32_t nsize)
 {
 	AUTOMUTEX
-
+	useCount++;
 	return m_arr[(nsize- 1)/8].GetFreeMemory();
 
 	/*
@@ -135,6 +135,10 @@ char* MemoryManager::GetFreeMemoryArr(uint32_t nsize)
 bool MemoryManager::FreeMemoryArr(uint32_t nsize, char *addr)
 {
 	AUTOMUTEX
+	freeCount++;
+
+	std::cout << "used : " << useCount << " free : " << freeCount <<" no free : "<< useCount - freeCount << std::endl;
+
 	return 	m_arr[(nsize - 1) / 8].FreeMemory(addr);
 	/*
 	if (nsize <= 8)
@@ -261,7 +265,7 @@ char* MemoryPool::GetFreeMemory()
 	//std::cout << "get memory " << m_len <<" B"<< std::endl;
 	//PrintMemoryStatus();
 	char* pAddr = m_freeData->m_pAddr;
-	std::cout <<"GetFreeMemory : " <<&(*m_freeData) <<" m_freeData->m_isUsed : "<< m_freeData->m_isUsed << std::endl;
+	//std::cout <<"GetFreeMemory : " <<&(*m_freeData) <<" m_freeData->m_isUsed : "<< m_freeData->m_isUsed << std::endl;
 	m_freeData->m_isUsed = true;
 	CapacityMemory();
 	uint64_t* ptr =(uint64_t*)m_freeData->m_pAddr;
@@ -300,7 +304,7 @@ bool MemoryPool::FreeMemory(char* addr)
 {
 	uint64_t * ptr1 = (uint64_t *)(addr - 8);
 	MemoryData *m_node = (MemoryData *)(ptr1[0]);
-	std::cout << "FreeMemory : " << (void*)m_node << std::endl;
+	//std::cout << "FreeMemory : " << (void*)m_node << std::endl;
 	m_node->m_isUsed = false;
 	m_node->m_pNext = m_freeData;
 	m_freeData = m_node;
