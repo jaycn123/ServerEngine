@@ -56,9 +56,6 @@ public:
 
 	char* GetFreeMemoryArr(uint32_t nsize);
 
-	char* GetFreeMemoryArr2(uint32_t nsize);
-
-	bool FreeMemoryArr2(uint32_t nsize, char *addr);
 
 	bool FreeMemoryArr(uint32_t nsize, char *addr);
 
