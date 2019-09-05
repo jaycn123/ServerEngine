@@ -12,7 +12,7 @@ CGameService::CGameService(void)
 	{
 		std::cout << "error " << std::endl;
 	}
-	CLog::GetInstancePtr()->LogError("---------服务器开始启动-----------");
+	CLog::GetInstancePtr()->LogError("---------server start-----------");
 }
 
 CGameService::~CGameService(void)
