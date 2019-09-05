@@ -46,6 +46,7 @@
 #include <thread>
 #include <functional>
 #include <mutex>
+#include <ostream>
 
 using namespace std;
 //using namespace std::placeholders;

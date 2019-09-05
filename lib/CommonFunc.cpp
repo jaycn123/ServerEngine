@@ -34,3 +34,20 @@ bool StringToHexArray(const std::string& str, uint8_t* pMem, int count)
 
 	return true;
 }
+
+bool CommonFunc::CreateDir(std::string& strDir)
+{
+	int32_t nRet = mkdir(strDir.c_str(), S_IRWXU);
+
+	if (nRet == 0)
+	{
+		return true;
+	}
+
+	if (errno == EEXIST)
+	{
+		return true;
+	}
+
+	return false;
+}

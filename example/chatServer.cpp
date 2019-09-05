@@ -4,10 +4,15 @@
 #include "../lib/serviceBase.h"
 #include "../lib/type_define.h"
 #include "chatServer.h"
+#include "../lib/Log.h"
 
 CGameService::CGameService(void)
 {
-
+	if (!CLog::GetInstancePtr()->StartLog("ChatServer", "log"))
+	{
+		std::cout << "error " << std::endl;
+	}
+	CLog::GetInstancePtr()->LogError("---------服务器开始启动-----------");
 }
 
 CGameService::~CGameService(void)

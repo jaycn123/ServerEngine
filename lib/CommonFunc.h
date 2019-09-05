@@ -9,6 +9,7 @@ namespace CommonFunc
 
 	bool StringToHexArray(const std::string& str, uint8_t* pMem, int count);
 
+	bool CreateDir(std::string& strDir);
 }
 
 
