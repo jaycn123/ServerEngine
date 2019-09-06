@@ -1,5 +1,6 @@
 #include "ConnectionManager.h"
 #include "memoryPool.h"
+#include "../protoFiles/test.pb.h"
 
 ConnectionManager::ConnectionManager(void)
 {
@@ -244,20 +245,18 @@ bool ConnectionManager::sendMessageByConnID(uint32 connid, uint32 msgid, const c
 		return false;
 	}
 
-	char* pMemData = MemoryManager::GetInstancePtr()->GetFreeMemoryArr(dwLen + sizeof(NetPacketHeader));
-	NetPacket msg;
-	msg.Header.wOpcode = SENDDATA;
-	msg.Header.wCode = NET_CODE;
-	msg.Header.wDataSize = dwLen + sizeof(NetPacketHeader);
-	memcpy(pMemData, (char*)(&msg), sizeof(NetPacketHeader));
-	memcpy(pMemData + sizeof(NetPacketHeader), pData, dwLen);
-	pConn->SendBuffer((NetPacket*)pMemData);
-	
+	NetPacket* pMemData = (NetPacket*)MemoryManager::GetInstancePtr()->GetFreeMemoryArr(dwLen + sizeof(NetPacketHeader));
+	pMemData->Header.wOpcode = SENDDATA;
+	pMemData->Header.wCode = NET_CODE;
+	pMemData->Header.wDataSize = dwLen + sizeof(NetPacketHeader);
+	memcpy(pMemData->pData, pData, dwLen);
+	pConn->SendBuffer(pMemData);
+
+
 	struct epoll_event en;
 	en.data.ptr = pConn;
 	en.events = EPOLLOUT | EPOLLET;
-	epoll_ctl(m_epfd, EPOLL_CTL_MOD, pConn->GetSocket(), &en);
-	
+	epoll_ctl(m_epfd, EPOLL_CTL_MOD, pConn->GetSocket(), &en);	
 }
 
 void ConnectionManager::CheckConntionAvalible()

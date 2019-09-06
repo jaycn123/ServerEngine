@@ -2,6 +2,7 @@
 #include "messageQueue.h"
 #include "serviceBase.h"
 #include "../protoFiles/test.pb.h"
+#include "memoryPool.h"
 
 
 
@@ -33,6 +34,8 @@ int32 Connection::GetConnStatus()
 
 void Connection::SetConnStatus(bool status)
 {
+	AUTOMUTEX
+
 	m_ConnComplete = status;
 
 	m_fd = -1;
@@ -42,6 +45,23 @@ void Connection::SetConnStatus(bool status)
 	m_RecvOffIndex = 0;
 
 	m_nRecvSize = 0;
+
+	//send
+
+	bzero(m_SendBuf,SEND_BUF_SIZE);
+
+	pSendMemoryAddr = nullptr;
+
+	m_SendOffIndex = 0;
+
+	m_nSendSize = 0;
+
+	while (!m_SendPackQueue.empty())
+	{
+		MemoryManager::GetInstancePtr()->FreeMemoryArr(m_SendPackQueue.front()->Header.wDataSize, (char*)(m_SendPackQueue.front()));
+		m_SendPackQueue.pop();
+	}
+
 
 }
 
@@ -78,89 +98,6 @@ bool Connection::ExtractBuffer()
 }
 
 bool Connection::DoReceive()
-{
-	m_lastRecvTime = NowTime;
-	int32 length = 0;
-	while (true)
-	{
-		if (RECV_BUF_SIZE == m_nRecvSize)
-		{
-			if ((m_nRecvSize - m_RecvOffIndex) > 0)
-			{
-				memmove(m_RecvBuf, m_RecvBuf + m_RecvOffIndex, m_nRecvSize - m_RecvOffIndex);
-				m_nRecvSize = m_nRecvSize - m_RecvOffIndex;
-				m_RecvOffIndex = 0;
-			}
-			else
-			{
-				bzero(m_RecvBuf, RECV_BUF_SIZE);
-				m_RecvOffIndex = 0;
-				m_nRecvSize = 0;
-				std::cout << "发送完成 ----------" << std::endl;
-			}
-		}
-
-		length = recv(m_fd, m_RecvBuf + m_nRecvSize, RECV_BUF_SIZE - m_nRecvSize, 0);
-		if (length > 0)
-		{
-			m_nRecvSize += length;
-
-			while ((m_nRecvSize - m_RecvOffIndex) >= sizeof(NetPacketHeader))
-			{
-				NetPacketHeader* pHeader = (NetPacketHeader*)(m_RecvBuf + m_RecvOffIndex);
-				if (pHeader == nullptr)
-				{
-					std::cout << "pHeader == nullptr" << std::endl;
-					getchar();
-					continue;
-				}
-
-				if (pHeader->wCode != NET_CODE)
-				{
-					std::cout << "pHeader->wCode" << std::endl;
-
-					std::cout << "length : " << length << std::endl;
-					std::cout << "m_nRecvSize : "<< m_nRecvSize<<std::endl;
-					std::cout << "m_RecvOffIndex : " << m_RecvOffIndex <<std::endl;
-
-					getchar();
-					break;
-				}
-
-				if (pHeader->wDataSize > (m_nRecvSize - m_RecvOffIndex))
-				{
-					break;
-				}
-
-				std::cout << "m_nRecvSize-------------" << m_nRecvSize << std::endl;
-
-				uint32 datalen = pHeader->wDataSize - sizeof(NetPacketHeader);
-
-				char* pData = MemoryManager::GetInstancePtr()->GetFreeMemoryArr(datalen);
-
-				memcpy(pData, m_RecvBuf + m_RecvOffIndex + sizeof(NetPacketHeader), datalen);
-
-				ServiceBase::GetInstancePtr()->AddNetPackToQueue(m_ConnID, datalen, (uint32)pHeader->wOpcode, pData);
-
-				m_RecvOffIndex += pHeader->wDataSize;
-			}
-		}
-		else
-		{
-			if (length == 0)
-			{
-				return false;
-			}
-			if (errno == EAGAIN)
-			{
-				return true;
-			}
-		}
-	}
-	return true;
-}
-
-bool Connection::DoReceiveEx()
 {
 	int32 length = 0;
 	while (true)
@@ -224,24 +161,10 @@ bool Connection::DoReceiveEx()
 					break;
 				}
 
-				//std::cout << "m_nRecvSize-------------" << m_nRecvSize << " length : " << length << std::endl;
-
-				uint32 datalen = pHeader->wDataSize - sizeof(NetPacketHeader);
-
+				uint32_t datalen = pHeader->wDataSize - sizeof(NetPacketHeader);
 				char* pData = MemoryManager::GetInstancePtr()->GetFreeMemoryArr(datalen);
-				//std::cout << "pData addr " << static_cast<const void *>(pData) << endl;
-				//char recvbuff[1024] = { 0 };
-				//memcpy(recvbuff, m_RecvBuf + m_RecvOffIndex + sizeof(NetPacketHeader), datalen);
 				memcpy(pData, m_RecvBuf + m_RecvOffIndex + sizeof(NetPacketHeader), datalen);
-
-				/*
-				HeartBeatReq Req;
-				Req.ParsePartialFromArray(recvbuff, datalen);
-
-				std::cout << "OnMsgWatchHeartBeatReq : " << Req.connid() << std::endl;
-				*/
 				ServiceBase::GetInstancePtr()->AddNetPackToQueue(m_ConnID, datalen, (uint32)pHeader->wOpcode, pData);
-
 				m_RecvOffIndex += pHeader->wDataSize;
 			}
 		}
@@ -271,10 +194,11 @@ void Connection::EventCallBack(const int& m_efd, struct epoll_event* pEv, func f
 {
 	if (pEv->events & EPOLLIN)
 	{
-		if (!DoReceiveEx())
+		if (!DoReceive())
 		{
 			fun();
 		}
+	
 		return;
 	}
 
@@ -338,16 +262,15 @@ bool Connection::SendBuffer(NetPacket* pBuff)
 
 SendStatus Connection::DoSend()
 {
-	NetPacket* pBuff = nullptr;
-
+	AUTOMUTEX
 	if (m_nSendSize == 0)
 	{
-		AUTOMUTEX
+		std::cout << m_SendPackQueue.size() << std::endl;
 		while (!m_SendPackQueue.empty())
 		{
-			pBuff = m_SendPackQueue.front();
-			memcpy(m_SendBuf + m_nSendSize, (char*)pBuff, pBuff->Header.wDataSize);
-			m_nSendSize += pBuff->Header.wDataSize;
+			pSendMemoryAddr = m_SendPackQueue.front();
+			memcpy(m_SendBuf + m_nSendSize, (char*)pSendMemoryAddr, pSendMemoryAddr->Header.wDataSize);
+			m_nSendSize += pSendMemoryAddr->Header.wDataSize;
 			m_SendPackQueue.pop();
 			break;
 		}
@@ -359,6 +282,7 @@ SendStatus Connection::DoSend()
 		
 		if (wlen <= 0)
 		{
+			std::cout << "111111111111111111" << std::endl;
 			return SendError;
 		}
 
@@ -369,15 +293,27 @@ SendStatus Connection::DoSend()
 	{
 		m_nSendSize = 0;
 		m_SendOffIndex = 0;
-		return SendComplete;
+		MemoryManager::GetInstancePtr()->FreeMemoryArr(pSendMemoryAddr->Header.wDataSize, (char*)pSendMemoryAddr);
+
+		if (m_SendPackQueue.empty())
+		{
+			return SendComplete;
+		}
+		else
+		{
+			return SendPart;
+		}
+
 	}
 	else
 	{
 		if (m_SendOffIndex > m_nSendSize)
 		{
+			std::cout << "4444444444444444" << std::endl;
 			return SendError;
 		}
 	}
+	std::cout << "5555555555555555" << std::endl;
 	return SendPart;
 	
 }

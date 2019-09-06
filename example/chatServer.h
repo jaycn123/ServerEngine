@@ -30,7 +30,7 @@ public:
 	bool OnMsgWatchHeartBeatReq(CNetPacket* pNetPacket);
 	//*********************消息处理定义结束******************************
 
-	void testSendProtobuf(uint32 connid);
+	void testSendProtobuf(uint32 connid, uint32_t tempcount);
 
 };
 

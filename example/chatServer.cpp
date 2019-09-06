@@ -57,13 +57,16 @@ bool CGameService::OnMsgWatchHeartBeatReq(CNetPacket* pNetPacket)
 	std::cout << "OnMsgWatchHeartBeatReq : " << Req.connid() << std::endl;
 
 	//std::cout << "MsgFrom : " << pNetPacket->m_connId << std::endl << std::endl;
-	//testSendProtobuf(pNetPacket->m_connId);
+
+	static uint32_t count = 1;
+
+	testSendProtobuf(pNetPacket->m_connId, Req.connid());
 }
 
-void CGameService::testSendProtobuf(uint32 connid)
+void CGameService::testSendProtobuf(uint32 connid,uint32_t tempcount)
 {
 	HeartBeatReq Req;
-	Req.set_connid(666);
+	Req.set_connid(tempcount);
 	ServiceBase::GetInstancePtr()->SendMsgProtoBuf(connid, 1, Req);
 }
 

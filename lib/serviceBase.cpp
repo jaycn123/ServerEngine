@@ -1,4 +1,5 @@
 #include "serviceBase.h"
+#include "../protoFiles/test.pb.h"
 
 ServiceBase::ServiceBase(void)
 {

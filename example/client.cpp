@@ -13,7 +13,9 @@
 #include <unistd.h>
 #include "../lib/type_define.h"
 #include "../protoFiles/test.pb.h"
+#include "../lib/netpack.h"
 
+/*
 #define NET_PACKET_DATA_SIZE 1024
 #define NET_CODE 0x2766
 
@@ -33,10 +35,10 @@ struct  NetPacketHeader
 struct NetPacket
 {
 	NetPacketHeader     Header;
-	char  Data[1024];
+	char  pData[0];
 };
 
-
+*/
 
 using namespace std;
 
@@ -55,37 +57,34 @@ uint32_t tempCount = 100;
 
 void sendMessage()
 {
-
+	static uint32_t i = 0;
+	i++;
 	//std::cout << "msg.Header.wDataSize : " << msg.Header.wDataSize << std::endl;
 
-	for (uint32_t i = 0; i < 1000000;i++)
-	{
-		NetPacket msg;
-		msg.Header.wOpcode = SENDDATA;
-		msg.Header.wCode = NET_CODE;
+	NetPacket msg;
+	msg.Header.wOpcode = SENDDATA;
+	msg.Header.wCode = NET_CODE;
 
-		HeartBeatReq sendPack;
-		sendPack.set_connid(i+1);
+	HeartBeatReq sendPack;
+	sendPack.set_connid(i + 1);
 
-		char szBuff[102400] = { 0 };
-		sendPack.ByteSize();
-		//std::cout << sendPack.ByteSize() << std::endl;
-		sendPack.SerializePartialToArray(szBuff, sendPack.GetCachedSize());
-		memcpy(msg.Data, szBuff, sendPack.ByteSize());
-		char temp[1024] = { 0 };
-		memcpy(temp, szBuff, sendPack.ByteSize());
-		bzero(szBuff, 102400);
-		msg.Header.wDataSize = sendPack.GetCachedSize() + sizeof(NetPacketHeader);
-		memcpy(szBuff, (char*)&msg, sendPack.GetCachedSize() + sizeof(NetPacketHeader));
+	char szBuff[102400] = { 0 };
+	sendPack.ByteSize();
+	//std::cout << sendPack.ByteSize() << std::endl;
+	sendPack.SerializePartialToArray(szBuff, sendPack.GetCachedSize());
+	memcpy(msg.pData, szBuff, sendPack.ByteSize());
+	char temp[1024] = { 0 };
+	memcpy(temp, szBuff, sendPack.ByteSize());
+	bzero(szBuff, 102400);
+	msg.Header.wDataSize = sendPack.GetCachedSize() + sizeof(NetPacketHeader);
+	memcpy(szBuff, (char*)&msg, sendPack.GetCachedSize() + sizeof(NetPacketHeader));
 
-		std::cout << "msg.Header.wDataSize : " << msg.Header.wDataSize << "sendPack.connid : " << sendPack.connid() << std::endl;
+	//std::cout << "msg.Header.wDataSize : " << msg.Header.wDataSize << "sendPack.connid : " << sendPack.connid() << std::endl;
 
-		//AUTOMUTEX
-		int wlen = send(sockfd, szBuff, msg.Header.wDataSize, 0);
-		//std::cout << "send len  : " << wlen << std::endl;
-		//usleep(100);
-		sleep(1);
-	}
+	//AUTOMUTEX
+	int wlen = send(sockfd, szBuff, msg.Header.wDataSize, 0);
+	//std::cout << "send len  : " << wlen << std::endl;
+	//usleep(100);
 }
 #define BUFFER_SIZE 1024
 #define RECV_BUF_SIZE 102400
@@ -125,8 +124,6 @@ bool DoReceiveEx()
 		//AUTOMUTEX
 		length = recv(sockfd, m_RecvBuf + m_nRecvSize, RECV_BUF_SIZE - m_nRecvSize, 0);
 	}
-
-	std::cout << "length : " << std::endl;
 
 	if (length > 0)
 	{
@@ -168,6 +165,7 @@ bool DoReceiveEx()
 			Req.ParsePartialFromArray(data, datalen);
 
 			std::cout << "Req : " << Req.connid() << std::endl;
+			sendMessage();
 
 			m_RecvOffIndex += pHeader->wDataSize;
 		}
@@ -213,8 +211,9 @@ int main(int argc, char* argv[])
 
 	cout << "succeed to connect epoll server " << endl;
 
- 	std::thread t(sendMessage);
- 	t.detach();
+ 	//std::thread t(sendMessage);
+ 	//t.detach();
+	sendMessage();
 
 	char revcbuff[1024];
 	bzero(revcbuff, 1024);
@@ -222,8 +221,9 @@ int main(int argc, char* argv[])
  	while(1)
  	{
 		//std::cout << "DoReceiveEx" << std::endl;
-	//	DoReceiveEx();
+    	DoReceiveEx();
 		usleep(2500);
+		//sleep(1);
  	}
 	close(sockfd);
 	return 0;
