@@ -5,7 +5,7 @@
 #include "ConnectionManager.h"
 #include "type_define.h"
 
-#define MAXPACKNUM 9999999
+#define MAXPACKNUM 9999
 
 #define PROCESS_MESSAGE_ITEMEX(dwMsgID, Func) \
 		case dwMsgID:{\

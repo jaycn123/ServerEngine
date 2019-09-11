@@ -6,6 +6,7 @@
 #include "memoryPool.h"
 
 #include <functional>
+#include "messageQueue.h"
 
 #define  NET_MSG_RECV				1
 #define  NET_MSG_SEND				2
