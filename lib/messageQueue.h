@@ -11,18 +11,17 @@ struct CNetPacket
 
 	}
 
-	CNetPacket(uint32 connid, uint32 len, uint32 messid, char* pdata)
+	CNetPacket(uint32 connid, uint32 len, uint32 messid)
 	{
 		m_connId = connid;
 		m_len = len;
 		messId = messid;
-		m_pData = pdata;
 	}
 
 	uint32     m_connId;
 	uint32     m_len;
 	uint32     messId;
-	char*      m_pData;
+	char       m_pData[0];
 
 };
 

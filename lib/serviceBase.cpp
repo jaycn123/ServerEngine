@@ -19,6 +19,7 @@ ServiceBase* ServiceBase::GetInstancePtr()
 
 bool ServiceBase::StartNetWork(uint32 port, uint32 maxConnNum, IPacketDispatcher* pDispather)
 {
+	signal(SIGPIPE, SIG_IGN);
 	if (pDispather == nullptr)
 	{
 		return false;
@@ -54,19 +55,12 @@ bool ServiceBase::StopNetWork()
 	return true;
 }
 
-bool ServiceBase::AddNetPackToQueue(uint32 connid, uint32 len, uint32 messid, char* pdata)
+bool ServiceBase::AddNetPackToQueue(CNetPacket* pData)
 {
-	if (m_PackNum < MAXPACKNUM)
 	{
 		AUTOMUTEX
-		m_NetPackArr[m_PackNum++] = std::move(CNetPacket(connid, len, messid, pdata));
+		m_NetPackQueue.push(pData);
 	}
-	else
-	{
-		AUTOMUTEX
-		m_NetPackQueue.push(std::move(CNetPacket(connid, len, messid, pdata)));
-	}
-
 	return true;
 }
 
@@ -111,17 +105,12 @@ void ServiceBase::ParsingLoop()
 
 void ServiceBase::ParsingNetPack()
 {
-	if (m_PackNum > 0)
+	while (!m_NetPackQueue.empty())
 	{
-		std::cout << "m_PackNum : " << m_PackNum << std::endl;
+		CNetPacket* pData = m_NetPackQueue.front();
+		m_pPacketDispatcher->DispatchPacket(pData);
+		MemoryManager::GetInstancePtr()->FreeMemoryArr(pData->m_len, (char*)pData);
+		m_NetPackQueue.pop();
 	}
-	while (m_ReadIndex < m_PackNum)
-	{
-		m_pPacketDispatcher->DispatchPacket(&(m_NetPackArr[m_ReadIndex]));
-		MemoryManager::GetInstancePtr()->FreeMemoryArr(m_NetPackArr[m_ReadIndex].m_len, m_NetPackArr[m_ReadIndex].m_pData);
-		m_ReadIndex++;
-	}
-	m_PackNum = 0;
-	m_ReadIndex = 0;
 }
 

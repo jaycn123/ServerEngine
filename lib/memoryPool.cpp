@@ -67,7 +67,7 @@ void MemoryManager::MemoryPool_init()
 	uint32_t blockCount[10] = { 0 };
 	for (uint32_t i = 0; i < 10; i++)
 	{
-		blockLen[i] = (initlen << (i + 1));
+		blockLen[i] = 10 + 10 * i;
 		blockCount[i] = 10;
 	}
 	MemoryPool_init(10, blockLen, blockCount);
@@ -77,124 +77,16 @@ char* MemoryManager::GetFreeMemoryArr(uint32_t nsize)
 {
 	AUTOMUTEX
 	useCount++;
-	std::cout << "nsize " << nsize << std::endl;
-	return m_arr[(nsize- 1)/4].GetFreeMemory();
-
-	/*
-	if (nsize <= 8)
-	{
-		return m_arr[0].GetFreeMemory();
-	}
-
-	if (nsize <= 16)
-	{
-		return m_arr[1].GetFreeMemory();
-	}
-
-	if (nsize <= 32)
-	{
-		return m_arr[2].GetFreeMemory();
-	}
-
-	if (nsize <= 64)
-	{
-		return m_arr[3].GetFreeMemory();
-	}
-
-	if (nsize <= 128)
-	{
-		return m_arr[4].GetFreeMemory();
-	}
-
-	if (nsize <= 256)
-	{
-		return m_arr[5].GetFreeMemory();
-	}
-
-	if (nsize <= 512)
-	{
-		return m_arr[6].GetFreeMemory();
-	}
-
-	if (nsize <= 1024)
-	{
-		return m_arr[7].GetFreeMemory();
-	}
-
-	if (nsize <= 2048)
-	{
-		return m_arr[8].GetFreeMemory();
-	}
-
-	if (nsize <= 4096)
-	{
-		return m_arr[9].GetFreeMemory();
-	}
-	return NULL;
-
-	*/
+	//std::cout << "nsize " << nsize << std::endl;
+	return m_arr[(nsize-1)/10].GetFreeMemory();
 }
 
 bool MemoryManager::FreeMemoryArr(uint32_t nsize, char *addr)
 {
 	AUTOMUTEX
 	freeCount++;
-
-	std::cout <<"size :" << nsize << "used : " << useCount << " free : " << freeCount <<" no free : "<< useCount - freeCount << std::endl;
-
-	return 	m_arr[(nsize - 1) / 8].FreeMemory(addr);
-	/*
-	if (nsize <= 8)
-	{
-		return m_arr[0].FreeMemory(addr);
-	}
-
-	if (nsize <= 16)
-	{
-		return m_arr[1].FreeMemory(addr);
-	}
-
-	if (nsize <= 32)
-	{
-		return m_arr[2].FreeMemory(addr);
-	}
-
-	if (nsize <= 64)
-	{
-		return m_arr[3].FreeMemory(addr);
-	}
-
-	if (nsize <= 128)
-	{
-		return m_arr[4].FreeMemory(addr);
-	}
-
-	if (nsize <= 256)
-	{
-		return m_arr[5].FreeMemory(addr);
-	}
-
-	if (nsize <= 512)
-	{
-		return m_arr[6].FreeMemory(addr);
-	}
-
-	if (nsize <= 1024)
-	{
-		return m_arr[7].FreeMemory(addr);
-	}
-
-	if (nsize <= 2048)
-	{
-		return m_arr[8].FreeMemory(addr);
-	}
-
-	if (nsize <= 4096)
-	{
-		return m_arr[9].FreeMemory(addr);
-	}
-	return true;
-	*/
+	//std::cout <<"size :" << nsize << "used : " << useCount << " free : " << freeCount <<" no free : "<< useCount - freeCount << std::endl;
+	return 	m_arr[(nsize - 1) / 10].FreeMemory(addr);
 }
 
 
@@ -268,7 +160,7 @@ char* MemoryPool::GetFreeMemory()
 	//std::cout << "get memory " << m_len <<" B"<< std::endl;
 	//PrintMemoryStatus();
 	char* pAddr = m_freeData->m_pAddr;
-	std::cout <<"GetFreeMemory : " <<&(*m_freeData) <<" m_freeData->m_isUsed : "<< m_freeData->m_isUsed << " len : "<<m_len<< std::endl;
+	//std::cout <<"GetFreeMemory : " <<&(*m_freeData) <<" m_freeData->m_isUsed : "<< m_freeData->m_isUsed << " len : "<<m_len<< std::endl;
 	m_freeData->m_isUsed = true;
 	CapacityMemory();
 	uint64_t* ptr =(uint64_t*)m_freeData->m_pAddr;
@@ -307,7 +199,7 @@ bool MemoryPool::FreeMemory(char* addr)
 {
 	uint64_t * ptr1 = (uint64_t *)(addr - 8);
 	MemoryData *m_node = (MemoryData *)(ptr1[0]);
-	std::cout << "FreeMemory : " << (void*)m_node << std::endl;
+	//std::cout << "FreeMemory : " << (void*)m_node << std::endl;
 	m_node->m_isUsed = false;
 	m_node->m_pNext = m_freeData;
 	m_freeData = m_node;

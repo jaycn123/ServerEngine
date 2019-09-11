@@ -162,9 +162,12 @@ bool Connection::DoReceive()
 				}
 
 				uint32_t datalen = pHeader->wDataSize - sizeof(NetPacketHeader);
-				char* pData = MemoryManager::GetInstancePtr()->GetFreeMemoryArr(datalen);
-				memcpy(pData, m_RecvBuf + m_RecvOffIndex + sizeof(NetPacketHeader), datalen);
-				ServiceBase::GetInstancePtr()->AddNetPackToQueue(m_ConnID, datalen, (uint32)pHeader->wOpcode, pData);
+				CNetPacket* pData = (CNetPacket*)MemoryManager::GetInstancePtr()->GetFreeMemoryArr(datalen + sizeof(CNetPacket));
+				pData->m_connId = m_ConnID;
+				pData->m_len = datalen;
+				pData->messId = pHeader->wOpcode;
+				memcpy(pData->m_pData, m_RecvBuf + m_RecvOffIndex + sizeof(NetPacketHeader), datalen);
+				ServiceBase::GetInstancePtr()->AddNetPackToQueue(pData);
 				m_RecvOffIndex += pHeader->wDataSize;
 			}
 		}
@@ -204,7 +207,7 @@ void Connection::EventCallBack(const int& m_efd, struct epoll_event* pEv, func f
 
 	if (pEv->events & EPOLLOUT)
 	{
-		switch (DoSend())
+		switch (DoSendEx())
 		{
 		case SendComplete:
 		{
@@ -217,6 +220,7 @@ void Connection::EventCallBack(const int& m_efd, struct epoll_event* pEv, func f
 
 		case SendPart:
 		{
+			std::cout << "SendPart " << std::endl;
 			struct epoll_event en;
 			en.data.ptr = this;
 			en.events = EPOLLOUT | EPOLLET;
@@ -225,8 +229,6 @@ void Connection::EventCallBack(const int& m_efd, struct epoll_event* pEv, func f
 		}
 		case SendError:
 		{
-			getchar();
-			std::cout << "zxzxzxzxzxzxzxzxzxzxzxzxzxzxzxzxzxzxzxzxzxzxzxzxzxzx" << std::endl;
 			fun();
 			break;
 		}
@@ -309,13 +311,56 @@ SendStatus Connection::DoSend()
 	{
 		if (m_SendOffIndex > m_nSendSize)
 		{
-			std::cout << "4444444444444444" << std::endl;
+			std::cout << "777777777777777777777" << std::endl;
 			return SendError;
 		}
 	}
 	std::cout << "5555555555555555" << std::endl;
 	return SendPart;
 	
+}
+
+SendStatus Connection::DoSendEx()
+{
+	AUTOMUTEX
+
+
+	std::cout << "DoSendEx : pack : "<< m_SendPackQueue.size() << std::endl;
+	while (!m_SendPackQueue.empty())
+	{
+		NetPacket* pSendMemoryAddr = m_SendPackQueue.front();
+		int	wlen = send(m_fd, (char*)pSendMemoryAddr + m_SendOffIndex, pSendMemoryAddr->Header.wDataSize - m_SendOffIndex, 0);
+		if (wlen == 0)
+		{
+			std::cout << "555555555555555555555" << std::endl;
+			return SendError;
+		}
+		if (wlen < 0)
+		{
+			if (errno == EAGAIN)
+			{
+				//perror("read error");
+				//getchar();
+				return SendPart;
+			}
+			else
+			{
+			//	perror("read error");  //read error: Broken pipe
+				return SendError;
+			}
+		}
+
+
+		m_SendOffIndex += wlen;
+
+		if (m_SendOffIndex == pSendMemoryAddr->Header.wDataSize)
+		{
+			m_SendOffIndex = 0;
+			MemoryManager::GetInstancePtr()->FreeMemoryArr(pSendMemoryAddr->Header.wDataSize, (char*)pSendMemoryAddr);
+			m_SendPackQueue.pop();
+		}
+	}
+	return SendComplete;
 }
 
 int32 Connection::GetFd()

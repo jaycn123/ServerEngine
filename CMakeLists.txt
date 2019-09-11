@@ -10,6 +10,7 @@ project ("serverdemo")
 LINK_LIBRARIES(-lpthread -lm)
 LINK_LIBRARIES(-lprotobuf -lm)
 set(CMAKE_BUILD_TYPE "Debug")
+#set(CMAKE_BUILD_TYPE "Release")
 set(CMAKE_CXX_FLAGS_DEBUG "$ENV{CXXFLAGS} -O0 -Wall -g -ggdb")
 set(CMAKE_CXX_FLAGS_RELEASE "$ENV{CXXFLAGS} -O3 -Wall")
 

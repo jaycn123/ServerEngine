@@ -32,7 +32,7 @@ public:
 
 	bool   StopNetWork();
 	
-	bool   AddNetPackToQueue(uint32 connid, uint32 len, uint32 messid, char* pdata);
+	bool   AddNetPackToQueue(CNetPacket* pData);
 
 	bool   SendMsgProtoBuf(uint32 dwConnID, uint32 dwMsgID,const google::protobuf::Message& pdata);
 
@@ -50,13 +50,7 @@ protected:
 
 	IPacketDispatcher *            m_pPacketDispatcher;
 
-	CNetPacket                     m_NetPackArr[MAXPACKNUM];
-
-	std::queue<CNetPacket>         m_NetPackQueue;
-
-	uint32                         m_PackNum = 0;
-
-	uint32                         m_ReadIndex = 0;
+	std::queue<CNetPacket*>        m_NetPackQueue;
 
 	std::mutex                     m_mutex;
 

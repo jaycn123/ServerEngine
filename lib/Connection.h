@@ -12,9 +12,9 @@
 #define  NET_MSG_SEND				2
 #define  NET_MSG_CONNECT			3
 
-#define RECV_BUF_SIZE               1024 * 1000
+#define RECV_BUF_SIZE               1024000
 
-#define SEND_BUF_SIZE               102400
+#define SEND_BUF_SIZE               1024000
 
 #define BUFFER_SIZE                 1024
 
@@ -62,6 +62,8 @@ public:
 	bool        SendBuffer(NetPacket*	pBuff);
 
 	SendStatus  DoSend();
+
+	SendStatus  DoSendEx();
 
 	int32       GetFd();
 

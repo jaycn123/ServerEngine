@@ -28,7 +28,7 @@ CGameService* CGameService::GetInstancePtr()
 
 void CGameService::Init()
 {
-	ServiceBase::GetInstancePtr()->StartNetWork(8888,1000,this);
+	ServiceBase::GetInstancePtr()->StartNetWork(8888,10,this);
 }
 
 void CGameService::Uninit()
@@ -54,7 +54,7 @@ bool CGameService::OnMsgWatchHeartBeatReq(CNetPacket* pNetPacket)
 	HeartBeatReq Req;
 	Req.ParsePartialFromArray(pNetPacket->m_pData, pNetPacket->m_len);
 
-	std::cout << "OnMsgWatchHeartBeatReq : " << Req.connid() << std::endl;
+	//std::cout << "OnMsgWatchHeartBeatReq : " << Req.connid() << std::endl;
 
 	//std::cout << "MsgFrom : " << pNetPacket->m_connId << std::endl << std::endl;
 
@@ -74,5 +74,6 @@ int main()
 {
 	CGameService::GetInstancePtr()->Init();
 	CGameService::GetInstancePtr()->Run();
+	std::cout << "exit-----------------------------------------" << std::endl;
 	return 0;
 }
