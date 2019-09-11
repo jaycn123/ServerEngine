@@ -47,20 +47,11 @@ void MemoryManager::MemoryPool_init(uint32_t colume_no, uint32_t block_len[], ui
 
 		m_arr[i]= pool; 
 
-		/*
-		//m_MemoryPoolMap[block_len[i]] = pool;
-
-		m_indexVec.push_back(block_len[i]);
-
-		m_MemoryPoolVec.push_back(pool);
-
-		m_pool = pool;
-		*/
 	}
 	return;
 }
 
-void MemoryManager::MemoryPool_init()
+void MemoryManager::Init()
 {
 	uint32_t initlen = 2;
 	uint32_t blockLen[10] = { 0 };
@@ -87,66 +78,6 @@ bool MemoryManager::FreeMemoryArr(uint32_t nsize, char *addr)
 	freeCount++;
 	//std::cout <<"size :" << nsize << "used : " << useCount << " free : " << freeCount <<" no free : "<< useCount - freeCount << std::endl;
 	return 	m_arr[(nsize - 1) / 10].FreeMemory(addr);
-}
-
-
-char* MemoryManager::GetFreeMemoryVec(uint32_t nsize)
-{
-	return NULL;
-}
-
-char* MemoryManager::GetFreeMemoryMap(uint32_t nsize)
-{
-	MemoryPool* pool = NULL;
-	for (std::map<uint32_t, MemoryPool>::iterator iter = m_MemoryPoolMap.begin(); iter != m_MemoryPoolMap.end(); ++iter)
-	{
-		if (iter->first >= nsize)
-		{
-			return iter->second.GetFreeMemory();
-		}
-	}
-	return NULL;
-}
-
-char* MemoryManager::GetFreeMemory(uint32_t nsize)
-{
-
-	MemoryPool* pool = NULL;
-	for (std::map<uint32_t, MemoryPool>::iterator iter = m_MemoryPoolMap.begin(); iter != m_MemoryPoolMap.end(); ++iter)
-	{
-		if (iter->first >= nsize)
-		{
-			return iter->second.GetFreeMemory();
-		}
-	}	
-
-	return NULL;
-}
-
-bool MemoryManager::FreeMemory(uint32_t nsize,char *addr)
-{
- 
-	char* temp = addr;
-
-	for (std::map<uint32_t, MemoryPool>::iterator iter = m_MemoryPoolMap.begin(); iter != m_MemoryPoolMap.end(); ++iter)
-	{
-		if (iter->first >= nsize)
-		{
-			return iter->second.FreeMemory(temp);
-		}
-	}
-	return true;
-}
-
-void MemoryManager::PrintMemoryStatus(uint32_t nsize)
-{
-	for (std::map<uint32_t, MemoryPool>::iterator iter = m_MemoryPoolMap.begin(); iter != m_MemoryPoolMap.end(); ++iter)
-	{
-		if (iter->first >= nsize)
-		{
-			return iter->second.PrintMemoryStatus();
-		}
-	}
 }
 
 MemoryManager* MemoryManager::GetInstancePtr()
@@ -219,13 +150,4 @@ void MemoryPool::PrintMemoryStatus()
 	}
 	std::cout << "-------------------------------- " << std::endl;
 	
-	//PrintMemoryStatus2();
-}
-
-void MemoryPool::PrintMemoryStatus2()
-{
-	for (auto it = m_usedMemoryMap.begin(); it != m_usedMemoryMap.end(); it++)
-	{
-		std::cout << "PrintMemoryStatus2222 : " << (void*)((it->second) )<< std::endl;
-	}
 }

@@ -8,7 +8,7 @@ ConnectionManager::ConnectionManager(void)
 	m_epfd = -1;
 	m_threadPool.setMaxQueueSize(100000);
 	m_threadPool.start(3);
-	MemoryManager::GetInstancePtr()->MemoryPool_init();
+	MemoryManager::GetInstancePtr()->Init();
 }
 
 ConnectionManager::~ConnectionManager(void)
