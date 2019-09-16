@@ -315,7 +315,6 @@ void Connection::EventCallBack(const int& m_efd, struct epoll_event* pEv, func f
 
 		case SendPart:
 		{
-			std::cout << "SendPart " << std::endl;
 			struct epoll_event en;
 			en.data.ptr = this;
 			en.events = EPOLLOUT | EPOLLET;
