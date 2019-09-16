@@ -28,7 +28,7 @@ CGameService* CGameService::GetInstancePtr()
 
 void CGameService::Init()
 {
-	ServiceBase::GetInstancePtr()->StartNetWork(8888,10,this);
+	ServiceBase::GetInstancePtr()->StartNetWork(8888,10000,this);
 }
 
 void CGameService::Uninit()

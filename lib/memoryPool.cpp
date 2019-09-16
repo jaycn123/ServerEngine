@@ -5,6 +5,11 @@ void MemoryManager::MemoryPool_init(uint32_t colume_no, uint32_t block_len[], ui
 {
 	for (int i = 0; i < colume_no; i++)
 	{
+		if (block_count[i] == 0 || block_len[i] == 0)
+		{
+			continue;
+		}
+
 		MemoryPool pool;
 		char * tempAddr = (char*)malloc((PTRSIZE + block_len[i]) * block_count[i]);
 		pool.m_hread = (MemoryData *)malloc(sizeof(MemoryData));
@@ -45,7 +50,7 @@ void MemoryManager::MemoryPool_init(uint32_t colume_no, uint32_t block_len[], ui
 			}
 		}
 
-		m_arr[i]= pool; 
+		m_MempoolVec.push_back(pool);
 
 	}
 	return;
@@ -54,30 +59,45 @@ void MemoryManager::MemoryPool_init(uint32_t colume_no, uint32_t block_len[], ui
 void MemoryManager::Init()
 {
 	uint32_t initlen = 2;
-	uint32_t blockLen[10] = { 0 };
-	uint32_t blockCount[10] = { 0 };
-	for (uint32_t i = 0; i < 10; i++)
+	uint32_t blockLen[PAGESIZE] = { 0 };
+	uint32_t blockCount[PAGESIZE] = { 0 };
+	for (uint32_t i = 0; i < PAGESIZE; i++)
 	{
-		blockLen[i] = 10 + 10 * i;
-		blockCount[i] = 10;
+		blockLen[i] = initlen << i;
+		blockCount[i] = PAGESIZE;
 	}
-	MemoryPool_init(10, blockLen, blockCount);
+
+	MemoryPool_init(PAGESIZE, blockLen, blockCount);
 }
 
-char* MemoryManager::GetFreeMemoryArr(uint32_t nsize)
+char* MemoryManager::GetFreeMemory(uint32_t nsize)
 {
 	AUTOMUTEX
 	useCount++;
-	//std::cout << "nsize " << nsize << std::endl;
-	return m_arr[(nsize-1)/10].GetFreeMemory();
+	
+	if (nsize > 1)
+	{
+		return m_MempoolVec[ceil(log(nsize) / log(2)) - 1].GetFreeMemory();
+	}
+	else
+	{
+		return m_MempoolVec[0].GetFreeMemory();
+	}
 }
 
-bool MemoryManager::FreeMemoryArr(uint32_t nsize, char *addr)
+bool MemoryManager::FreeMemory(uint32_t nsize, char *addr)
 {
 	AUTOMUTEX
 	freeCount++;
-	//std::cout <<"size :" << nsize << "used : " << useCount << " free : " << freeCount <<" no free : "<< useCount - freeCount << std::endl;
-	return 	m_arr[(nsize - 1) / 10].FreeMemory(addr);
+
+	if (nsize > 1)
+	{
+		return m_MempoolVec[ceil(log(nsize) / log(2)) - 1].FreeMemory(addr);
+	}
+	else
+	{
+		return m_MempoolVec[0].FreeMemory(addr); 
+	}
 }
 
 MemoryManager* MemoryManager::GetInstancePtr()
@@ -128,6 +148,7 @@ void MemoryPool::CapacityMemory()
 
 bool MemoryPool::FreeMemory(char* addr)
 {
+	//std::cout << "FreeMemory : " << (void*)addr << std::endl;
 	uint64_t * ptr1 = (uint64_t *)(addr - 8);
 	MemoryData *m_node = (MemoryData *)(ptr1[0]);
 	//std::cout << "FreeMemory : " << (void*)m_node << std::endl;

@@ -12,11 +12,8 @@
 #define  NET_MSG_SEND				2
 #define  NET_MSG_CONNECT			3
 
-#define RECV_BUF_SIZE               1024000
+#define RECV_BUF_SIZE               65536
 
-#define SEND_BUF_SIZE               1024000
-
-#define BUFFER_SIZE                 1024
 
 #define Hash_Map                    std::map
 
@@ -50,6 +47,8 @@ public:
 	bool	    ExtractBuffer();
 			    
 	bool	    DoReceive();
+
+	bool	    DoReceiveEx();
 			    
 	void	    EventCallBack(const int& m_efd, struct epoll_event* pEv,func fun);
 			    
@@ -63,8 +62,6 @@ public:
 
 	SendStatus  DoSend();
 
-	SendStatus  DoSendEx();
-
 	int32       GetFd();
 
 	
@@ -76,7 +73,8 @@ public:
 			                
 	bool	                m_ConnComplete;
 			                
-	char                    m_RecvBuf[RECV_BUF_SIZE];
+	//char                    m_RecvBuf[RECV_BUF_SIZE];
+	char                    m_RecvBuf[1];
 			                
 	uint32                  m_RecvOffIndex = 0;
 			                
@@ -84,9 +82,11 @@ public:
 			                
 	uint32                  m_tempCount = 0;
 
+	//
+	char*                    m_pRecvBuf = nullptr;
+
 	//-----------------------------
 
-	char                    m_SendBuf[SEND_BUF_SIZE];
 
 	NetPacket*              pSendMemoryAddr = nullptr;
 

@@ -1,15 +1,17 @@
 #ifndef MEMORY_H
 #define MEMORY_H
 #include <stdint.h>
-#include <vector>
-#include <map>
 #include <iostream>
-#include <unordered_map>
 #include <string.h>
 #include <mutex>
+#include <math.h>
+#include <cmath>
+#include <vector>
 
 #define FREEMEMORY MemoryManager::GetInstancePtr()->FreeMemory(sizeof(this),(char*)this);
 #define PTRSIZE 8
+
+#define PAGESIZE 20
 
 #define AUTOMUTEX std::lock_guard<std::mutex> lock(m_mutex);
 
@@ -50,17 +52,23 @@ public:
 
 	void MemoryPool_init(uint32_t colume_no, uint32_t block_len[], uint32_t block_count[]);
 
-	char* GetFreeMemoryArr(uint32_t nsize);
+	char* GetFreeMemory(uint32_t nsize);
 
-	bool FreeMemoryArr(uint32_t nsize, char *addr);
+	bool FreeMemory(uint32_t nsize, char *addr);
 
 	static MemoryManager* GetInstancePtr();
+
+protected:
+
+	
 
 private:
 
 	MemoryManager() {}
 
-	MemoryPool m_arr[10];
+	//MemoryPool m_arr[PAGESIZE];
+
+	std::vector<MemoryPool>m_MempoolVec;
 
 	std::mutex m_mutex;
 

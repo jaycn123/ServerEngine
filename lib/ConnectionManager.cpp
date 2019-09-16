@@ -245,7 +245,7 @@ bool ConnectionManager::sendMessageByConnID(uint32 connid, uint32 msgid, const c
 		return false;
 	}
 
-	NetPacket* pMemData = (NetPacket*)MemoryManager::GetInstancePtr()->GetFreeMemoryArr(dwLen + sizeof(NetPacketHeader));
+	NetPacket* pMemData = (NetPacket*)MemoryManager::GetInstancePtr()->GetFreeMemory(dwLen + sizeof(NetPacketHeader));
 	pMemData->Header.wOpcode = SENDDATA;
 	pMemData->Header.wCode = NET_CODE;
 	pMemData->Header.wDataSize = dwLen + sizeof(NetPacketHeader);
@@ -289,9 +289,10 @@ void ConnectionManager::AddNewConn(int32 fd)
 		Connection* pConn = m_ConnectionVec.at(i);
 		if (!pConn->GetConnStatus())
 		{
+			std::cout << "new connid : " << pConn->GetConnectionID() << std::endl;
+
 			pConn->SetSocket(fd);
 			AddEpollFd(fd, pConn, true);
-			std::cout << "new connid : " <<pConn->GetConnectionID() << std::endl;
 			break;
 		}
 	}

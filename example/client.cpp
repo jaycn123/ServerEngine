@@ -225,6 +225,7 @@ int main(int argc, char* argv[])
 
 	cout << "succeed to connect epoll server " << endl;
 
+
  	std::thread t(sendMessage);
  	t.detach();
 	//sendMessage();
