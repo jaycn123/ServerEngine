@@ -9,7 +9,7 @@
 
 Connection::Connection()
 {
-	//SetConnStatus(false);
+	m_ConnComplete = false;
 }
 
 Connection::~Connection()

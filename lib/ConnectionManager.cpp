@@ -283,8 +283,7 @@ void ConnectionManager::CheckConntionAvalible()
 
 void ConnectionManager::AddNewConn(int32 fd)
 {
-
-	for (int32 i = 0; i < m_ConnectionVec.size(); ++i)
+	for (int32 i = 0; i < m_ConnectionVec.size(); i++)
 	{
 		Connection* pConn = m_ConnectionVec.at(i);
 		if (!pConn->GetConnStatus())
