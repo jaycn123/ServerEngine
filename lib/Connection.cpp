@@ -112,15 +112,15 @@ bool Connection::DoReceive()
 				m_RecvOffIndex = 0;
 
 
-				std::cout <<"m_nRecvSize : " << m_nRecvSize << " m_RecvOffIndex : " << m_RecvOffIndex << std::endl;
-				std::cout << "清理数据 ----------" << std::endl;
+				//std::cout <<"m_nRecvSize : " << m_nRecvSize << " m_RecvOffIndex : " << m_RecvOffIndex << std::endl;
+				//std::cout << "清理数据 ----------" << std::endl;
 			}
 			else
 			{
 				bzero(m_RecvBuf, RECV_BUF_SIZE);
 				m_RecvOffIndex = 0;
 				m_nRecvSize = 0;
-				std::cout << "发送完成 ----------" << std::endl;
+				//std::cout << "发送完成 ----------" << std::endl;
 			}
 		}
 
@@ -196,7 +196,6 @@ bool Connection::DoReceive()
 
 bool Connection::DoReceiveEx()
 {
-	std::cout << " free : " << (void*)m_pRecvBuf << std::endl;
 	int32 length = 0;
 	while (true)
 	{
@@ -209,15 +208,14 @@ bool Connection::DoReceiveEx()
 				m_RecvOffIndex = 0;
 
 
-				std::cout << "m_nRecvSize : " << m_nRecvSize << " m_RecvOffIndex : " << m_RecvOffIndex << std::endl;
-				std::cout << "清理数据 ----------" << std::endl;
+				//std::cout << "m_nRecvSize : " << m_nRecvSize << " m_RecvOffIndex : " << m_RecvOffIndex << std::endl;
+				//std::cout << "清理数据 ----------" << std::endl;
 			}
 			else
 			{
 				bzero(m_pRecvBuf, RECV_BUF_SIZE);
 				m_RecvOffIndex = 0;
 				m_nRecvSize = 0;
-				std::cout << "发送完成 ----------" << std::endl;
 			}
 		}
 
@@ -364,7 +362,7 @@ bool Connection::SendBuffer(NetPacket* pBuff)
 SendStatus Connection::DoSend()
 {
 	AUTOMUTEX
-	std::cout << "DoSendEx : pack : "<< m_SendPackQueue.size() << std::endl;
+	//std::cout << "DoSendEx : pack : "<< m_SendPackQueue.size() << std::endl;
 	while (!m_SendPackQueue.empty())
 	{
 		NetPacket* pSendMemoryAddr = m_SendPackQueue.front();
