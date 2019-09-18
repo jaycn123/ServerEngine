@@ -51,3 +51,15 @@ bool CommonFunc::CreateDir(std::string& strDir)
 
 	return false;
 }
+
+
+
+bool CommonFunc::StringTrim(std::string& strValue)
+{
+	if (!strValue.empty())
+	{
+		strValue.erase(0, strValue.find_first_not_of((" \n\r\t")));
+		strValue.erase(strValue.find_last_not_of((" \n\r\t")) + 1);
+	}
+	return true;
+}

@@ -8,11 +8,7 @@
 
 CGameService::CGameService(void)
 {
-	if (!CLog::GetInstancePtr()->StartLog("gateServer", "log"))
-	{
-		std::cout << "error " << std::endl;
-	}
-	CLog::GetInstancePtr()->LogError("---------server start-----------");
+	
 }
 
 CGameService::~CGameService(void)
@@ -28,7 +24,29 @@ CGameService* CGameService::GetInstancePtr()
 
 void CGameService::Init()
 {
-	ServiceBase::GetInstancePtr()->StartNetWork(8888,10000,this);
+	if (!CLog::GetInstancePtr()->StartLog("gateServer", "log"))
+	{
+		std::cout << "error can not create log" << std::endl;
+	}
+
+	CLog::GetInstancePtr()->LogError("---------server start-----------");
+
+	if (!CConfigFile::GetInstancePtr()->Load("servercfg.ini"))
+	{
+		CLog::GetInstancePtr()->LogError("配制文件加载失败!");
+		return;
+	}
+
+	CLog::GetInstancePtr()->SetLogLevel(CConfigFile::GetInstancePtr()->GetIntValue("gate_log_level"));
+
+	uint32_t port = CConfigFile::GetInstancePtr()->GetIntValue("gate_svr_port");
+	uint32_t maxcon = CConfigFile::GetInstancePtr()->GetIntValue("gate_svr_max_con");
+
+
+	std::cout << "port : " << port << " maxcon : "<< maxcon << std::endl;
+
+
+	ServiceBase::GetInstancePtr()->StartNetWork(port, maxcon, this);
 }
 
 void CGameService::Uninit()

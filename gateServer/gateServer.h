@@ -2,6 +2,7 @@
 #define CHATSERVER_H
 
 #include "../lib/messageQueue.h"
+#include "../lib/configFile.h"
 
 
 class CGameService : public IPacketDispatcher
