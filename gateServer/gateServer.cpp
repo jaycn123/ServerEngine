@@ -71,6 +71,16 @@ bool CGameService::DispatchPacket(CNetPacket* pNetPacket)
 
 bool CGameService::OnForwardNetPack(CNetPacket* pNetPacket)
 {
+	HeartBeatReq Req;
+	Req.ParsePartialFromArray(pNetPacket->m_pData, pNetPacket->m_len);
+
+	std::cout << "OnMsgWatchHeartBeatReq : " << Req.connid() << std::endl;
+
+	//std::cout << "MsgFrom : " << pNetPacket->m_connId << std::endl << std::endl;
+
+	static uint32_t count = 1;
+
+	testSendProtobuf(pNetPacket->m_connId, Req.connid());
 	return true;
 }
 
