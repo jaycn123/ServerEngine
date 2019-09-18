@@ -26,6 +26,8 @@ public:
 	
 public:
 
+	bool OnForwardNetPack(CNetPacket* pNetPacket);
+
 	//*********************消息处理定义开始******************************
 	bool OnMsgWatchHeartBeatReq(CNetPacket* pNetPacket);
 	//*********************消息处理定义结束******************************

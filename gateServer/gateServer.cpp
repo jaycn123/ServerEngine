@@ -43,10 +43,17 @@ void CGameService::Run()
 
 bool CGameService::DispatchPacket(CNetPacket* pNetPacket)
 {
-	switch (pNetPacket->messId)
-	{
-		PROCESS_MESSAGE_ITEMEX(1, OnMsgWatchHeartBeatReq)
-	}
+	OnForwardNetPack(pNetPacket);
+// 	switch (pNetPacket->messId)
+// 	{
+// 		PROCESS_MESSAGE_ITEMEX(1, OnMsgWatchHeartBeatReq)
+// 	}
+
+}
+
+bool CGameService::OnForwardNetPack(CNetPacket* pNetPacket)
+{
+	return true;
 }
 
 bool CGameService::OnMsgWatchHeartBeatReq(CNetPacket* pNetPacket)
@@ -54,7 +61,7 @@ bool CGameService::OnMsgWatchHeartBeatReq(CNetPacket* pNetPacket)
 	HeartBeatReq Req;
 	Req.ParsePartialFromArray(pNetPacket->m_pData, pNetPacket->m_len);
 
-	//std::cout << "OnMsgWatchHeartBeatReq : " << Req.connid() << std::endl;
+	std::cout << "OnMsgWatchHeartBeatReq : " << Req.connid() << std::endl;
 
 	//std::cout << "MsgFrom : " << pNetPacket->m_connId << std::endl << std::endl;
 
