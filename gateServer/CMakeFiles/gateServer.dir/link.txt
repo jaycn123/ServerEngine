@@ -1,1 +1,0 @@
-/usr/bin/c++   -O0 -Wall -g -ggdb   CMakeFiles/gateServer.dir/gateServer.cpp.o  -o ../bin/gateServer -lpthread -lm -lprotobuf -lm ../liba/libproto.a ../liba/libengine.a -lpthread -lm -lprotobuf -lm -lprotobuf 
