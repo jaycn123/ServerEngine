@@ -51,14 +51,6 @@ class TestProto : public ::google::protobuf::Message /* @@protoc_insertion_point
     return *this;
   }
 
-  inline const ::google::protobuf::UnknownFieldSet& unknown_fields() const {
-    return _internal_metadata_.unknown_fields();
-  }
-
-  inline ::google::protobuf::UnknownFieldSet* mutable_unknown_fields() {
-    return _internal_metadata_.mutable_unknown_fields();
-  }
-
   static const ::google::protobuf::Descriptor* descriptor();
   static const TestProto& default_instance();
 
@@ -108,14 +100,12 @@ class TestProto : public ::google::protobuf::Message /* @@protoc_insertion_point
   // accessors -------------------------------------------------------
 
   // optional int32 id = 1;
-  bool has_id() const;
   void clear_id();
   static const int kIdFieldNumber = 1;
   ::google::protobuf::int32 id() const;
   void set_id(::google::protobuf::int32 value);
 
   // optional string name = 2;
-  bool has_name() const;
   void clear_name();
   static const int kNameFieldNumber = 2;
   const ::std::string& name() const;
@@ -128,16 +118,12 @@ class TestProto : public ::google::protobuf::Message /* @@protoc_insertion_point
 
   // @@protoc_insertion_point(class_scope:TestProto)
  private:
-  inline void set_has_id();
-  inline void clear_has_id();
-  inline void set_has_name();
-  inline void clear_has_name();
 
   ::google::protobuf::internal::InternalMetadataWithArena _internal_metadata_;
-  ::google::protobuf::uint32 _has_bits_[1];
-  mutable int _cached_size_;
+  bool _is_default_instance_;
   ::google::protobuf::internal::ArenaStringPtr name_;
   ::google::protobuf::int32 id_;
+  mutable int _cached_size_;
   friend void  protobuf_AddDesc_test_2eproto();
   friend void protobuf_AssignDesc_test_2eproto();
   friend void protobuf_ShutdownFile_test_2eproto();
@@ -157,14 +143,6 @@ class HeartBeatReq : public ::google::protobuf::Message /* @@protoc_insertion_po
   inline HeartBeatReq& operator=(const HeartBeatReq& from) {
     CopyFrom(from);
     return *this;
-  }
-
-  inline const ::google::protobuf::UnknownFieldSet& unknown_fields() const {
-    return _internal_metadata_.unknown_fields();
-  }
-
-  inline ::google::protobuf::UnknownFieldSet* mutable_unknown_fields() {
-    return _internal_metadata_.mutable_unknown_fields();
   }
 
   static const ::google::protobuf::Descriptor* descriptor();
@@ -216,7 +194,6 @@ class HeartBeatReq : public ::google::protobuf::Message /* @@protoc_insertion_po
   // accessors -------------------------------------------------------
 
   // optional int32 connid = 1;
-  bool has_connid() const;
   void clear_connid();
   static const int kConnidFieldNumber = 1;
   ::google::protobuf::int32 connid() const;
@@ -224,13 +201,11 @@ class HeartBeatReq : public ::google::protobuf::Message /* @@protoc_insertion_po
 
   // @@protoc_insertion_point(class_scope:HeartBeatReq)
  private:
-  inline void set_has_connid();
-  inline void clear_has_connid();
 
   ::google::protobuf::internal::InternalMetadataWithArena _internal_metadata_;
-  ::google::protobuf::uint32 _has_bits_[1];
-  mutable int _cached_size_;
+  bool _is_default_instance_;
   ::google::protobuf::int32 connid_;
+  mutable int _cached_size_;
   friend void  protobuf_AddDesc_test_2eproto();
   friend void protobuf_AssignDesc_test_2eproto();
   friend void protobuf_ShutdownFile_test_2eproto();
@@ -247,78 +222,58 @@ class HeartBeatReq : public ::google::protobuf::Message /* @@protoc_insertion_po
 // TestProto
 
 // optional int32 id = 1;
-inline bool TestProto::has_id() const {
-  return (_has_bits_[0] & 0x00000001u) != 0;
-}
-inline void TestProto::set_has_id() {
-  _has_bits_[0] |= 0x00000001u;
-}
-inline void TestProto::clear_has_id() {
-  _has_bits_[0] &= ~0x00000001u;
-}
 inline void TestProto::clear_id() {
   id_ = 0;
-  clear_has_id();
 }
 inline ::google::protobuf::int32 TestProto::id() const {
   // @@protoc_insertion_point(field_get:TestProto.id)
   return id_;
 }
 inline void TestProto::set_id(::google::protobuf::int32 value) {
-  set_has_id();
+  
   id_ = value;
   // @@protoc_insertion_point(field_set:TestProto.id)
 }
 
 // optional string name = 2;
-inline bool TestProto::has_name() const {
-  return (_has_bits_[0] & 0x00000002u) != 0;
-}
-inline void TestProto::set_has_name() {
-  _has_bits_[0] |= 0x00000002u;
-}
-inline void TestProto::clear_has_name() {
-  _has_bits_[0] &= ~0x00000002u;
-}
 inline void TestProto::clear_name() {
   name_.ClearToEmptyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
-  clear_has_name();
 }
 inline const ::std::string& TestProto::name() const {
   // @@protoc_insertion_point(field_get:TestProto.name)
   return name_.GetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
 }
 inline void TestProto::set_name(const ::std::string& value) {
-  set_has_name();
+  
   name_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), value);
   // @@protoc_insertion_point(field_set:TestProto.name)
 }
 inline void TestProto::set_name(const char* value) {
-  set_has_name();
+  
   name_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), ::std::string(value));
   // @@protoc_insertion_point(field_set_char:TestProto.name)
 }
 inline void TestProto::set_name(const char* value, size_t size) {
-  set_has_name();
+  
   name_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(),
       ::std::string(reinterpret_cast<const char*>(value), size));
   // @@protoc_insertion_point(field_set_pointer:TestProto.name)
 }
 inline ::std::string* TestProto::mutable_name() {
-  set_has_name();
+  
   // @@protoc_insertion_point(field_mutable:TestProto.name)
   return name_.MutableNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
 }
 inline ::std::string* TestProto::release_name() {
   // @@protoc_insertion_point(field_release:TestProto.name)
-  clear_has_name();
+  
   return name_.ReleaseNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
 }
 inline void TestProto::set_allocated_name(::std::string* name) {
   if (name != NULL) {
-    set_has_name();
+    
   } else {
-    clear_has_name();
+    
   }
   name_.SetAllocatedNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), name);
   // @@protoc_insertion_point(field_set_allocated:TestProto.name)
@@ -329,25 +284,15 @@ inline void TestProto::set_allocated_name(::std::string* name) {
 // HeartBeatReq
 
 // optional int32 connid = 1;
-inline bool HeartBeatReq::has_connid() const {
-  return (_has_bits_[0] & 0x00000001u) != 0;
-}
-inline void HeartBeatReq::set_has_connid() {
-  _has_bits_[0] |= 0x00000001u;
-}
-inline void HeartBeatReq::clear_has_connid() {
-  _has_bits_[0] &= ~0x00000001u;
-}
 inline void HeartBeatReq::clear_connid() {
   connid_ = 0;
-  clear_has_connid();
 }
 inline ::google::protobuf::int32 HeartBeatReq::connid() const {
   // @@protoc_insertion_point(field_get:HeartBeatReq.connid)
   return connid_;
 }
 inline void HeartBeatReq::set_connid(::google::protobuf::int32 value) {
-  set_has_connid();
+  
   connid_ = value;
   // @@protoc_insertion_point(field_set:HeartBeatReq.connid)
 }
