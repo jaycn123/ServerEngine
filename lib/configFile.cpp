@@ -1,4 +1,4 @@
-﻿#include "ConfigFile.h"
+﻿#include "configFile.h"
 #include "CommonFunc.h"
 #include "Log.h"
 
