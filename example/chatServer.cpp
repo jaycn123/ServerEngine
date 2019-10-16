@@ -5,14 +5,11 @@
 #include "../lib/type_define.h"
 #include "chatServer.h"
 #include "../lib/Log.h"
+#include "../lib/configFile.h"
 
 CGameService::CGameService(void)
 {
-	if (!CLog::GetInstancePtr()->StartLog("ChatServer", "log"))
-	{
-		std::cout << "error " << std::endl;
-	}
-	CLog::GetInstancePtr()->LogError("---------server start-----------");
+	
 }
 
 CGameService::~CGameService(void)
@@ -28,6 +25,27 @@ CGameService* CGameService::GetInstancePtr()
 
 void CGameService::Init()
 {
+
+	if (!CLog::GetInstancePtr()->StartLog("gameServer", "log"))
+	{
+		std::cout << "error can not create log" << std::endl;
+	}
+
+	CLog::GetInstancePtr()->LogError("---------server start-----------");
+
+	if (!CConfigFile::GetInstancePtr()->Load("servercfg.ini"))
+	{
+		CLog::GetInstancePtr()->LogError("配制文件加载失败!");
+		return;
+	}
+
+	CLog::GetInstancePtr()->SetLogLevel(CConfigFile::GetInstancePtr()->GetIntValue("game_log_level"));
+
+	uint32_t port = CConfigFile::GetInstancePtr()->GetIntValue("game_svr_port");
+	uint32_t maxcon = CConfigFile::GetInstancePtr()->GetIntValue("game_svr_max_con");
+
+
+	std::cout << "port : " << port << " maxcon : " << maxcon << std::endl;
 	ServiceBase::GetInstancePtr()->StartNetWork(8888,10000,this);
 }
 
