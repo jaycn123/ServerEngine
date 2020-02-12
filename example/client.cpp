@@ -88,7 +88,7 @@ void sendMessage()
 		int wlen = send(sockfd, szBuff, msg.Header.wDataSize, 0);
 		//std::cout << "send len  : " << wlen << std::endl;
 		//sleep(1);
-		//usleep(1000);
+		usleep(5000);
 	}
 }
 #define BUFFER_SIZE 1024

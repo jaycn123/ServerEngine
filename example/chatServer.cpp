@@ -78,7 +78,7 @@ bool CGameService::OnMsgWatchHeartBeatReq(CNetPacket* pNetPacket)
 
 	static uint32_t count = 1;
 
-	testSendProtobuf(pNetPacket->m_connId, Req.connid());
+	//testSendProtobuf(pNetPacket->m_connId, Req.connid());
 }
 
 void CGameService::testSendProtobuf(uint32 connid,uint32_t tempcount)

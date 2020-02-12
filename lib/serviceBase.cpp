@@ -109,7 +109,7 @@ void ServiceBase::ParsingNetPack()
 	{
 		CNetPacket* pData = m_NetPackQueue.front();
 		m_pPacketDispatcher->DispatchPacket(pData);
-		MemoryManager::GetInstancePtr()->FreeMemory(pData->m_len, (char*)pData);
+		MemoryManager::GetInstancePtr()->FreeMemory(pData->m_len + sizeof(CNetPacket), (char*)pData);
 		m_NetPackQueue.pop();
 	}
 }

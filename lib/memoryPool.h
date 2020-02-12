@@ -42,6 +42,8 @@ struct MemoryPool
 
 	void PrintMemoryStatus();
 
+	std::vector<MemoryData*> m_nodeVec;
+
 };
 
 class MemoryManager
@@ -66,8 +68,6 @@ private:
 
 	MemoryManager() {}
 
-	//MemoryPool m_arr[PAGESIZE];
-
 	std::vector<MemoryPool>m_MempoolVec;
 
 	std::mutex m_mutex;
@@ -76,6 +76,7 @@ private:
 	uint32_t useCount = 0;
 
 	uint32_t freeCount = 0;
+
 };
 
 #endif
