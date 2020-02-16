@@ -3,16 +3,16 @@
 
 #include "../lib/messageQueue.h"
 #include "../lib/configFile.h"
+#include "../lib/Connection.h"
 
-
-class CGameService : public IPacketDispatcher
+class GateServer : public IPacketDispatcher
 {
 private:
-	CGameService(void);
-	virtual ~CGameService(void);
+	GateServer(void);
+	virtual ~GateServer(void);
 
 public:
-	static CGameService* GetInstancePtr();
+	static GateServer* GetInstancePtr();
 
 	void		Init();
 
@@ -22,7 +22,15 @@ public:
 
 	bool		DispatchPacket(CNetPacket* pNetPacket);
 
-public:
+	void        OnSecondTimer();
+
+	void        OnCloseConnect(Connection* pConnection);
+
+	void		OnNewConnect(Connection* pConnection);
+
+protected:
+
+	bool        ConnectionGame();
 
 	
 public:
@@ -34,6 +42,10 @@ public:
 	//*********************消息处理定义结束******************************
 
 	void testSendProtobuf(uint32 connid, uint32_t tempcount);
+
+private:
+
+	uint32_t m_GameConnID = 0;
 
 };
 

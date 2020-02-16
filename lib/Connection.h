@@ -6,7 +6,7 @@
 #include "memoryPool.h"
 
 #include <functional>
-#include "messageQueue.h"
+
 
 #define  NET_MSG_RECV				1
 #define  NET_MSG_SEND				2
@@ -32,8 +32,6 @@ public:
 			    
 	int32       GetConnStatus();
 			    
-	void        SetConnStatus(bool status);
-			    
 	void        SetConnectionID(int32 dwConnID);
 			    
 	void	    SetConnectionData(int64 dwData);
@@ -47,8 +45,6 @@ public:
 	bool	    ExtractBuffer();
 			    
 	bool	    DoReceive();
-
-	bool	    DoReceiveEx();
 			    
 	void	    EventCallBack(const int& m_efd, struct epoll_event* pEv,func fun);
 			    
@@ -72,10 +68,7 @@ public:
 	int32	                m_ConnID;
 			                
 	bool	                m_ConnComplete;
-			                
-	//char                    m_RecvBuf[RECV_BUF_SIZE];
-	char                    m_RecvBuf[1];
-			                
+			                                
 	uint32                  m_RecvOffIndex = 0;
 			                
 	uint32                  m_nRecvSize = 0;

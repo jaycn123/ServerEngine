@@ -3,16 +3,17 @@
 
 #include "../lib/messageQueue.h"
 #include "../lib/configFile.h"
+#include "../lib/Connection.h"
 
 
-class CGameService : public IPacketDispatcher
+class AccountServer : public IPacketDispatcher
 {
 private:
-	CGameService(void);
-	virtual ~CGameService(void);
+	AccountServer(void);
+	virtual ~AccountServer(void);
 
 public:
-	static CGameService* GetInstancePtr();
+	static AccountServer* GetInstancePtr();
 
 	void		Init();
 
@@ -22,8 +23,11 @@ public:
 
 	bool		DispatchPacket(CNetPacket* pNetPacket);
 
-public:
+	void        OnSecondTimer();
 
+	void        OnCloseConnect(Connection* pConnection);
+
+	void		OnNewConnect(Connection* pConnection);
 	
 public:
 

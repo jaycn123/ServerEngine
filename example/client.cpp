@@ -13,6 +13,7 @@
 #include <unistd.h>
 #include "../lib/type_define.h"
 #include "../protoFiles/test.pb.h"
+#include "../protoFiles/msgId.pb.h"
 #include "../lib/netpack.h"
 
 /*
@@ -61,11 +62,11 @@ void sendMessage()
 	i++;
 	//std::cout << "msg.Header.wDataSize : " << msg.Header.wDataSize << std::endl;
 
-	for (;;)
-	//for (uint32_t j = 0;j < 1; j++)
+	//for (;;)
+	for (uint32_t j = 0;j < 1; j++)
 	{
 		NetPacket msg;
-		msg.Header.wOpcode = SENDDATA;
+		msg.Header.wOpcode = MessageID::MSGID_FIRST_REQ;
 		msg.Header.wCode = NET_CODE;
 
 		HeartBeatReq sendPack;
@@ -112,9 +113,7 @@ bool DoReceiveEx()
 		{
 			if ((m_nRecvSize - m_RecvOffIndex) > 0)
 			{
-
 				std::cout << " clean m_nRecvSize " << m_nRecvSize <<" m_RecvOffIndex "<< m_RecvOffIndex << std::endl;
-
 
 				memmove(m_RecvBuf, m_RecvBuf + m_RecvOffIndex, m_nRecvSize - m_RecvOffIndex);
 				m_nRecvSize = m_nRecvSize - m_RecvOffIndex;

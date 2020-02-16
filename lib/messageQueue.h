@@ -1,8 +1,8 @@
 #ifndef MESSAGEQUEUE_H
 #define MESSAGEQUEUE_H
+
 #include "type_define.h"
-
-
+#include "Connection.h"
 
 struct CNetPacket
 {
@@ -25,14 +25,18 @@ struct CNetPacket
 
 };
 
+struct IDataHandler
+{
+	virtual void OnCloseConnect(Connection* pConnection) = 0;
+	virtual void OnNewConnect(Connection* pConnection) = 0;
+};
+
 struct IPacketDispatcher
 {
 	virtual bool DispatchPacket(CNetPacket* pNetPacket) = 0;
-	/*
-	virtual bool OnSecondTimer() = 0;
-	virtual bool OnCloseConnect(CConnection* pConnection) = 0;
-	virtual bool OnNewConnect(CConnection* pConnection) = 0;
-	*/
+	virtual void OnSecondTimer() = 0;
+	virtual void OnCloseConnect(Connection* pConnection) = 0;
+	virtual void OnNewConnect(Connection* pConnection) = 0;
 };
 
 #endif

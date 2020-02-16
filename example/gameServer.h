@@ -2,16 +2,17 @@
 #define CHATSERVER_H
 
 #include "../lib/messageQueue.h"
+#include "../lib/Connection.h"
 
 
-class CGameService : public IPacketDispatcher
+class GameServer : public IPacketDispatcher
 {
 private:
-	CGameService(void);
-	virtual ~CGameService(void);
+	GameServer(void);
+	virtual ~GameServer(void);
 
 public:
-	static CGameService* GetInstancePtr();
+	static GameServer* GetInstancePtr();
 
 	void		Init();
 
@@ -20,6 +21,12 @@ public:
 	void		Run();
 
 	bool		DispatchPacket(CNetPacket* pNetPacket);
+
+	void        OnSecondTimer();
+
+	void        OnCloseConnect(Connection* pConnection);
+
+	void		OnNewConnect(Connection* pConnection);
 
 public:
 

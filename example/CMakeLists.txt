@@ -6,7 +6,7 @@ cmake_minimum_required (VERSION 3.8)
 
 aux_source_directory(. DIR_SRCS)
 
-add_executable (serverd "chatServer.cpp" "chatServer.h")
+add_executable (serverd "gameServer.cpp" "gameServer.h")
 add_executable (client "client.cpp")
 
 # 将源代码添加到此项目的可执行文件。

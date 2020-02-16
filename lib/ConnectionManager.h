@@ -2,7 +2,6 @@
 #define CONNECTION_H
 #include <iostream>
 #include "type_define.h"
-#include "ThreadPool.h"
 #include "Connection.h"
 
 class ConnectionManager
@@ -16,41 +15,38 @@ protected:
 
 public:
 
-	static      ConnectionManager* GetInstancePtr();
+	static				ConnectionManager* GetInstancePtr();
 
-	bool		CreteSocket(xstring& ip, int32 port);
+	bool				CreteSocket(xstring& ip, int32 port);
 
-	bool	    CreateEpollEvent();
+	bool				CreateEpollEvent();
 
-	void        AddEpollFd(bool enable_et = false);
+	void				AddEpollFd(bool enable_et = false);
 
-	void        AddEpollFd(int fd, Connection* pConn, bool enable_et);
+	void				AddEpollFd(int fd, Connection* pConn, bool enable_et);
 
-	void        sendBroadcastmessage(int32 clientfd);
+	void				sendBroadcastmessage(int32 clientfd);
 
-	int         setnonblocking(int sockfd);
+	int					setnonblocking(int sockfd);
 
-	void        Run();
+	void				Run();
 
-	void        SetConnectionNum(int32 nMaxCons);
+	void				SetConnectionNum(int32 nMaxCons);
 
-	void        Init();
+	void				Init();
 
-	void        Start();
+	void				Close();
 
-	void        Close();
+	bool				sendMessageByConnID(uint32 connid, uint32 msgid, const char* pData, uint32 dwLen);
 
-	bool        CanExit();
+	void				CheckConntionAvalible();
 
-	bool		SendConnIDToClient(int32 fd, int32 connID);
+	Connection*         ConnectionToServer(std::string& ip, uint32 port);
 
-	bool        sendMessageByConnID(uint32 connid, uint32 msgid, const char* pData, uint32 dwLen);
-
-	void        CheckConntionAvalible();
 
 protected:
 
-	void        AddNewConn(int32 fd);
+	Connection*        AddNewConn(int32 fd);
 
 	Connection*        GetConnByFd(int32 fd);
 				       
@@ -65,8 +61,6 @@ private:
 	int32 m_epfd;
 
 	struct epoll_event m_events[EPOLL_SIZE];
-
-	fivestar::ThreadPool m_threadPool;
 
 	typedef std::function<void()> Looptask;
 

@@ -12,8 +12,7 @@
 		if(Func(pNetPacket)){return true;}}break;
 
 
-
-class ServiceBase
+class ServiceBase : public IDataHandler
 {
 
 protected:
@@ -26,7 +25,7 @@ public:
 
 	static ServiceBase* GetInstancePtr();
 
-	bool   StartNetWork(uint32 port, uint32 maxConnNum, IPacketDispatcher* pDispather);
+	bool   StartNetWork(std::string& ip, uint32 port, uint32 maxConnNum, IPacketDispatcher* pDispather);
 
 	bool   Run();
 
@@ -35,6 +34,12 @@ public:
 	bool   AddNetPackToQueue(CNetPacket* pData);
 
 	bool   SendMsgProtoBuf(uint32 dwConnID, uint32 dwMsgID,const google::protobuf::Message& pdata);
+
+	bool   SendDataByConnID(uint32 connid, uint32 msgid, const char* pData, uint32 dwLen);
+
+	void   OnCloseConnect(Connection* pConnection);
+
+	void   OnNewConnect(Connection* pConnection);
 
 protected:
 
@@ -55,6 +60,8 @@ protected:
 	std::mutex                     m_mutex;
 
 	uint32                         m_checkConnStatus = 0;
+
+	uint64_t                       m_tickCount = 0;
 };
 
 

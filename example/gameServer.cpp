@@ -3,27 +3,27 @@
 #include "../protoFiles/test.pb.h"
 #include "../lib/serviceBase.h"
 #include "../lib/type_define.h"
-#include "chatServer.h"
+#include "gameServer.h"
 #include "../lib/Log.h"
 #include "../lib/configFile.h"
 
-CGameService::CGameService(void)
+GameServer::GameServer(void)
 {
 	
 }
 
-CGameService::~CGameService(void)
+GameServer::~GameServer(void)
 {
 
 }
 
-CGameService* CGameService::GetInstancePtr()
+GameServer* GameServer::GetInstancePtr()
 {
-	static CGameService cGameService;
+	static GameServer cGameService;
 	return &cGameService;
 }
 
-void CGameService::Init()
+void GameServer::Init()
 {
 
 	if (!CLog::GetInstancePtr()->StartLog("gameServer", "log"))
@@ -43,23 +43,25 @@ void CGameService::Init()
 
 	uint32_t port = CConfigFile::GetInstancePtr()->GetIntValue("game_svr_port");
 	uint32_t maxcon = CConfigFile::GetInstancePtr()->GetIntValue("game_svr_max_con");
-
+	std::string ip = CConfigFile::GetInstancePtr()->GetStringValue("gate_svr_ip");
 
 	std::cout << "port : " << port << " maxcon : " << maxcon << std::endl;
-	ServiceBase::GetInstancePtr()->StartNetWork(8888,10000,this);
+
+	ServiceBase::GetInstancePtr()->StartNetWork(ip, port, maxcon,this);
+
 }
 
-void CGameService::Uninit()
+void GameServer::Uninit()
 {
 
 }
 
-void CGameService::Run()
+void GameServer::Run()
 {
 	ServiceBase::GetInstancePtr()->Run();
 }
 
-bool CGameService::DispatchPacket(CNetPacket* pNetPacket)
+bool GameServer::DispatchPacket(CNetPacket* pNetPacket)
 {
 	switch (pNetPacket->messId)
 	{
@@ -67,21 +69,35 @@ bool CGameService::DispatchPacket(CNetPacket* pNetPacket)
 	}
 }
 
-bool CGameService::OnMsgWatchHeartBeatReq(CNetPacket* pNetPacket)
+void GameServer::OnSecondTimer()
+{
+
+}
+
+void GameServer::OnCloseConnect(Connection* pConn)
+{
+
+}
+
+void GameServer::OnNewConnect(Connection* pConnection)
+{
+
+}
+
+bool GameServer::OnMsgWatchHeartBeatReq(CNetPacket* pNetPacket)
 {
 	HeartBeatReq Req;
 	Req.ParsePartialFromArray(pNetPacket->m_pData, pNetPacket->m_len);
 
-	//std::cout << "OnMsgWatchHeartBeatReq : " << Req.connid() << std::endl;
+	std::cout << "OnMsgWatchHeartBeatReq : " << Req.connid() << std::endl;
 
 	//std::cout << "MsgFrom : " << pNetPacket->m_connId << std::endl << std::endl;
 
-	static uint32_t count = 1;
 
 	//testSendProtobuf(pNetPacket->m_connId, Req.connid());
 }
 
-void CGameService::testSendProtobuf(uint32 connid,uint32_t tempcount)
+void GameServer::testSendProtobuf(uint32 connid,uint32_t tempcount)
 {
 	HeartBeatReq Req;
 	Req.set_connid(tempcount);
@@ -90,8 +106,8 @@ void CGameService::testSendProtobuf(uint32 connid,uint32_t tempcount)
 
 int main()
 {
-	CGameService::GetInstancePtr()->Init();
-	CGameService::GetInstancePtr()->Run();
+	GameServer::GetInstancePtr()->Init();
+	GameServer::GetInstancePtr()->Run();
 	std::cout << "exit-----------------------------------------" << std::endl;
 	return 0;
 }

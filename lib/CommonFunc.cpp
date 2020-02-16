@@ -63,3 +63,16 @@ bool CommonFunc::StringTrim(std::string& strValue)
 	}
 	return true;
 }
+
+uint64_t CommonFunc::GetTickCount()
+{
+	uint64_t uTickCount = 0;;
+	struct timespec on;
+	if (0 == clock_gettime(CLOCK_MONOTONIC, &on))
+	{
+		uTickCount = on.tv_sec * 1000 + on.tv_nsec / 1000000;
+	}
+
+	return uTickCount;
+
+}

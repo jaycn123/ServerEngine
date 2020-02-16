@@ -1,5 +1,6 @@
 #include "serviceBase.h"
 #include "../protoFiles/test.pb.h"
+#include "CommonFunc.h"
 
 ServiceBase::ServiceBase(void)
 {
@@ -17,7 +18,7 @@ ServiceBase* ServiceBase::GetInstancePtr()
 	return &serviceBase;
 }
 
-bool ServiceBase::StartNetWork(uint32 port, uint32 maxConnNum, IPacketDispatcher* pDispather)
+bool ServiceBase::StartNetWork(std::string& ip, uint32 port, uint32 maxConnNum, IPacketDispatcher* pDispather)
 {
 	signal(SIGPIPE, SIG_IGN);
 	if (pDispather == nullptr)
@@ -27,7 +28,6 @@ bool ServiceBase::StartNetWork(uint32 port, uint32 maxConnNum, IPacketDispatcher
 	m_pPacketDispatcher = pDispather;
 
 	ConnectionManager::GetInstancePtr()->SetConnectionNum(maxConnNum);
-	xstring ip = "0.0.0.0";
 	if (!ConnectionManager::GetInstancePtr()->CreteSocket(ip, port))
 	{
 		printf("create socket error \n");
@@ -78,6 +78,21 @@ bool ServiceBase::SendMsgProtoBuf(uint32 dwConnID, uint32 dwMsgID, const google:
 	ConnectionManager::GetInstancePtr()->sendMessageByConnID(dwConnID, dwMsgID, szBuff, pdata.GetCachedSize());
 }
 
+bool ServiceBase::SendDataByConnID(uint32 connid, uint32 msgid, const char* pData, uint32 dwLen)
+{
+	return ConnectionManager::GetInstancePtr()->sendMessageByConnID(connid, msgid, pData, dwLen);
+}
+
+void ServiceBase::OnCloseConnect(Connection* pConnection)
+{
+	m_pPacketDispatcher->OnCloseConnect(pConnection);
+}
+
+void ServiceBase::OnNewConnect(Connection* pConnection)
+{
+	m_pPacketDispatcher->OnNewConnect(pConnection);
+}
+
 void ServiceBase::StartThreadParsing()
 {
 	std::thread tPars(&ServiceBase::ParsingLoop,this);
@@ -98,8 +113,20 @@ void ServiceBase::ParsingLoop()
 			AUTOMUTEX
 			ParsingNetPack();
 		}
-		
-		usleep(2500);
+		if (m_tickCount == 0)
+		{
+			m_tickCount = CommonFunc::GetTickCount();
+		}
+		else
+		{
+			if ((CommonFunc::GetTickCount() - m_tickCount) > 1000)
+			{
+				m_pPacketDispatcher->OnSecondTimer();
+				m_tickCount = CommonFunc::GetTickCount();
+			}
+		}
+
+		usleep(1000);
 	}
 }
 

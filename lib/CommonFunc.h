@@ -12,6 +12,8 @@ namespace CommonFunc
 	bool CreateDir(std::string& strDir);
 
 	bool StringTrim(std::string& strValue);
+
+	uint64_t GetTickCount();
 }
 
 

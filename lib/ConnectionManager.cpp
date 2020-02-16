@@ -6,8 +6,6 @@ ConnectionManager::ConnectionManager(void)
 {
 	m_listener = -1;
 	m_epfd = -1;
-	m_threadPool.setMaxQueueSize(100000);
-	m_threadPool.start(3);
 	MemoryManager::GetInstancePtr()->Init();
 }
 
@@ -136,10 +134,11 @@ void ConnectionManager::Init()
 	m_Looptask = std::bind(&ConnectionManager::Run, this);
 }
 
-void ConnectionManager::Start()
-{
-	m_threadPool.run(m_Looptask);
-}
+// void ConnectionManager::Start()
+// {
+// 	std::cout << "-------------------" << std::endl;
+// 	m_threadPool.run(m_Looptask);
+// }
 
 void ConnectionManager::Run()
 {
@@ -213,29 +212,6 @@ void ConnectionManager::Close()
 	close(m_epfd);    //关闭内核
 }
 
-bool ConnectionManager::CanExit()
-{
-	return m_threadPool.canExit();
-}
-
-bool ConnectionManager::SendConnIDToClient(int32 fd, int32 connID)
-{
-	/*
-	NetPacket_Test1 msg;
-	msg.nIndex = connID;
-	strncpy(msg.arrMessage, "test", sizeof(msg.arrMessage));
-	char* pDataBuffer = (char*)&msg;
-	NetPacketHeader* pHead = (NetPacketHeader*)m_cbSendBuf;
-	pHead->wOpcode = NET_TEST1;
-
-	memcpy(pHead + 1, pDataBuffer, sizeof(pDataBuffer));g
-	// 发送消息
-	const unsigned short nSendSize = sizeof(pDataBuffer) + sizeof(NetPacketHeader);
-	pHead->wDataSize = nSendSize;
-	int ret = send(fd, m_cbSendBuf, nSendSize, 0);
-	return (ret > 0) ? true : false;
-	*/
-}
 
 bool ConnectionManager::sendMessageByConnID(uint32 connid, uint32 msgid, const char* pData, uint32 dwLen)
 {
@@ -281,7 +257,35 @@ void ConnectionManager::CheckConntionAvalible()
 	}
 }
 
-void ConnectionManager::AddNewConn(int32 fd)
+Connection* ConnectionManager::ConnectionToServer(std::string& ip, uint32 port)
+{
+	int32 sockfd;
+	struct sockaddr_in servaddr;
+	memset(&servaddr, 0, sizeof(servaddr));
+	if ((sockfd = socket(AF_INET, SOCK_STREAM, 0)) < 0)
+	{
+		cout << "create socket fail" << endl;
+		return nullptr;
+	}
+
+	//setsockopt(sockfd, SOL_SOCKET, SO_REUSEADDR, &on, sizeof(on));
+
+	servaddr.sin_port = htons((short)port);
+	servaddr.sin_family = AF_INET;
+	//servaddr.sin_addr.s_addr = inet_addr("49.235.145.135"); //此处更改epoll服务器地址
+	servaddr.sin_addr.s_addr = inet_addr(ip.c_str());
+	if (connect(sockfd, (struct sockaddr*)&servaddr, sizeof(servaddr)) < 0) 
+	{
+		cout << "connect error" << endl;
+		return nullptr;
+	}
+
+	cout << "succeed to connect server id : " << ip << " port : " << port << endl;
+
+	return AddNewConn(sockfd);
+}
+
+Connection* ConnectionManager::AddNewConn(int32 fd)
 {
 	for (int32 i = 0; i < m_ConnectionVec.size(); i++)
 	{
@@ -291,10 +295,11 @@ void ConnectionManager::AddNewConn(int32 fd)
 			std::cout << "new connid : " << pConn->GetConnectionID() << std::endl;
 
 			pConn->SetSocket(fd);
-			AddEpollFd(fd, pConn, true);
-			break;
+		    AddEpollFd(fd, pConn, true);
+			return pConn;
 		}
 	}
+	return nullptr;
 }
 
 Connection* ConnectionManager::GetConnByFd(int32 fd)
@@ -327,5 +332,5 @@ void ConnectionManager::FreeConnByConnid(int32 nConnid)
 		return;
 	}
 	std::cout << "free nConnid : " << nConnid << std::endl;
-	m_ConnectionVec[nConnid - 1]->SetConnStatus(false);
+	m_ConnectionVec[nConnid - 1]->Close();
 }
