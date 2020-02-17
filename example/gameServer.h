@@ -28,16 +28,21 @@ public:
 
 	void		OnNewConnect(Connection* pConnection);
 
+	void        RegisterMsg();
 public:
 
 	
 public:
 
 	//*********************消息处理定义开始******************************
-	bool OnMsgWatchHeartBeatReq(CNetPacket* pNetPacket);
+	void OnMsgWatchHeartBeatReq(CNetPacket* pNetPacket);
 	//*********************消息处理定义结束******************************
 
 	void testSendProtobuf(uint32 connid, uint32_t tempcount);
+
+private:
+
+	
 
 };
 

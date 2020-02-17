@@ -7,13 +7,18 @@
 
 #define MAXPACKNUM 9999
 
+// #define PROCESS_MESSAGE_ITEMEX(dwMsgID, Func) \
+// 		case dwMsgID:{\
+// 		if(Func(pNetPacket)){return true;}}brea
+
 #define PROCESS_MESSAGE_ITEMEX(dwMsgID, Func) \
 		case dwMsgID:{\
-		if(Func(pNetPacket)){return true;}}break;
+		Func(pNetPacket);}break;
 
 
 class ServiceBase : public IDataHandler
 {
+	typedef std::function<void(CNetPacket*)> msgfunc;
 
 protected:
 
@@ -41,6 +46,9 @@ public:
 
 	void   OnNewConnect(Connection* pConnection);
 
+	void   RegisterMsg(uint32_t msgid, msgfunc fp);
+
+
 protected:
 
 	void   StartThreadParsing();
@@ -49,9 +57,9 @@ protected:
 
 	void   ParsingNetPack();
 
+	bool   ExecutionMsg(CNetPacket* pNetPack);
 
-protected:
-
+private:
 
 	IPacketDispatcher *            m_pPacketDispatcher;
 
@@ -62,6 +70,9 @@ protected:
 	uint32                         m_checkConnStatus = 0;
 
 	uint64_t                       m_tickCount = 0;
+
+	std::map <uint32, std::vector<msgfunc>> m_msgFuncMap;
+
 };
 
 

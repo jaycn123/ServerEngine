@@ -93,6 +93,11 @@ void ServiceBase::OnNewConnect(Connection* pConnection)
 	m_pPacketDispatcher->OnNewConnect(pConnection);
 }
 
+void ServiceBase::RegisterMsg(uint32_t msgid, msgfunc fp)
+{
+	m_msgFuncMap[msgid].push_back(fp);
+}
+
 void ServiceBase::StartThreadParsing()
 {
 	std::thread tPars(&ServiceBase::ParsingLoop,this);
@@ -135,9 +140,28 @@ void ServiceBase::ParsingNetPack()
 	while (!m_NetPackQueue.empty())
 	{
 		CNetPacket* pData = m_NetPackQueue.front();
+		ExecutionMsg(pData);
 		m_pPacketDispatcher->DispatchPacket(pData);
 		MemoryManager::GetInstancePtr()->FreeMemory(pData->m_len + sizeof(CNetPacket), (char*)pData);
 		m_NetPackQueue.pop();
 	}
+}
+
+bool ServiceBase::ExecutionMsg(CNetPacket* pNetPack)
+{
+	std::cout << "msgid : " << pNetPack->messId  << std::endl;
+	auto it = m_msgFuncMap.find(pNetPack->messId);
+	if (it == m_msgFuncMap.end())
+	{
+		std::cout << "msgid : " << pNetPack->messId << " not Register" << std::endl;
+		return false;
+	}
+
+	for (auto& iter : it->second)
+	{
+		iter(pNetPack);
+	}
+
+	return true;
 }
 

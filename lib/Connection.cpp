@@ -260,7 +260,7 @@ bool Connection::SendBuffer(NetPacket* pBuff)
 SendStatus Connection::DoSend()
 {
 	AUTOMUTEX
-	std::cout << "DoSendEx : pack : "<< m_SendPackQueue.size() << std::endl;
+	//std::cout << "DoSendEx : pack : "<< m_SendPackQueue.size() << std::endl;
 	while (!m_SendPackQueue.empty())
 	{
 		NetPacket* pSendMemoryAddr = m_SendPackQueue.front();

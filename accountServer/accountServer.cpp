@@ -1,5 +1,4 @@
 #include "../lib/ConnectionManager.h"
-#include "../lib/ThreadPool.h"
 #include "../protoFiles/test.pb.h"
 #include "../lib/serviceBase.h"
 #include "../lib/type_define.h"

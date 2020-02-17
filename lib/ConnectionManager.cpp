@@ -222,7 +222,7 @@ bool ConnectionManager::sendMessageByConnID(uint32 connid, uint32 msgid, const c
 	}
 
 	NetPacket* pMemData = (NetPacket*)MemoryManager::GetInstancePtr()->GetFreeMemory(dwLen + sizeof(NetPacketHeader));
-	pMemData->Header.wOpcode = SENDDATA;
+	pMemData->Header.wOpcode = msgid;
 	pMemData->Header.wCode = NET_CODE;
 	pMemData->Header.wDataSize = dwLen + sizeof(NetPacketHeader);
 	memcpy(pMemData->pData, pData, dwLen);
@@ -276,7 +276,6 @@ Connection* ConnectionManager::ConnectionToServer(std::string& ip, uint32 port)
 	servaddr.sin_addr.s_addr = inet_addr(ip.c_str());
 	if (connect(sockfd, (struct sockaddr*)&servaddr, sizeof(servaddr)) < 0) 
 	{
-		cout << "connect error" << endl;
 		return nullptr;
 	}
 

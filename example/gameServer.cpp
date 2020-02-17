@@ -1,11 +1,11 @@
 #include "../lib/ConnectionManager.h"
-#include "../lib/ThreadPool.h"
 #include "../protoFiles/test.pb.h"
 #include "../lib/serviceBase.h"
 #include "../lib/type_define.h"
 #include "gameServer.h"
 #include "../lib/Log.h"
 #include "../lib/configFile.h"
+#include "../protoFiles/msgId.pb.h"
 
 GameServer::GameServer(void)
 {
@@ -49,6 +49,7 @@ void GameServer::Init()
 
 	ServiceBase::GetInstancePtr()->StartNetWork(ip, port, maxcon,this);
 
+	RegisterMsg();
 }
 
 void GameServer::Uninit()
@@ -63,6 +64,7 @@ void GameServer::Run()
 
 bool GameServer::DispatchPacket(CNetPacket* pNetPacket)
 {
+	return true;
 	switch (pNetPacket->messId)
 	{
 		PROCESS_MESSAGE_ITEMEX(1, OnMsgWatchHeartBeatReq)
@@ -84,7 +86,12 @@ void GameServer::OnNewConnect(Connection* pConnection)
 
 }
 
-bool GameServer::OnMsgWatchHeartBeatReq(CNetPacket* pNetPacket)
+void GameServer::RegisterMsg()
+{
+	ServiceBase::GetInstancePtr()->RegisterMsg(MessageID::MSGID_FIRST_REQ, std::bind(&GameServer::OnMsgWatchHeartBeatReq, this, std::placeholders::_1));
+}
+
+void GameServer::OnMsgWatchHeartBeatReq(CNetPacket* pNetPacket)
 {
 	HeartBeatReq Req;
 	Req.ParsePartialFromArray(pNetPacket->m_pData, pNetPacket->m_len);

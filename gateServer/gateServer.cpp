@@ -1,5 +1,4 @@
 #include "../lib/ConnectionManager.h"
-#include "../lib/ThreadPool.h"
 #include "../protoFiles/test.pb.h"
 #include "../lib/serviceBase.h"
 #include "../lib/type_define.h"
@@ -7,6 +6,7 @@
 #include "../lib/Log.h"
 #include "../lib/CommonFunc.h"
 #include "../protoFiles/msgId.pb.h"
+#include <functional>
 
 
 GateServer::GateServer(void)
@@ -49,6 +49,8 @@ void GateServer::Init()
 	std::cout << "port : " << port << " maxcon : "<< maxcon << std::endl;
 
 	ServiceBase::GetInstancePtr()->StartNetWork(ip , port, maxcon, this);
+
+	RegisterMsg();
 }
 
 void GateServer::Uninit()
@@ -80,12 +82,21 @@ void GateServer::OnSecondTimer()
 
 void GateServer::OnCloseConnect(Connection* pConnection)
 {
-
+	if (pConnection->m_ConnID == m_GameConnID)
+	{
+		m_GameConnID = 0;
+		std::cout << "gameserver close connection" << std::endl;
+	}
 }
 
 void GateServer::OnNewConnect(Connection* pConnection)
 {
 
+}
+
+void GateServer::RegisterMsg()
+{
+	//ServiceBase::GetInstancePtr()->RegisterMsg(MessageID::MSGID_FIRST_REQ, std::bind(&GateServer::OnMsgWatchHeartBeatReq, this, std::placeholders::_1));
 }
 
 bool GateServer::ConnectionGame()
@@ -127,7 +138,7 @@ bool GateServer::OnForwardNetPack(CNetPacket* pNetPacket)
 	return true;
 }
 
-bool GateServer::OnMsgWatchHeartBeatReq(CNetPacket* pNetPacket)
+void GateServer::OnMsgWatchHeartBeatReq(CNetPacket* pNetPacket)
 {
 	HeartBeatReq Req;
 	Req.ParsePartialFromArray(pNetPacket->m_pData, pNetPacket->m_len);
