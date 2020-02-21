@@ -49,8 +49,6 @@ void GateServer::Init()
 	std::cout << "port : " << port << " maxcon : "<< maxcon << std::endl;
 
 	ServiceBase::GetInstancePtr()->StartNetWork(ip , port, maxcon, this);
-
-	RegisterMsg();
 }
 
 void GateServer::Uninit()
@@ -66,10 +64,6 @@ void GateServer::Run()
 bool GateServer::DispatchPacket(CNetPacket* pNetPacket)
 {
 	OnForwardNetPack(pNetPacket);
-// 	switch (pNetPacket->messId)
-// 	{
-// 		PROCESS_MESSAGE_ITEMEX(1, OnMsgWatchHeartBeatReq)
-// 	}
 }
 
 void GateServer::OnSecondTimer()
@@ -87,16 +81,42 @@ void GateServer::OnCloseConnect(Connection* pConnection)
 		m_GameConnID = 0;
 		std::cout << "gameserver close connection" << std::endl;
 	}
+	else
+	{
+		m_ClientConnectionMap.erase(pConnection->GetConnectionID());
+		Msg_Connetc_Notice Req;
+		Req.set_connid(pConnection->m_ConnID);
+		Req.set_status(0);
+		ServiceBase::GetInstancePtr()->SendMsgProtoBuf(m_GameConnID, MessageID::MSGID_CONNETC_NOTICE, Req);
+	}
 }
 
 void GateServer::OnNewConnect(Connection* pConnection)
 {
+	if (pConnection->GetConnectionID() == m_GameConnID)
+	{
+		pConnection->SetConnType(CT_GameServer);
+	}
+	else
+	{
+		pConnection->SetConnType(CT_Client);
+		m_ClientConnectionMap[pConnection->GetConnectionID()] = pConnection;
 
+		Msg_Connetc_Notice Req;
+		Req.set_connid(pConnection->m_ConnID);
+		Req.set_status(1);
+		ServiceBase::GetInstancePtr()->SendMsgProtoBuf(m_GameConnID, MessageID::MSGID_CONNETC_NOTICE, Req);
+	}
 }
 
 void GateServer::RegisterMsg()
 {
-	//ServiceBase::GetInstancePtr()->RegisterMsg(MessageID::MSGID_FIRST_REQ, std::bind(&GateServer::OnMsgWatchHeartBeatReq, this, std::placeholders::_1));
+	 ServiceBase::GetInstancePtr()->RegisterMsg(MessageID::MSGID_HEARTBEAT_REQ, std::bind(&GateServer::OnHeartBeatReq, this, std::placeholders::_1));
+}
+
+void GateServer::InitMsg()
+{
+	GateServer::GetInstancePtr()->RegisterMsg();
 }
 
 bool GateServer::ConnectionGame()
@@ -119,43 +139,33 @@ bool GateServer::OnForwardNetPack(CNetPacket* pNetPacket)
 {
 	if (pNetPacket->messId > MessageID::MSGID_GAMEMSG_BEGIN && pNetPacket->messId < MessageID::MSGID_GAMEMSG_END)
 	{
-		std::cout << "pNetPacket->messId : "<<pNetPacket->messId << std::endl;
-		ServiceBase::GetInstancePtr()->SendDataByConnID(m_GameConnID, pNetPacket->messId, pNetPacket->m_pData, pNetPacket->m_len);
+		if (m_GameConnID != 0 && pNetPacket->m_connId != m_GameConnID)
+		{
+			std::cout << "pNetPacket->messId : " << pNetPacket->messId << std::endl;
+			ServiceBase::GetInstancePtr()->SendDataByConnID(m_GameConnID, pNetPacket);
+			return true;
+		}
+		else
+		{
+			auto it = m_ClientConnectionMap.find(pNetPacket->m_targetid);
+			if (it == m_ClientConnectionMap.end())
+			{
+				return true;
+			}
+
+			std::cout << "pNetPacket->messId : " << pNetPacket->messId <<" pNetPacket->m_targetid "<< pNetPacket->m_targetid << std::endl;
+			ServiceBase::GetInstancePtr()->SendDataByConnID(pNetPacket->m_targetid, pNetPacket);
+		}
 	}
-
-	/*
-	HeartBeatReq Req;
-	Req.ParsePartialFromArray(pNetPacket->m_pData, pNetPacket->m_len);
-
-	std::cout << "OnMsgWatchHeartBeatReq : " << Req.connid() << std::endl;
-
-	//std::cout << "MsgFrom : " << pNetPacket->m_connId << std::endl << std::endl;
-
-
-	testSendProtobuf(pNetPacket->m_connId, Req.connid());
-	*/
 
 	return true;
 }
 
-void GateServer::OnMsgWatchHeartBeatReq(CNetPacket* pNetPacket)
+void GateServer::OnHeartBeatReq(CNetPacket* pNetPacket)
 {
-	HeartBeatReq Req;
-	Req.ParsePartialFromArray(pNetPacket->m_pData, pNetPacket->m_len);
-
-	std::cout << "OnMsgWatchHeartBeatReq : " << Req.connid() << std::endl;
-
-	//std::cout << "MsgFrom : " << pNetPacket->m_connId << std::endl << std::endl;
-
-
-	testSendProtobuf(pNetPacket->m_connId, Req.connid());
-}
-
-void GateServer::testSendProtobuf(uint32 connid,uint32_t tempcount)
-{
-	HeartBeatReq Req;
-	Req.set_connid(tempcount);
-	ServiceBase::GetInstancePtr()->SendMsgProtoBuf(connid, 1, Req);
+	std::cout << "OnHeartBeatReq : " << std::endl;
+	Msg_Heartbeat_Ack ack;
+	ServiceBase::GetInstancePtr()->SendMsgProtoBuf(pNetPacket->m_connId, MessageID::MSGID_HEARTBEAT_ACK, ack);
 }
 
 int main()

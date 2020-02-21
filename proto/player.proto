@@ -1,0 +1,33 @@
+syntax = "proto3";
+
+message Msg_Login_Req
+{
+	uint32 accountid = 1;
+    uint32 roleid    = 2;
+}
+
+message Msg_Login_Ack
+{
+	int32 returncode = 1;
+}
+
+message Msg_CreatePlayer_Req
+{
+    int32  accountid = 1;
+	string name = 2;
+}
+
+message Msg_CreatePlayer_Ack
+{
+	int32 returncode = 1;
+}
+
+message Msg_LoginOff_Req
+{
+    int32 roleid = 1;
+}
+
+message Msg_LoginOff_Ack
+{
+	int32 returncode = 1;
+}

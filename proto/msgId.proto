@@ -1,9 +1,35 @@
 ﻿syntax = "proto3";
+
 enum MessageID 
 {
-    MSGID__BEGIN                       = 0;
+    MSGID_BEGIN                        = 0;
+	MSGID_HEARTBEAT_REQ                = 1;
+	MSGID_HEARTBEAT_ACK                = 2;
+	MSGID_CONNETC_NOTICE               = 3;
+	
+	
     MSGID_GAMEMSG_BEGIN                = 1000000;
-    MSGID_FIRST_REQ                    = 1000001;
+	MSGID_CREATEPLAYER_REQ             = 1000001;
+	MSGID_CREATEPLAYER_ACK             = 1000002;
+    MSGID_LOGIN_REQ                    = 1000003;
+	MSGID_LOGIN_ACK                    = 1000004;
+	MSGID_LOGINOFF_REQ                 = 1000005;
+	MSGID_LOGINOFF_ACK                 = 1000006;
     MSGID_GAMEMSG_END                  = 2000000;
 }
 
+message Msg_Heartbeat_Req
+{
+    
+}
+
+message Msg_Heartbeat_Ack
+{
+   
+}
+
+message Msg_Connetc_Notice
+{
+	int32 connid = 1;
+	int32 status = 2;
+}

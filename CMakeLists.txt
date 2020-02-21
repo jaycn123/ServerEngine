@@ -19,7 +19,8 @@ SET(LIBRARY_OUTPUT_PATH ${PROJECT_SOURCE_DIR}/liba)
 
 add_subdirectory ("lib")
 add_subdirectory ("protoFiles")
-add_subdirectory ("example")
+add_subdirectory ("gameServer")
 add_subdirectory ("gateServer")
 add_subdirectory ("accountServer")
+add_subdirectory ("client")
 

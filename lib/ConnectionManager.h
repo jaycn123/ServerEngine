@@ -37,7 +37,7 @@ public:
 
 	void				Close();
 
-	bool				sendMessageByConnID(uint32 connid, uint32 msgid, const char* pData, uint32 dwLen);
+	bool				sendMessageByConnID(uint32 connid,uint32_t sconnid, uint32 msgid, const char* pData, uint32 dwLen);
 
 	void				CheckConntionAvalible();
 

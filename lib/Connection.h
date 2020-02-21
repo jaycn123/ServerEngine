@@ -13,8 +13,6 @@
 #define  NET_MSG_CONNECT			3
 
 #define RECV_BUF_SIZE               65536
-
-
 #define Hash_Map                    std::map
 
 class Connection
@@ -60,8 +58,13 @@ public:
 
 	int32       GetFd();
 
-	
+	void        SetConnType(int32 ctype);
+
+	int32       GetConnType();
+
 public:
+
+	int32                   m_ConnType = 0;
 
 	int32	                m_fd;
 			                
@@ -72,11 +75,9 @@ public:
 	uint32                  m_RecvOffIndex = 0;
 			                
 	uint32                  m_nRecvSize = 0;
-			                
-	uint32                  m_tempCount = 0;
 
 	//
-	char*                    m_pRecvBuf = nullptr;
+	char*                   m_pRecvBuf = nullptr;
 
 	//-----------------------------
 

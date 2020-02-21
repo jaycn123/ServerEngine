@@ -5,7 +5,13 @@ cmake_minimum_required (VERSION 3.8)
 
 aux_source_directory(. DIR_SRCS)
 
-add_executable (accountServer "accountServer.cpp" "accountServer.h")
+
+file(GLOB file_SRC
+    "*.h"
+    "*.cpp"
+)
+
+add_executable(accountServer ${file_SRC})
 
 # 将源代码添加到此项目的可执行文件。
 target_link_libraries(accountServer proto)

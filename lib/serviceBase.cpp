@@ -28,6 +28,7 @@ bool ServiceBase::StartNetWork(std::string& ip, uint32 port, uint32 maxConnNum, 
 	m_pPacketDispatcher = pDispather;
 
 	ConnectionManager::GetInstancePtr()->SetConnectionNum(maxConnNum);
+
 	if (!ConnectionManager::GetInstancePtr()->CreteSocket(ip, port))
 	{
 		printf("create socket error \n");
@@ -39,7 +40,31 @@ bool ServiceBase::StartNetWork(std::string& ip, uint32 port, uint32 maxConnNum, 
 		printf("create CreateEpollEvent error \n");
 		return false;
 	}
+	m_pPacketDispatcher->InitMsg();
+
+	return true;
 	
+}
+
+bool ServiceBase::InitClientConn(uint32 maxConnNum, IPacketDispatcher* pDispather)
+{
+	signal(SIGPIPE, SIG_IGN);
+	if (pDispather == nullptr)
+	{
+		return false;
+	}
+
+	m_pPacketDispatcher = pDispather;
+
+	ConnectionManager::GetInstancePtr()->SetConnectionNum(maxConnNum);
+
+	if (!ConnectionManager::GetInstancePtr()->CreateEpollEvent())
+	{
+		printf("create CreateEpollEvent error \n");
+		return false;
+	}
+
+	return true;
 }
 
 bool ServiceBase::Run()
@@ -68,19 +93,38 @@ bool ServiceBase::SendMsgProtoBuf(uint32 dwConnID, uint32 dwMsgID, const google:
 {
 	char szBuff[102400] = { 0 };
 
-	if(pdata.ByteSize() > 102400)
+	if(dwConnID == 0 || pdata.ByteSize() > 102400)
 	{
 		return false;
 	}
 
 	pdata.SerializePartialToArray(szBuff, pdata.GetCachedSize());
 
-	ConnectionManager::GetInstancePtr()->sendMessageByConnID(dwConnID, dwMsgID, szBuff, pdata.GetCachedSize());
+	ConnectionManager::GetInstancePtr()->sendMessageByConnID(dwConnID,0, dwMsgID, szBuff, pdata.GetCachedSize());
 }
 
-bool ServiceBase::SendDataByConnID(uint32 connid, uint32 msgid, const char* pData, uint32 dwLen)
+bool ServiceBase::SendMsgProtoBuf(uint32 dwConnID, uint32_t sconnid, uint32 dwMsgID, const google::protobuf::Message& pdata)
 {
-	return ConnectionManager::GetInstancePtr()->sendMessageByConnID(connid, msgid, pData, dwLen);
+	char szBuff[102400] = { 0 };
+
+	if (pdata.ByteSize() > 102400)
+	{
+		return false;
+	}
+
+	pdata.SerializePartialToArray(szBuff, pdata.GetCachedSize());
+
+	ConnectionManager::GetInstancePtr()->sendMessageByConnID(dwConnID, sconnid, dwMsgID, szBuff, pdata.GetCachedSize());
+
+}
+
+bool ServiceBase::SendDataByConnID(uint32 connid, CNetPacket* pNetPacket)
+{
+	if (connid == 0)
+	{
+		return false;
+	}
+	return ConnectionManager::GetInstancePtr()->sendMessageByConnID(connid, pNetPacket->m_connId, pNetPacket->messId, pNetPacket->m_pData, pNetPacket->m_len);
 }
 
 void ServiceBase::OnCloseConnect(Connection* pConnection)
@@ -149,11 +193,10 @@ void ServiceBase::ParsingNetPack()
 
 bool ServiceBase::ExecutionMsg(CNetPacket* pNetPack)
 {
-	std::cout << "msgid : " << pNetPack->messId  << std::endl;
+	std::cout << "recv msgid : " << pNetPack->messId  << std::endl;
 	auto it = m_msgFuncMap.find(pNetPack->messId);
 	if (it == m_msgFuncMap.end())
 	{
-		std::cout << "msgid : " << pNetPack->messId << " not Register" << std::endl;
 		return false;
 	}
 

@@ -32,6 +32,9 @@ public:
 
 	bool   StartNetWork(std::string& ip, uint32 port, uint32 maxConnNum, IPacketDispatcher* pDispather);
 
+	//不需要监听端口  测试作为客户端用
+	bool   InitClientConn(uint32 maxConnNum, IPacketDispatcher* pDispather);
+
 	bool   Run();
 
 	bool   StopNetWork();
@@ -40,7 +43,9 @@ public:
 
 	bool   SendMsgProtoBuf(uint32 dwConnID, uint32 dwMsgID,const google::protobuf::Message& pdata);
 
-	bool   SendDataByConnID(uint32 connid, uint32 msgid, const char* pData, uint32 dwLen);
+	bool   SendMsgProtoBuf(uint32 dwConnID,uint32_t sconnid, uint32 dwMsgID, const google::protobuf::Message& pdata);
+
+	bool   SendDataByConnID(uint32 connid, CNetPacket* pPack);
 
 	void   OnCloseConnect(Connection* pConnection);
 

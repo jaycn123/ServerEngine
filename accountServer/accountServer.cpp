@@ -83,6 +83,11 @@ void AccountServer::OnNewConnect(Connection* pConnection)
 
 }
 
+void AccountServer::InitMsg()
+{
+	
+}
+
 bool AccountServer::OnForwardNetPack(CNetPacket* pNetPacket)
 {
 	HeartBeatReq Req;

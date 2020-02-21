@@ -7,16 +7,12 @@
 #define NET_CODE 0x2766
 
 
-enum NetMessage
-{
-	SENDDATA = 1,
-};
-
 struct  NetPacketHeader
 {
 	uint32          wDataSize = 0;
-	uint32          wOpcode = SENDDATA;
+	uint32          wOpcode = 0;
 	uint32          wCode = NET_CODE;
+	uint32          wSconnId = 0;
 };
 
 struct NetPacket

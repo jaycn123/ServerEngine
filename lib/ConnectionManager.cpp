@@ -213,7 +213,7 @@ void ConnectionManager::Close()
 }
 
 
-bool ConnectionManager::sendMessageByConnID(uint32 connid, uint32 msgid, const char* pData, uint32 dwLen)
+bool ConnectionManager::sendMessageByConnID(uint32 connid, uint32_t sconnid, uint32 msgid, const char* pData, uint32 dwLen)
 {
 	Connection* pConn = GetConnByConnid(connid);
 	if (pConn == nullptr)
@@ -224,6 +224,7 @@ bool ConnectionManager::sendMessageByConnID(uint32 connid, uint32 msgid, const c
 	NetPacket* pMemData = (NetPacket*)MemoryManager::GetInstancePtr()->GetFreeMemory(dwLen + sizeof(NetPacketHeader));
 	pMemData->Header.wOpcode = msgid;
 	pMemData->Header.wCode = NET_CODE;
+	pMemData->Header.wSconnId = sconnid;
 	pMemData->Header.wDataSize = dwLen + sizeof(NetPacketHeader);
 	memcpy(pMemData->pData, pData, dwLen);
 	pConn->SendBuffer(pMemData);
@@ -316,17 +317,16 @@ Connection* ConnectionManager::GetConnByFd(int32 fd)
 
 Connection* ConnectionManager::GetConnByConnid(int32 nConnid)
 {
-	nConnid -= 1;
-	if (nConnid >= m_ConnectionVec.size())
+	if (nConnid > m_ConnectionVec.size())
 	{
 		return nullptr;
 	}
-	return m_ConnectionVec[nConnid];
+	return m_ConnectionVec[nConnid - 1];
 }
 
 void ConnectionManager::FreeConnByConnid(int32 nConnid)
 {
-	if (nConnid >= m_ConnectionVec.size())
+	if (nConnid > m_ConnectionVec.size())
 	{
 		return;
 	}

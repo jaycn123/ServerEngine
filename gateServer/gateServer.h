@@ -5,6 +5,12 @@
 #include "../lib/configFile.h"
 #include "../lib/Connection.h"
 
+enum ConnType
+{
+	CT_Client = 1,
+	CT_GameServer = 2
+};
+
 class GateServer : public IPacketDispatcher
 {
 private:
@@ -30,6 +36,8 @@ public:
 
 	void        RegisterMsg();
 
+	void        InitMsg();
+
 protected:
 
 	bool        ConnectionGame();
@@ -40,14 +48,14 @@ public:
 	bool OnForwardNetPack(CNetPacket* pNetPacket);
 
 	//*********************消息处理定义开始******************************
-	void OnMsgWatchHeartBeatReq(CNetPacket* pNetPacket);
+	void OnHeartBeatReq(CNetPacket* pNetPacket);
 	//*********************消息处理定义结束******************************
-
-	void testSendProtobuf(uint32 connid, uint32_t tempcount);
 
 private:
 
 	uint32_t m_GameConnID = 0;
+
+	std::map<int32, Connection* >m_ClientConnectionMap;
 
 };
 

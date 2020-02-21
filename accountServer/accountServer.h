@@ -28,6 +28,8 @@ public:
 	void        OnCloseConnect(Connection* pConnection);
 
 	void		OnNewConnect(Connection* pConnection);
+
+	void        InitMsg();
 	
 public:
 

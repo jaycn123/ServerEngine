@@ -121,8 +121,7 @@ bool Connection::DoReceive()
 		length = recv(m_fd, m_pRecvBuf + m_nRecvSize, RECV_BUF_SIZE - m_nRecvSize, 0);
 		if (length == 0)
 		{
-			std::cout << "recv leng : " << length << std::endl;
-			//client close conn
+			std::cout << "recv leng : " << length<<"  close conn" << std::endl;
 			return false;
 		}
 
@@ -161,6 +160,8 @@ bool Connection::DoReceive()
 				pData->m_connId = m_ConnID;
 				pData->m_len = datalen;
 				pData->messId = pHeader->wOpcode;
+				pData->m_targetid = pHeader->wSconnId;
+
 				memcpy(pData->m_pData, m_pRecvBuf + m_RecvOffIndex + sizeof(NetPacketHeader), datalen);
 				ServiceBase::GetInstancePtr()->AddNetPackToQueue(pData);
 				m_RecvOffIndex += pHeader->wDataSize;
@@ -302,4 +303,14 @@ SendStatus Connection::DoSend()
 int32 Connection::GetFd()
 {
 	return m_fd;
+}
+
+void Connection::SetConnType(int32 ctype)
+{
+	m_ConnType = ctype;
+}
+
+int32 Connection::GetConnType()
+{
+	return m_ConnType;
 }
