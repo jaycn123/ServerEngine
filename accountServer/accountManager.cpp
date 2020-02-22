@@ -21,9 +21,18 @@ AccountManager* AccountManager::GetInstancePtr()
 	return &cGameService;
 }
 
-void AccountManager::Init()
+bool AccountManager::Init(MysqlControl* pMysql)
 {
-	
+	if (pMysql == nullptr)
+	{
+		return false;
+	}
+
+	m_pMysql = pMysql;
+
+	GetAllAccount();
+
+	return true;
 }
 
 void AccountManager::Uninit()
@@ -35,4 +44,9 @@ void AccountManager::Uninit()
 void AccountManager::InitMsg()
 {
 	
+}
+
+bool AccountManager::GetAllAccount()
+{
+
 }

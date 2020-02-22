@@ -6,6 +6,7 @@
 #include "../lib/Connection.h"
 
 
+
 class AccountServer : public IPacketDispatcher
 {
 private:
@@ -40,6 +41,10 @@ public:
 	//*********************消息处理定义结束******************************
 
 	void testSendProtobuf(uint32 connid, uint32_t tempcount);
+
+private:
+
+	
 
 };
 

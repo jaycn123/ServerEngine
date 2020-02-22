@@ -78,6 +78,7 @@ private:
 
 	std::map <uint32, std::vector<msgfunc>> m_msgFuncMap;
 
+
 };
 
 
