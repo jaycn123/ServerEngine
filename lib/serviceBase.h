@@ -4,6 +4,8 @@
 #include "messageQueue.h"
 #include "ConnectionManager.h"
 #include "type_define.h"
+#include "dataBase.h"
+#include "mysql_control.h"
 
 #define MAXPACKNUM 9999
 
@@ -53,12 +55,19 @@ public:
 
 	void   RegisterMsg(uint32_t msgid, msgfunc fp);
 
+	void   ChangeDB(DB_Base* pBase);
+
+	void   SetMysqlControl(MysqlControl* pMysql);
 
 protected:
 
 	void   StartThreadParsing();
 
+	void   StartDBThread();
+
 	void   ParsingLoop();
+
+	void   ChangeDateBase();
 
 	void   ParsingNetPack();
 
@@ -66,18 +75,21 @@ protected:
 
 private:
 
-	IPacketDispatcher *            m_pPacketDispatcher;
+	IPacketDispatcher *                     m_pPacketDispatcher;
 
-	std::queue<CNetPacket*>        m_NetPackQueue;
+	std::queue<CNetPacket*>                 m_NetPackQueue;
 
-	std::mutex                     m_mutex;
+	std::mutex                              m_mutex;
 
-	uint32                         m_checkConnStatus = 0;
+	uint32                                  m_checkConnStatus = 0;
 
-	uint64_t                       m_tickCount = 0;
+	uint64_t                                m_tickCount = 0;
 
 	std::map <uint32, std::vector<msgfunc>> m_msgFuncMap;
 
+	MysqlControl*                           m_pMysqlControl = nullptr;
+
+	std::vector<DB_Base*>                   m_DataBaseVec;
 
 };
 

@@ -1,10 +1,11 @@
-#ifndef CHATSERVER_H
-#define CHATSERVER_H
+#ifndef ACCOUNTSERVER_H
+#define ACCOUNTSERVER_H
 
 #include "../lib/messageQueue.h"
 #include "../lib/configFile.h"
 #include "../lib/Connection.h"
-
+#include "../lib/mysql_control.h"
+#include "accountManager.h"
 
 
 class AccountServer : public IPacketDispatcher
@@ -26,6 +27,10 @@ public:
 
 	void        OnSecondTimer();
 
+	bool        ConnectionGame();
+
+	bool        ConnectionGate();
+
 	void        OnCloseConnect(Connection* pConnection);
 
 	void		OnNewConnect(Connection* pConnection);
@@ -44,7 +49,11 @@ public:
 
 private:
 
-	
+	MysqlControl* m_pMysql = nullptr;
+
+	uint32_t      m_GateServerConnID = 0;
+
+	uint32_t      m_GameServerConnID = 0;
 
 };
 

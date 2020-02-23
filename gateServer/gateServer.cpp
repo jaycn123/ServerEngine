@@ -68,10 +68,7 @@ bool GateServer::DispatchPacket(CNetPacket* pNetPacket)
 
 void GateServer::OnSecondTimer()
 {
-	if (m_GameConnID == 0)
-	{
-		ConnectionGame();
-	}
+
 }
 
 void GateServer::OnCloseConnect(Connection* pConnection)
@@ -112,6 +109,7 @@ void GateServer::OnNewConnect(Connection* pConnection)
 void GateServer::RegisterMsg()
 {
 	 ServiceBase::GetInstancePtr()->RegisterMsg(MessageID::MSGID_HEARTBEAT_REQ, std::bind(&GateServer::OnHeartBeatReq, this, std::placeholders::_1));
+	 ServiceBase::GetInstancePtr()->RegisterMsg(MessageID::MSGID_CONNETC_INFO, std::bind(&GateServer::OnServerInfo, this, std::placeholders::_1));
 }
 
 void GateServer::InitMsg()
@@ -166,6 +164,31 @@ void GateServer::OnHeartBeatReq(CNetPacket* pNetPacket)
 	std::cout << "OnHeartBeatReq : " << std::endl;
 	Msg_Heartbeat_Ack ack;
 	ServiceBase::GetInstancePtr()->SendMsgProtoBuf(pNetPacket->m_connId, MessageID::MSGID_HEARTBEAT_ACK, ack);
+}
+
+void GateServer::OnServerInfo(CNetPacket* pNetPacket)
+{
+	Msg_Connetc_Info req;
+	req.ParsePartialFromArray(pNetPacket->m_pData, pNetPacket->m_len);
+
+	switch (req.stype())
+	{
+	case ST_Client:
+		break;
+	case ST_Account:
+	{
+		m_AccountConnID = pNetPacket->m_connId;
+	}
+		break;
+	case ST_Game:
+	{
+		m_GameConnIdMap[req.serverid()] = pNetPacket->m_connId;
+	}
+		break;
+
+	default:
+		break;
+	}
 }
 
 int main()

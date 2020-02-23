@@ -339,13 +339,9 @@ public:
 		}  
 	}  
 
-    void Prinf()
+	std::map<std::string, int>& GetField()
     {
-        std::cout<<m_Field->name<<std::endl;
-        for(auto it : m_FieldIndexMap)
-        {
-            std::cout<<it.first<<" : "<<it.second<<std::endl;
-        }
+		return m_FieldIndexMap;
     }
 
     //获取一行结果，将其存入DoubleDArray  

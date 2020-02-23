@@ -66,7 +66,7 @@ private:
 
 	Looptask m_Looptask;
 
-	std::vector<Connection*>m_ConnectionVec;
+	std::vector<Connection*>m_ConnectionVec;  //待优化 改链表
 
 };
 

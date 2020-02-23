@@ -49,13 +49,20 @@ public:
 
 	//*********************消息处理定义开始******************************
 	void OnHeartBeatReq(CNetPacket* pNetPacket);
+
+	void OnServerInfo(CNetPacket* pNetPacket);
+
 	//*********************消息处理定义结束******************************
 
 private:
 
 	uint32_t m_GameConnID = 0;
 
+	uint32_t m_AccountConnID = 0;
+
 	std::map<int32, Connection* >m_ClientConnectionMap;
+
+	std::map<uint32_t, uint32_t > m_GameConnIdMap;
 
 };
 

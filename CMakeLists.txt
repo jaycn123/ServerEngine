@@ -8,6 +8,7 @@ project ("serverdemo")
 # 包含子项目。
 #set( CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++17 -march=native -O3 -lpthread -lprotobuf" )
 LINK_LIBRARIES(-lpthread -lm)
+LINK_LIBRARIES(-lmysqlclient -lm)
 LINK_LIBRARIES(-lprotobuf -lm)
 set(CMAKE_BUILD_TYPE "Debug")
 #set(CMAKE_BUILD_TYPE "Release")

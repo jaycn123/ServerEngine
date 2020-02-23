@@ -70,6 +70,7 @@ bool ServiceBase::InitClientConn(uint32 maxConnNum, IPacketDispatcher* pDispathe
 bool ServiceBase::Run()
 {
 	StartThreadParsing();
+	StartDBThread();
 	ConnectionManager::GetInstancePtr()->Run();
 }
 
@@ -142,9 +143,26 @@ void ServiceBase::RegisterMsg(uint32_t msgid, msgfunc fp)
 	m_msgFuncMap[msgid].push_back(fp);
 }
 
+void ServiceBase::ChangeDB(DB_Base* pBase)
+{
+	AUTOMUTEX
+	m_DataBaseVec.push_back(pBase);
+}
+
+void ServiceBase::SetMysqlControl(MysqlControl* pMysql)
+{
+	m_pMysqlControl = pMysql;
+}
+
 void ServiceBase::StartThreadParsing()
 {
-	std::thread tPars(&ServiceBase::ParsingLoop,this);
+	std::thread tPars(&ServiceBase::ParsingLoop,this); 
+	tPars.detach();
+}
+
+void ServiceBase::StartDBThread()
+{
+	std::thread tPars(&ServiceBase::ChangeDateBase, this);
 	tPars.detach();
 }
 
@@ -176,6 +194,23 @@ void ServiceBase::ParsingLoop()
 		}
 
 		usleep(1000);
+	}
+}
+
+void ServiceBase::ChangeDateBase()
+{
+	while (true)
+	{
+		{
+			AUTOMUTEX
+			for (auto i = 0; i < m_DataBaseVec.size(); i++)
+			{
+				m_DataBaseVec[i]->Run(m_pMysqlControl);
+			}
+
+			m_DataBaseVec.clear();
+		}
+		usleep(1000000);
 	}
 }
 

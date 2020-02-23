@@ -35,6 +35,7 @@ void protobuf_AddDesc_msgId_2eproto();
 void protobuf_AssignDesc_msgId_2eproto();
 void protobuf_ShutdownFile_msgId_2eproto();
 
+class Msg_Connetc_Info;
 class Msg_Connetc_Notice;
 class Msg_Heartbeat_Ack;
 class Msg_Heartbeat_Req;
@@ -44,6 +45,7 @@ enum MessageID {
   MSGID_HEARTBEAT_REQ = 1,
   MSGID_HEARTBEAT_ACK = 2,
   MSGID_CONNETC_NOTICE = 3,
+  MSGID_CONNETC_INFO = 4,
   MSGID_GAMEMSG_BEGIN = 1000000,
   MSGID_CREATEPLAYER_REQ = 1000001,
   MSGID_CREATEPLAYER_ACK = 1000002,
@@ -69,6 +71,30 @@ inline bool MessageID_Parse(
     const ::std::string& name, MessageID* value) {
   return ::google::protobuf::internal::ParseNamedEnum<MessageID>(
     MessageID_descriptor(), name, value);
+}
+enum ServerType {
+  ST_Client = 0,
+  ST_Account = 1,
+  ST_Game = 2,
+  ST_Gate = 3,
+  ST_World = 4,
+  ServerType_INT_MIN_SENTINEL_DO_NOT_USE_ = ::google::protobuf::kint32min,
+  ServerType_INT_MAX_SENTINEL_DO_NOT_USE_ = ::google::protobuf::kint32max
+};
+bool ServerType_IsValid(int value);
+const ServerType ServerType_MIN = ST_Client;
+const ServerType ServerType_MAX = ST_World;
+const int ServerType_ARRAYSIZE = ServerType_MAX + 1;
+
+const ::google::protobuf::EnumDescriptor* ServerType_descriptor();
+inline const ::std::string& ServerType_Name(ServerType value) {
+  return ::google::protobuf::internal::NameOfEnum(
+    ServerType_descriptor(), value);
+}
+inline bool ServerType_Parse(
+    const ::std::string& name, ServerType* value) {
+  return ::google::protobuf::internal::ParseNamedEnum<ServerType>(
+    ServerType_descriptor(), name, value);
 }
 // ===================================================================
 
@@ -309,6 +335,95 @@ class Msg_Connetc_Notice : public ::google::protobuf::Message /* @@protoc_insert
   void InitAsDefaultInstance();
   static Msg_Connetc_Notice* default_instance_;
 };
+// -------------------------------------------------------------------
+
+class Msg_Connetc_Info : public ::google::protobuf::Message /* @@protoc_insertion_point(class_definition:Msg_Connetc_Info) */ {
+ public:
+  Msg_Connetc_Info();
+  virtual ~Msg_Connetc_Info();
+
+  Msg_Connetc_Info(const Msg_Connetc_Info& from);
+
+  inline Msg_Connetc_Info& operator=(const Msg_Connetc_Info& from) {
+    CopyFrom(from);
+    return *this;
+  }
+
+  static const ::google::protobuf::Descriptor* descriptor();
+  static const Msg_Connetc_Info& default_instance();
+
+  void Swap(Msg_Connetc_Info* other);
+
+  // implements Message ----------------------------------------------
+
+  inline Msg_Connetc_Info* New() const { return New(NULL); }
+
+  Msg_Connetc_Info* New(::google::protobuf::Arena* arena) const;
+  void CopyFrom(const ::google::protobuf::Message& from);
+  void MergeFrom(const ::google::protobuf::Message& from);
+  void CopyFrom(const Msg_Connetc_Info& from);
+  void MergeFrom(const Msg_Connetc_Info& from);
+  void Clear();
+  bool IsInitialized() const;
+
+  int ByteSize() const;
+  bool MergePartialFromCodedStream(
+      ::google::protobuf::io::CodedInputStream* input);
+  void SerializeWithCachedSizes(
+      ::google::protobuf::io::CodedOutputStream* output) const;
+  ::google::protobuf::uint8* InternalSerializeWithCachedSizesToArray(
+      bool deterministic, ::google::protobuf::uint8* output) const;
+  ::google::protobuf::uint8* SerializeWithCachedSizesToArray(::google::protobuf::uint8* output) const {
+    return InternalSerializeWithCachedSizesToArray(false, output);
+  }
+  int GetCachedSize() const { return _cached_size_; }
+  private:
+  void SharedCtor();
+  void SharedDtor();
+  void SetCachedSize(int size) const;
+  void InternalSwap(Msg_Connetc_Info* other);
+  private:
+  inline ::google::protobuf::Arena* GetArenaNoVirtual() const {
+    return _internal_metadata_.arena();
+  }
+  inline void* MaybeArenaPtr() const {
+    return _internal_metadata_.raw_arena_ptr();
+  }
+  public:
+
+  ::google::protobuf::Metadata GetMetadata() const;
+
+  // nested types ----------------------------------------------------
+
+  // accessors -------------------------------------------------------
+
+  // optional .ServerType stype = 1;
+  void clear_stype();
+  static const int kStypeFieldNumber = 1;
+  ::ServerType stype() const;
+  void set_stype(::ServerType value);
+
+  // optional int32 serverid = 2;
+  void clear_serverid();
+  static const int kServeridFieldNumber = 2;
+  ::google::protobuf::int32 serverid() const;
+  void set_serverid(::google::protobuf::int32 value);
+
+  // @@protoc_insertion_point(class_scope:Msg_Connetc_Info)
+ private:
+
+  ::google::protobuf::internal::InternalMetadataWithArena _internal_metadata_;
+  bool _is_default_instance_;
+  int stype_;
+  ::google::protobuf::int32 serverid_;
+  mutable int _cached_size_;
+  friend void  protobuf_AddDesc_msgId_2eproto();
+  friend void protobuf_AssignDesc_msgId_2eproto();
+  friend void protobuf_ShutdownFile_msgId_2eproto();
+
+  void InitAsDefaultInstance();
+  static Msg_Connetc_Info* default_instance_;
+};
 // ===================================================================
 
 
@@ -353,7 +468,41 @@ inline void Msg_Connetc_Notice::set_status(::google::protobuf::int32 value) {
   // @@protoc_insertion_point(field_set:Msg_Connetc_Notice.status)
 }
 
+// -------------------------------------------------------------------
+
+// Msg_Connetc_Info
+
+// optional .ServerType stype = 1;
+inline void Msg_Connetc_Info::clear_stype() {
+  stype_ = 0;
+}
+inline ::ServerType Msg_Connetc_Info::stype() const {
+  // @@protoc_insertion_point(field_get:Msg_Connetc_Info.stype)
+  return static_cast< ::ServerType >(stype_);
+}
+inline void Msg_Connetc_Info::set_stype(::ServerType value) {
+  
+  stype_ = value;
+  // @@protoc_insertion_point(field_set:Msg_Connetc_Info.stype)
+}
+
+// optional int32 serverid = 2;
+inline void Msg_Connetc_Info::clear_serverid() {
+  serverid_ = 0;
+}
+inline ::google::protobuf::int32 Msg_Connetc_Info::serverid() const {
+  // @@protoc_insertion_point(field_get:Msg_Connetc_Info.serverid)
+  return serverid_;
+}
+inline void Msg_Connetc_Info::set_serverid(::google::protobuf::int32 value) {
+  
+  serverid_ = value;
+  // @@protoc_insertion_point(field_set:Msg_Connetc_Info.serverid)
+}
+
 #endif  // !PROTOBUF_INLINE_NOT_IN_HEADERS
+// -------------------------------------------------------------------
+
 // -------------------------------------------------------------------
 
 // -------------------------------------------------------------------
@@ -369,6 +518,11 @@ template <> struct is_proto_enum< ::MessageID> : ::google::protobuf::internal::t
 template <>
 inline const EnumDescriptor* GetEnumDescriptor< ::MessageID>() {
   return ::MessageID_descriptor();
+}
+template <> struct is_proto_enum< ::ServerType> : ::google::protobuf::internal::true_type {};
+template <>
+inline const EnumDescriptor* GetEnumDescriptor< ::ServerType>() {
+  return ::ServerType_descriptor();
 }
 
 }  // namespace protobuf

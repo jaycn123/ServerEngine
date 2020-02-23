@@ -6,6 +6,7 @@ enum MessageID
 	MSGID_HEARTBEAT_REQ                = 1;
 	MSGID_HEARTBEAT_ACK                = 2;
 	MSGID_CONNETC_NOTICE               = 3;
+	MSGID_CONNETC_INFO                 = 4;
 	
 	
     MSGID_GAMEMSG_BEGIN                = 1000000;
@@ -32,4 +33,19 @@ message Msg_Connetc_Notice
 {
 	int32 connid = 1;
 	int32 status = 2;
+}
+
+enum ServerType
+{
+	ST_Client   = 0;
+	ST_Account  = 1;
+	ST_Game     = 2;
+	ST_Gate     = 3;
+	ST_World    = 4;
+}
+
+message Msg_Connetc_Info
+{
+	ServerType stype = 1;
+	int32   serverid = 2;
 }
