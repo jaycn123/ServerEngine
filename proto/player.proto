@@ -1,12 +1,22 @@
 syntax = "proto3";
 
-message Msg_Login_Req
+message Msg_LoginAccount_Req
 {
-	uint32 accountid = 1;
-    uint32 roleid    = 2;
+	string username = 1;
+	string password = 2;
 }
 
-message Msg_Login_Ack
+message Msg_LoginAccount_Ack
+{
+	int32 returncode = 1;
+}
+
+message Msg_LoginPlayer_Req
+{
+	uint64 roleid = 1;
+}
+
+message Msg_LoginPlayer_Ack
 {
 	int32 returncode = 1;
 }

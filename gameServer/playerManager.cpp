@@ -24,7 +24,7 @@ void PlayerManager::RegisterMsg()
 {
 	ServiceBase::GetInstancePtr()->RegisterMsg(MessageID::MSGID_CREATEPLAYER_REQ, std::bind(&PlayerManager::OnCreatePlayer, this, std::placeholders::_1));
 
-	ServiceBase::GetInstancePtr()->RegisterMsg(MessageID::MSGID_LOGIN_REQ, std::bind(&PlayerManager::OnPlayerOnline, this, std::placeholders::_1));
+	ServiceBase::GetInstancePtr()->RegisterMsg(MessageID::MSGID_LOGINPLAYER_ACK, std::bind(&PlayerManager::OnPlayerOnline, this, std::placeholders::_1));
 
 	ServiceBase::GetInstancePtr()->RegisterMsg(MessageID::MSGID_LOGINOFF_REQ, std::bind(&PlayerManager::OnPlayerOffline, this, std::placeholders::_1));
 }
@@ -56,14 +56,16 @@ void PlayerManager::OnCreatePlayer(CNetPacket* pNetPacket)
 
 void PlayerManager::OnPlayerOnline(CNetPacket* pNetPacket)
 {
-	Msg_Login_Req Req;
+	/*
+	Msg_LoginPlayer_Ack Req;
 	Req.ParsePartialFromArray(pNetPacket->m_pData, pNetPacket->m_len);
 	std::cout << Req.roleid() << std::endl;
 	Msg_Login_Ack Ack;
 	Ack.set_returncode(6789);
-	ServiceBase::GetInstancePtr()->SendMsgProtoBuf(pNetPacket->m_connId,pNetPacket->m_targetid, MessageID::MSGID_LOGIN_ACK, Ack);
+	ServiceBase::GetInstancePtr()->SendMsgProtoBuf(pNetPacket->m_connId,pNetPacket->m_targetid, MessageID::MSGID_LOGINPLAYER_ACK, Ack);
 	
 	m_ConnectMap[pNetPacket->m_connId] = Req.roleid();
+	*/
 }
 
 void PlayerManager::OnPlayerOffline(CNetPacket* pNetPacket)

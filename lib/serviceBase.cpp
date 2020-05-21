@@ -118,6 +118,20 @@ bool ServiceBase::SendMsgProtoBuf(uint32 dwConnID, uint32_t sconnid, uint32 dwMs
 	ConnectionManager::GetInstancePtr()->sendMessageByConnID(dwConnID, sconnid, dwMsgID, szBuff, pdata.GetCachedSize());
 
 }
+bool ServiceBase::SendMsgProtoBuf(CNetPacket* pNetPacket, uint32 dwMsgID, const google::protobuf::Message& pdata)
+{
+	char szBuff[102400] = { 0 };
+
+	if (pdata.ByteSize() > 102400)
+	{
+		return false;
+	}
+
+	pdata.SerializePartialToArray(szBuff, pdata.GetCachedSize());
+
+	ConnectionManager::GetInstancePtr()->sendMessageByConnID(pNetPacket->m_connId, pNetPacket->m_targetid, dwMsgID, szBuff, pdata.GetCachedSize());
+
+}
 
 bool ServiceBase::SendDataByConnID(uint32 connid, CNetPacket* pNetPacket)
 {
@@ -143,10 +157,9 @@ void ServiceBase::RegisterMsg(uint32_t msgid, msgfunc fp)
 	m_msgFuncMap[msgid].push_back(fp);
 }
 
-void ServiceBase::ChangeDB(DB_Base* pBase)
+void ServiceBase::ChangeDB(std::string& sql)
 {
-	AUTOMUTEX
-	m_DataBaseVec.push_back(pBase);
+	m_DataBaseVec.push_back(sql);
 }
 
 void ServiceBase::SetMysqlControl(MysqlControl* pMysql)
@@ -203,14 +216,14 @@ void ServiceBase::ChangeDateBase()
 	{
 		{
 			AUTOMUTEX
-			for (auto i = 0; i < m_DataBaseVec.size(); i++)
+			for (auto &it : m_DataBaseVec)
 			{
-				m_DataBaseVec[i]->Run(m_pMysqlControl);
+				m_pMysqlControl->Query(it);
 			}
 
 			m_DataBaseVec.clear();
 		}
-		usleep(1000000);
+		usleep(1000);
 	}
 }
 
@@ -228,7 +241,6 @@ void ServiceBase::ParsingNetPack()
 
 bool ServiceBase::ExecutionMsg(CNetPacket* pNetPack)
 {
-	std::cout << "recv msgid : " << pNetPack->messId  << std::endl;
 	auto it = m_msgFuncMap.find(pNetPack->messId);
 	if (it == m_msgFuncMap.end())
 	{

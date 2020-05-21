@@ -73,36 +73,34 @@ void GateServer::OnSecondTimer()
 
 void GateServer::OnCloseConnect(Connection* pConnection)
 {
-	if (pConnection->m_ConnID == m_GameConnID)
-	{
-		m_GameConnID = 0;
-		std::cout << "gameserver close connection" << std::endl;
-	}
-	else
+	if (m_ClientConnectionMap.find(pConnection->GetConnectionID()) != m_ClientConnectionMap.end())
 	{
 		m_ClientConnectionMap.erase(pConnection->GetConnectionID());
-		Msg_Connetc_Notice Req;
-		Req.set_connid(pConnection->m_ConnID);
-		Req.set_status(0);
-		ServiceBase::GetInstancePtr()->SendMsgProtoBuf(m_GameConnID, MessageID::MSGID_CONNETC_NOTICE, Req);
+		return;
+	}
+
+	if (m_GameConnIdMap.find(pConnection->GetConnectionID()) != m_GameConnIdMap.end())
+	{
+		std::cout << "gameserver close connection Id " << m_GameConnIdMap[pConnection->GetConnectionID()]->m_serverId << std::endl;
+		return;
+	}
+
+	if (pConnection->GetConnectionID() == m_AccountConnID)
+	{
+		std::cout << "account close connection Id " << std::endl;
+		return;
 	}
 }
 
+
 void GateServer::OnNewConnect(Connection* pConnection)
 {
-	if (pConnection->GetConnectionID() == m_GameConnID)
+	if (m_GameConnIdMap.find(pConnection->GetConnectionID()) == m_GameConnIdMap.end())
 	{
-		pConnection->SetConnType(CT_GameServer);
-	}
-	else
-	{
-		pConnection->SetConnType(CT_Client);
-		m_ClientConnectionMap[pConnection->GetConnectionID()] = pConnection;
-
-		Msg_Connetc_Notice Req;
-		Req.set_connid(pConnection->m_ConnID);
-		Req.set_status(1);
-		ServiceBase::GetInstancePtr()->SendMsgProtoBuf(m_GameConnID, MessageID::MSGID_CONNETC_NOTICE, Req);
+		if (m_AccountConnID != pConnection->GetConnectionID())
+		{
+			m_ClientConnectionMap[pConnection->GetConnectionID()] = pConnection;
+		}
 	}
 }
 
@@ -117,42 +115,25 @@ void GateServer::InitMsg()
 	GateServer::GetInstancePtr()->RegisterMsg();
 }
 
-bool GateServer::ConnectionGame()
-{
-	std::string ip = CConfigFile::GetInstancePtr()->GetStringValue("game_svr_ip");
-	uint32_t port = CConfigFile::GetInstancePtr()->GetIntValue("game_svr_port");
-	auto pConn = ConnectionManager::GetInstancePtr()->ConnectionToServer(ip, port);
-	if (!pConn)
-	{
-		CLog::GetInstancePtr()->LogError("connect game fail ! ");
-		return false;
-	}
-
-	m_GameConnID = pConn->m_ConnID;
-
-	return true;
-}
-
 bool GateServer::OnForwardNetPack(CNetPacket* pNetPacket)
 {
-	if (pNetPacket->messId > MessageID::MSGID_GAMEMSG_BEGIN && pNetPacket->messId < MessageID::MSGID_GAMEMSG_END)
+	std::cout << "pNetPacket : " << pNetPacket->messId << std::endl;
+	if (pNetPacket->messId > MessageID::MSGID_LOGINMSG_BEGIN&& pNetPacket->messId < MessageID::MSGID_LOGINMSG_END)
 	{
-		if (m_GameConnID != 0 && pNetPacket->m_connId != m_GameConnID)
+		std::cout << m_AccountConnID << std::endl;
+		std::cout << pNetPacket->m_connId << std::endl;
+
+		if (m_AccountConnID != 0 && pNetPacket->m_connId != m_AccountConnID)
 		{
-			std::cout << "pNetPacket->messId : " << pNetPacket->messId << std::endl;
-			ServiceBase::GetInstancePtr()->SendDataByConnID(m_GameConnID, pNetPacket);
+			std::cout << "1111111111111" << std::endl;
+			ServiceBase::GetInstancePtr()->SendDataByConnID(m_AccountConnID, pNetPacket);
 			return true;
 		}
 		else
 		{
-			auto it = m_ClientConnectionMap.find(pNetPacket->m_targetid);
-			if (it == m_ClientConnectionMap.end())
-			{
-				return true;
-			}
-
-			std::cout << "pNetPacket->messId : " << pNetPacket->messId <<" pNetPacket->m_targetid "<< pNetPacket->m_targetid << std::endl;
+			std::cout << "2222222222" << pNetPacket->m_targetid << std::endl;
 			ServiceBase::GetInstancePtr()->SendDataByConnID(pNetPacket->m_targetid, pNetPacket);
+			return true;
 		}
 	}
 
@@ -161,13 +142,17 @@ bool GateServer::OnForwardNetPack(CNetPacket* pNetPacket)
 
 void GateServer::OnHeartBeatReq(CNetPacket* pNetPacket)
 {
-	std::cout << "OnHeartBeatReq : " << std::endl;
+	Msg_Heartbeat_Req Req;
+	Req.ParsePartialFromArray(pNetPacket->m_pData, pNetPacket->m_len);
+
 	Msg_Heartbeat_Ack ack;
+	ack.set_index(Req.index());
 	ServiceBase::GetInstancePtr()->SendMsgProtoBuf(pNetPacket->m_connId, MessageID::MSGID_HEARTBEAT_ACK, ack);
 }
 
 void GateServer::OnServerInfo(CNetPacket* pNetPacket)
 {
+	std::cout << "OnServerInfo" << std::endl;
 	Msg_Connetc_Info req;
 	req.ParsePartialFromArray(pNetPacket->m_pData, pNetPacket->m_len);
 
@@ -182,7 +167,12 @@ void GateServer::OnServerInfo(CNetPacket* pNetPacket)
 		break;
 	case ST_Game:
 	{
-		m_GameConnIdMap[req.serverid()] = pNetPacket->m_connId;
+		GameInfo* pServer = new GameInfo();
+		pServer->m_connId = pNetPacket->m_connId;
+		pServer->m_serverId = req.serverid();
+		pServer->m_serverName = req.name();
+		m_GameServerIdMap[req.serverid()] = pServer;
+		m_GameConnIdMap[pServer->m_connId] = pServer;
 	}
 		break;
 

@@ -58,13 +58,7 @@ public:
 
 	int32       GetFd();
 
-	void        SetConnType(int32 ctype);
-
-	int32       GetConnType();
-
 public:
-
-	int32                   m_ConnType = 0;
 
 	int32	                m_fd;
 			                

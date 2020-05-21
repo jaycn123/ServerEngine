@@ -4,6 +4,8 @@
 #include "../lib/type_define.h"
 #include "AccountManager.h"
 #include "../lib/Log.h"
+#include "../protoFiles/msgId.pb.h"
+#include "../protoFiles/player.pb.h"
 
 AccountManager::AccountManager(void)
 {
@@ -43,10 +45,58 @@ void AccountManager::Uninit()
 
 void AccountManager::InitMsg()
 {
-	
+	ServiceBase::GetInstancePtr()->RegisterMsg(MessageID::MSGID_LOGINACCOUNT_REQ, std::bind(&AccountManager::OnLoginAccount, this, std::placeholders::_1));
 }
 
 void AccountManager::OnSecondTimer()
+{
+
+}
+
+void AccountManager::OnLoginAccount(CNetPacket* pNetPacket)
+{
+	std::cout << "OnLoginAccount" << std::endl;
+	Msg_LoginAccount_Req Req;
+	Req.ParsePartialFromArray(pNetPacket->m_pData, pNetPacket->m_len);
+
+	Msg_LoginAccount_Ack Ack;
+	Ack.set_returncode(ErrorID::Succeed);
+
+
+
+	do 
+	{
+		auto it = m_accountMap.find(Req.username());
+		if (it == m_accountMap.end())
+		{
+			Ack.set_returncode(ErrorID::UserNotFound);
+			break;
+		}
+
+		if (it->second->password != Req.password())
+		{
+			Ack.set_returncode(ErrorID::PasswordError);
+			break;
+		}
+
+	} while (false);
+
+	ServiceBase::GetInstancePtr()->SendMsgProtoBuf(pNetPacket,MessageID::MSGID_LOGINACCOUNT_ACK, Ack);
+
+	
+	static int id = 1;
+	DB_Account* pAccount = new DB_Account();
+	pAccount->ctype = CT_Add;
+	pAccount->id = id++;
+	pAccount->user = "wangmingxing_" + std::to_string(id);
+	pAccount->password = std::to_string(id);
+	
+	pAccount->Save();
+	
+	return;
+}
+
+void AccountManager::OnCreateAccount(CNetPacket* pNetPacket)
 {
 
 }

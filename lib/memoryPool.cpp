@@ -83,7 +83,7 @@ char* MemoryManager::GetFreeMemory(uint32_t nsize)
 	AUTOMUTEX
 	useCount++;
 	
-	std::cout << "GetFreeMemory : " << nsize << std::endl;
+	//std::cout << "GetFreeMemory : " << nsize << std::endl;
 
 	if (nsize > 1)
 	{
@@ -100,7 +100,7 @@ bool MemoryManager::FreeMemory(uint32_t nsize, char *addr)
 	AUTOMUTEX
 	freeCount++;
 
-	std::cout << "FreeMemory : " << nsize << std::endl;
+	//std::cout << "FreeMemory : " << nsize << std::endl;
 	//std::cout << "useCount : " << useCount << " freeCount : " << freeCount << std::endl;
 
 	if (nsize > 1)
@@ -135,7 +135,7 @@ void MemoryPool::CapacityMemory()
 	if (m_freeData->m_pNext != NULL)
 		return;
 
-	std::cout << "memory not enought m_len : "<< m_len << std::endl;
+	//std::cout << "memory not enought m_len : "<< m_len << std::endl;
 
 	MemoryData* p = m_freeData;
 	char* addr = (char*)malloc((PTRSIZE + m_len) * m_count);

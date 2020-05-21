@@ -11,6 +11,14 @@ enum ConnType
 	CT_GameServer = 2
 };
 
+struct GameInfo
+{
+	uint32_t m_serverId = 0;
+	uint32_t m_connId = 0;
+	std::string m_serverName = "";
+};
+
+
 class GateServer : public IPacketDispatcher
 {
 private:
@@ -40,7 +48,6 @@ public:
 
 protected:
 
-	bool        ConnectionGame();
 
 	
 public:
@@ -56,13 +63,13 @@ public:
 
 private:
 
-	uint32_t m_GameConnID = 0;
-
 	uint32_t m_AccountConnID = 0;
 
 	std::map<int32, Connection* >m_ClientConnectionMap;
 
-	std::map<uint32_t, uint32_t > m_GameConnIdMap;
+	std::map<uint32_t, GameInfo*> m_GameServerIdMap;
+
+	std::map<uint32_t, GameInfo*> m_GameConnIdMap;
 
 };
 

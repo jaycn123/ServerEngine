@@ -57,10 +57,6 @@ void Client::Run()
 bool Client::DispatchPacket(CNetPacket* pNetPacket)
 {
 	return true;
-// 	switch (pNetPacket->messId)
-// 	{
-// 		PROCESS_MESSAGE_ITEMEX(1, OnMsgWatchHeartBeatReq)
-// 	}
 }
 
 void Client::OnSecondTimer()
@@ -68,11 +64,11 @@ void Client::OnSecondTimer()
 	if (m_GameConnID == 0)
 	{
 		ConnectionGame();
+		Login();
 		return;
 	}
 
 	HeartBeat();
-	Login();
 }
 
 void Client::OnCloseConnect(Connection* pConn)
@@ -88,7 +84,7 @@ void Client::OnNewConnect(Connection* pConnection)
 void Client::RegisterMsg()
 {
 	ServiceBase::GetInstancePtr()->RegisterMsg(MessageID::MSGID_HEARTBEAT_ACK, std::bind(&Client::OnHeartBeatAck, this, std::placeholders::_1));
-	ServiceBase::GetInstancePtr()->RegisterMsg(MessageID::MSGID_LOGIN_ACK, std::bind(&Client::OnLoginAck, this, std::placeholders::_1));
+	ServiceBase::GetInstancePtr()->RegisterMsg(MessageID::MSGID_LOGINACCOUNT_ACK, std::bind(&Client::OnLoginAck, this, std::placeholders::_1));
 }
 
 void Client::InitMsg()
@@ -109,35 +105,40 @@ bool Client::ConnectionGame()
 
 	m_GameConnID = pConn->m_ConnID;
 
+	Client::GetInstancePtr()->RegisterMsg();
+
 	return true;
 }
 
 void Client::OnHeartBeatAck(CNetPacket* pNetPacket)
 {
-	std::cout << "OnHeartBeatAck : " << std::endl;
+	Msg_Heartbeat_Ack Ack;
+	Ack.ParsePartialFromArray(pNetPacket->m_pData, pNetPacket->m_len);
 }
 
 void Client::OnLoginAck(CNetPacket* pNetPacket)
 {
-	Msg_Login_Ack Ack;
+	std::cout << "OnLoginAck" << std::endl;
+	Msg_LoginAccount_Ack Ack;
 	Ack.ParsePartialFromArray(pNetPacket->m_pData, pNetPacket->m_len);
 	std::cout << Ack.returncode() << std::endl;
+
+	Login();
 }
 
 void Client::HeartBeat()
 {
 	Msg_Heartbeat_Req Req;
+	Req.set_index(++m_heartIndex);
 	ServiceBase::GetInstancePtr()->SendMsgProtoBuf(m_GameConnID, MessageID::MSGID_HEARTBEAT_REQ, Req);
 }
 
 void Client::Login()
 {
-	for (uint32_t i = 0; i < 1; i++)
-	{
-		Msg_Login_Req Req;
-		Req.set_roleid(123456);
-		ServiceBase::GetInstancePtr()->SendMsgProtoBuf(m_GameConnID, MessageID::MSGID_LOGIN_REQ, Req);
-	}
+	Msg_LoginAccount_Req Req;
+	Req.set_username("wangmingxing");
+	Req.set_password("123456");
+	ServiceBase::GetInstancePtr()->SendMsgProtoBuf(m_GameConnID, MessageID::MSGID_LOGINACCOUNT_REQ, Req);
 }
 
 int main()

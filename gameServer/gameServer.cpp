@@ -68,7 +68,10 @@ bool GameServer::DispatchPacket(CNetPacket* pNetPacket)
 
 void GameServer::OnSecondTimer()
 {
-
+	if (!m_GateServerConnId)
+	{
+		ConnectionGate();
+	}
 }
 
 void GameServer::OnCloseConnect(Connection* pConn)
@@ -78,8 +81,36 @@ void GameServer::OnCloseConnect(Connection* pConn)
 
 void GameServer::OnNewConnect(Connection* pConnection)
 {
-
+	if (m_GateServerConnId == pConnection->m_ConnID)
+	{
+		std::cout << "m_GateServerConnId : " << m_GateServerConnId << std::endl;
+	}
 }
+
+bool GameServer::ConnectionGate()
+{
+	std::string ip = CConfigFile::GetInstancePtr()->GetStringValue("gate_svr_ip");
+	std::string areaname = CConfigFile::GetInstancePtr()->GetStringValue("areaname");
+	uint32_t areaid = CConfigFile::GetInstancePtr()->GetIntValue("areaid");
+	uint32_t port = CConfigFile::GetInstancePtr()->GetIntValue("gate_svr_port");
+	auto pConn = ConnectionManager::GetInstancePtr()->ConnectionToServer(ip, port);
+	if (!pConn)
+	{
+		CLog::GetInstancePtr()->LogError("connect gate fail ! ");
+		return false;
+	}
+
+	m_GateServerConnId = pConn->m_ConnID;
+
+	Msg_Connetc_Info Req;
+	Req.set_stype(ServerType::ST_Game);
+	Req.set_name(areaname);
+	Req.set_serverid(areaid);
+	ServiceBase::GetInstancePtr()->SendMsgProtoBuf(m_GateServerConnId, MessageID::MSGID_CONNETC_INFO, Req);
+
+	return true;
+}
+
 
 void GameServer::RegisterMsg()
 {

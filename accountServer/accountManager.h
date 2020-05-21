@@ -8,7 +8,7 @@
 #include "../lib/mysql_control.h"
 
 
-class AccountManager 
+class AccountManager
 {
 private:
 
@@ -27,10 +27,13 @@ public:
 	void        InitMsg();
 
 	void        OnSecondTimer();
-	
+
+		
 public:
 
-	
+	void        OnLoginAccount(CNetPacket* pNetPacket);
+
+	void        OnCreateAccount(CNetPacket* pNetPacket);
 
 protected:
 

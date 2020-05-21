@@ -8,25 +8,40 @@ enum MessageID
 	MSGID_CONNETC_NOTICE               = 3;
 	MSGID_CONNETC_INFO                 = 4;
 	
-	
-    MSGID_GAMEMSG_BEGIN                = 1000000;
-	MSGID_CREATEPLAYER_REQ             = 1000001;
-	MSGID_CREATEPLAYER_ACK             = 1000002;
-    MSGID_LOGIN_REQ                    = 1000003;
-	MSGID_LOGIN_ACK                    = 1000004;
-	MSGID_LOGINOFF_REQ                 = 1000005;
-	MSGID_LOGINOFF_ACK                 = 1000006;
-    MSGID_GAMEMSG_END                  = 2000000;
+	MSGID_LOGINMSG_BEGIN               = 1000000;
+	MSGID_LOGINACCOUNT_REQ             = 1000001;
+	MSGID_LOGINACCOUNT_ACK             = 1000002;
+	MSGID_REGISTERACCOUNT_REQ          = 1000003;
+	MSGID_REGISTERACCOUNT_ACK          = 1000004;
+	MSGID_LOGINMSG_END                 = 1999999;
+
+    MSGID_GAMEMSG_BEGIN                = 2000000;
+	MSGID_CREATEPLAYER_REQ             = 2000001;
+	MSGID_CREATEPLAYER_ACK             = 2000002;
+    MSGID_LOGINPLAYER_REQ              = 2000003;
+	MSGID_LOGINPLAYER_ACK              = 2000004;
+	MSGID_LOGINOFF_REQ                 = 2000005;
+	MSGID_LOGINOFF_ACK                 = 2000006;
+    MSGID_GAMEMSG_END                  = 2999999;
+}
+
+enum ErrorID
+{
+	Succeed 						   = 0;   
+	PasswordError                      = 1;
+	UserRepetition                     = 2;
+	UserIllegal                        = 3;
+	UserNotFound                       = 4;
 }
 
 message Msg_Heartbeat_Req
 {
-    
+    uint64 index = 1;
 }
 
 message Msg_Heartbeat_Ack
 {
-   
+   uint64 index = 1;
 }
 
 message Msg_Connetc_Notice
@@ -48,4 +63,5 @@ message Msg_Connetc_Info
 {
 	ServerType stype = 1;
 	int32   serverid = 2;
+	string  name = 3;
 }

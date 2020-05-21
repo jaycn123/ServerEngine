@@ -229,7 +229,6 @@ bool ConnectionManager::sendMessageByConnID(uint32 connid, uint32_t sconnid, uin
 	memcpy(pMemData->pData, pData, dwLen);
 	pConn->SendBuffer(pMemData);
 
-
 	struct epoll_event en;
 	en.data.ptr = pConn;
 	en.events = EPOLLOUT | EPOLLET;
@@ -284,6 +283,7 @@ Connection* ConnectionManager::ConnectionToServer(std::string& ip, uint32 port)
 
 	return AddNewConn(sockfd);
 }
+
 
 Connection* ConnectionManager::AddNewConn(int32 fd)
 {

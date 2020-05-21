@@ -47,6 +47,8 @@ public:
 
 	bool   SendMsgProtoBuf(uint32 dwConnID,uint32_t sconnid, uint32 dwMsgID, const google::protobuf::Message& pdata);
 
+	bool   SendMsgProtoBuf(CNetPacket* pNetPacket, uint32 dwMsgID, const google::protobuf::Message& pdata);
+
 	bool   SendDataByConnID(uint32 connid, CNetPacket* pPack);
 
 	void   OnCloseConnect(Connection* pConnection);
@@ -55,7 +57,7 @@ public:
 
 	void   RegisterMsg(uint32_t msgid, msgfunc fp);
 
-	void   ChangeDB(DB_Base* pBase);
+	void   ChangeDB(std::string &sql);
 
 	void   SetMysqlControl(MysqlControl* pMysql);
 
@@ -89,7 +91,7 @@ private:
 
 	MysqlControl*                           m_pMysqlControl = nullptr;
 
-	std::vector<DB_Base*>                   m_DataBaseVec;
+	std::vector<std::string>                m_DataBaseVec;
 
 };
 

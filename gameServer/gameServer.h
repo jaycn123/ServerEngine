@@ -35,7 +35,9 @@ public:
 	void        RegisterMsg();
 
 
-public:
+protected:
+
+	bool ConnectionGate();
 
 	
 public:
@@ -49,6 +51,7 @@ public:
 private:
 
 	
+	uint32_t m_GateServerConnId = 0;
 
 };
 

@@ -121,7 +121,7 @@ bool Connection::DoReceive()
 		length = recv(m_fd, m_pRecvBuf + m_nRecvSize, RECV_BUF_SIZE - m_nRecvSize, 0);
 		if (length == 0)
 		{
-			std::cout << "recv leng : " << length<<"  close conn" << std::endl;
+			//std::cout << "recv leng : " << length<<"  close conn" << std::endl;
 			return false;
 		}
 
@@ -261,7 +261,6 @@ bool Connection::SendBuffer(NetPacket* pBuff)
 SendStatus Connection::DoSend()
 {
 	AUTOMUTEX
-	//std::cout << "DoSendEx : pack : "<< m_SendPackQueue.size() << std::endl;
 	while (!m_SendPackQueue.empty())
 	{
 		NetPacket* pSendMemoryAddr = m_SendPackQueue.front();
@@ -303,14 +302,4 @@ SendStatus Connection::DoSend()
 int32 Connection::GetFd()
 {
 	return m_fd;
-}
-
-void Connection::SetConnType(int32 ctype)
-{
-	m_ConnType = ctype;
-}
-
-int32 Connection::GetConnType()
-{
-	return m_ConnType;
 }

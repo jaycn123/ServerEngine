@@ -36,39 +36,41 @@ void protobuf_ShutdownFile_player_2eproto();
 
 class Msg_CreatePlayer_Ack;
 class Msg_CreatePlayer_Req;
+class Msg_LoginAccount_Ack;
+class Msg_LoginAccount_Req;
 class Msg_LoginOff_Ack;
 class Msg_LoginOff_Req;
-class Msg_Login_Ack;
-class Msg_Login_Req;
+class Msg_LoginPlayer_Ack;
+class Msg_LoginPlayer_Req;
 
 // ===================================================================
 
-class Msg_Login_Req : public ::google::protobuf::Message /* @@protoc_insertion_point(class_definition:Msg_Login_Req) */ {
+class Msg_LoginAccount_Req : public ::google::protobuf::Message /* @@protoc_insertion_point(class_definition:Msg_LoginAccount_Req) */ {
  public:
-  Msg_Login_Req();
-  virtual ~Msg_Login_Req();
+  Msg_LoginAccount_Req();
+  virtual ~Msg_LoginAccount_Req();
 
-  Msg_Login_Req(const Msg_Login_Req& from);
+  Msg_LoginAccount_Req(const Msg_LoginAccount_Req& from);
 
-  inline Msg_Login_Req& operator=(const Msg_Login_Req& from) {
+  inline Msg_LoginAccount_Req& operator=(const Msg_LoginAccount_Req& from) {
     CopyFrom(from);
     return *this;
   }
 
   static const ::google::protobuf::Descriptor* descriptor();
-  static const Msg_Login_Req& default_instance();
+  static const Msg_LoginAccount_Req& default_instance();
 
-  void Swap(Msg_Login_Req* other);
+  void Swap(Msg_LoginAccount_Req* other);
 
   // implements Message ----------------------------------------------
 
-  inline Msg_Login_Req* New() const { return New(NULL); }
+  inline Msg_LoginAccount_Req* New() const { return New(NULL); }
 
-  Msg_Login_Req* New(::google::protobuf::Arena* arena) const;
+  Msg_LoginAccount_Req* New(::google::protobuf::Arena* arena) const;
   void CopyFrom(const ::google::protobuf::Message& from);
   void MergeFrom(const ::google::protobuf::Message& from);
-  void CopyFrom(const Msg_Login_Req& from);
-  void MergeFrom(const Msg_Login_Req& from);
+  void CopyFrom(const Msg_LoginAccount_Req& from);
+  void MergeFrom(const Msg_LoginAccount_Req& from);
   void Clear();
   bool IsInitialized() const;
 
@@ -87,7 +89,7 @@ class Msg_Login_Req : public ::google::protobuf::Message /* @@protoc_insertion_p
   void SharedCtor();
   void SharedDtor();
   void SetCachedSize(int size) const;
-  void InternalSwap(Msg_Login_Req* other);
+  void InternalSwap(Msg_LoginAccount_Req* other);
   private:
   inline ::google::protobuf::Arena* GetArenaNoVirtual() const {
     return _internal_metadata_.arena();
@@ -103,61 +105,71 @@ class Msg_Login_Req : public ::google::protobuf::Message /* @@protoc_insertion_p
 
   // accessors -------------------------------------------------------
 
-  // optional uint32 accountid = 1;
-  void clear_accountid();
-  static const int kAccountidFieldNumber = 1;
-  ::google::protobuf::uint32 accountid() const;
-  void set_accountid(::google::protobuf::uint32 value);
+  // optional string username = 1;
+  void clear_username();
+  static const int kUsernameFieldNumber = 1;
+  const ::std::string& username() const;
+  void set_username(const ::std::string& value);
+  void set_username(const char* value);
+  void set_username(const char* value, size_t size);
+  ::std::string* mutable_username();
+  ::std::string* release_username();
+  void set_allocated_username(::std::string* username);
 
-  // optional uint32 roleid = 2;
-  void clear_roleid();
-  static const int kRoleidFieldNumber = 2;
-  ::google::protobuf::uint32 roleid() const;
-  void set_roleid(::google::protobuf::uint32 value);
+  // optional string password = 2;
+  void clear_password();
+  static const int kPasswordFieldNumber = 2;
+  const ::std::string& password() const;
+  void set_password(const ::std::string& value);
+  void set_password(const char* value);
+  void set_password(const char* value, size_t size);
+  ::std::string* mutable_password();
+  ::std::string* release_password();
+  void set_allocated_password(::std::string* password);
 
-  // @@protoc_insertion_point(class_scope:Msg_Login_Req)
+  // @@protoc_insertion_point(class_scope:Msg_LoginAccount_Req)
  private:
 
   ::google::protobuf::internal::InternalMetadataWithArena _internal_metadata_;
   bool _is_default_instance_;
-  ::google::protobuf::uint32 accountid_;
-  ::google::protobuf::uint32 roleid_;
+  ::google::protobuf::internal::ArenaStringPtr username_;
+  ::google::protobuf::internal::ArenaStringPtr password_;
   mutable int _cached_size_;
   friend void  protobuf_AddDesc_player_2eproto();
   friend void protobuf_AssignDesc_player_2eproto();
   friend void protobuf_ShutdownFile_player_2eproto();
 
   void InitAsDefaultInstance();
-  static Msg_Login_Req* default_instance_;
+  static Msg_LoginAccount_Req* default_instance_;
 };
 // -------------------------------------------------------------------
 
-class Msg_Login_Ack : public ::google::protobuf::Message /* @@protoc_insertion_point(class_definition:Msg_Login_Ack) */ {
+class Msg_LoginAccount_Ack : public ::google::protobuf::Message /* @@protoc_insertion_point(class_definition:Msg_LoginAccount_Ack) */ {
  public:
-  Msg_Login_Ack();
-  virtual ~Msg_Login_Ack();
+  Msg_LoginAccount_Ack();
+  virtual ~Msg_LoginAccount_Ack();
 
-  Msg_Login_Ack(const Msg_Login_Ack& from);
+  Msg_LoginAccount_Ack(const Msg_LoginAccount_Ack& from);
 
-  inline Msg_Login_Ack& operator=(const Msg_Login_Ack& from) {
+  inline Msg_LoginAccount_Ack& operator=(const Msg_LoginAccount_Ack& from) {
     CopyFrom(from);
     return *this;
   }
 
   static const ::google::protobuf::Descriptor* descriptor();
-  static const Msg_Login_Ack& default_instance();
+  static const Msg_LoginAccount_Ack& default_instance();
 
-  void Swap(Msg_Login_Ack* other);
+  void Swap(Msg_LoginAccount_Ack* other);
 
   // implements Message ----------------------------------------------
 
-  inline Msg_Login_Ack* New() const { return New(NULL); }
+  inline Msg_LoginAccount_Ack* New() const { return New(NULL); }
 
-  Msg_Login_Ack* New(::google::protobuf::Arena* arena) const;
+  Msg_LoginAccount_Ack* New(::google::protobuf::Arena* arena) const;
   void CopyFrom(const ::google::protobuf::Message& from);
   void MergeFrom(const ::google::protobuf::Message& from);
-  void CopyFrom(const Msg_Login_Ack& from);
-  void MergeFrom(const Msg_Login_Ack& from);
+  void CopyFrom(const Msg_LoginAccount_Ack& from);
+  void MergeFrom(const Msg_LoginAccount_Ack& from);
   void Clear();
   bool IsInitialized() const;
 
@@ -176,7 +188,7 @@ class Msg_Login_Ack : public ::google::protobuf::Message /* @@protoc_insertion_p
   void SharedCtor();
   void SharedDtor();
   void SetCachedSize(int size) const;
-  void InternalSwap(Msg_Login_Ack* other);
+  void InternalSwap(Msg_LoginAccount_Ack* other);
   private:
   inline ::google::protobuf::Arena* GetArenaNoVirtual() const {
     return _internal_metadata_.arena();
@@ -198,7 +210,7 @@ class Msg_Login_Ack : public ::google::protobuf::Message /* @@protoc_insertion_p
   ::google::protobuf::int32 returncode() const;
   void set_returncode(::google::protobuf::int32 value);
 
-  // @@protoc_insertion_point(class_scope:Msg_Login_Ack)
+  // @@protoc_insertion_point(class_scope:Msg_LoginAccount_Ack)
  private:
 
   ::google::protobuf::internal::InternalMetadataWithArena _internal_metadata_;
@@ -210,7 +222,171 @@ class Msg_Login_Ack : public ::google::protobuf::Message /* @@protoc_insertion_p
   friend void protobuf_ShutdownFile_player_2eproto();
 
   void InitAsDefaultInstance();
-  static Msg_Login_Ack* default_instance_;
+  static Msg_LoginAccount_Ack* default_instance_;
+};
+// -------------------------------------------------------------------
+
+class Msg_LoginPlayer_Req : public ::google::protobuf::Message /* @@protoc_insertion_point(class_definition:Msg_LoginPlayer_Req) */ {
+ public:
+  Msg_LoginPlayer_Req();
+  virtual ~Msg_LoginPlayer_Req();
+
+  Msg_LoginPlayer_Req(const Msg_LoginPlayer_Req& from);
+
+  inline Msg_LoginPlayer_Req& operator=(const Msg_LoginPlayer_Req& from) {
+    CopyFrom(from);
+    return *this;
+  }
+
+  static const ::google::protobuf::Descriptor* descriptor();
+  static const Msg_LoginPlayer_Req& default_instance();
+
+  void Swap(Msg_LoginPlayer_Req* other);
+
+  // implements Message ----------------------------------------------
+
+  inline Msg_LoginPlayer_Req* New() const { return New(NULL); }
+
+  Msg_LoginPlayer_Req* New(::google::protobuf::Arena* arena) const;
+  void CopyFrom(const ::google::protobuf::Message& from);
+  void MergeFrom(const ::google::protobuf::Message& from);
+  void CopyFrom(const Msg_LoginPlayer_Req& from);
+  void MergeFrom(const Msg_LoginPlayer_Req& from);
+  void Clear();
+  bool IsInitialized() const;
+
+  int ByteSize() const;
+  bool MergePartialFromCodedStream(
+      ::google::protobuf::io::CodedInputStream* input);
+  void SerializeWithCachedSizes(
+      ::google::protobuf::io::CodedOutputStream* output) const;
+  ::google::protobuf::uint8* InternalSerializeWithCachedSizesToArray(
+      bool deterministic, ::google::protobuf::uint8* output) const;
+  ::google::protobuf::uint8* SerializeWithCachedSizesToArray(::google::protobuf::uint8* output) const {
+    return InternalSerializeWithCachedSizesToArray(false, output);
+  }
+  int GetCachedSize() const { return _cached_size_; }
+  private:
+  void SharedCtor();
+  void SharedDtor();
+  void SetCachedSize(int size) const;
+  void InternalSwap(Msg_LoginPlayer_Req* other);
+  private:
+  inline ::google::protobuf::Arena* GetArenaNoVirtual() const {
+    return _internal_metadata_.arena();
+  }
+  inline void* MaybeArenaPtr() const {
+    return _internal_metadata_.raw_arena_ptr();
+  }
+  public:
+
+  ::google::protobuf::Metadata GetMetadata() const;
+
+  // nested types ----------------------------------------------------
+
+  // accessors -------------------------------------------------------
+
+  // optional uint64 roleid = 1;
+  void clear_roleid();
+  static const int kRoleidFieldNumber = 1;
+  ::google::protobuf::uint64 roleid() const;
+  void set_roleid(::google::protobuf::uint64 value);
+
+  // @@protoc_insertion_point(class_scope:Msg_LoginPlayer_Req)
+ private:
+
+  ::google::protobuf::internal::InternalMetadataWithArena _internal_metadata_;
+  bool _is_default_instance_;
+  ::google::protobuf::uint64 roleid_;
+  mutable int _cached_size_;
+  friend void  protobuf_AddDesc_player_2eproto();
+  friend void protobuf_AssignDesc_player_2eproto();
+  friend void protobuf_ShutdownFile_player_2eproto();
+
+  void InitAsDefaultInstance();
+  static Msg_LoginPlayer_Req* default_instance_;
+};
+// -------------------------------------------------------------------
+
+class Msg_LoginPlayer_Ack : public ::google::protobuf::Message /* @@protoc_insertion_point(class_definition:Msg_LoginPlayer_Ack) */ {
+ public:
+  Msg_LoginPlayer_Ack();
+  virtual ~Msg_LoginPlayer_Ack();
+
+  Msg_LoginPlayer_Ack(const Msg_LoginPlayer_Ack& from);
+
+  inline Msg_LoginPlayer_Ack& operator=(const Msg_LoginPlayer_Ack& from) {
+    CopyFrom(from);
+    return *this;
+  }
+
+  static const ::google::protobuf::Descriptor* descriptor();
+  static const Msg_LoginPlayer_Ack& default_instance();
+
+  void Swap(Msg_LoginPlayer_Ack* other);
+
+  // implements Message ----------------------------------------------
+
+  inline Msg_LoginPlayer_Ack* New() const { return New(NULL); }
+
+  Msg_LoginPlayer_Ack* New(::google::protobuf::Arena* arena) const;
+  void CopyFrom(const ::google::protobuf::Message& from);
+  void MergeFrom(const ::google::protobuf::Message& from);
+  void CopyFrom(const Msg_LoginPlayer_Ack& from);
+  void MergeFrom(const Msg_LoginPlayer_Ack& from);
+  void Clear();
+  bool IsInitialized() const;
+
+  int ByteSize() const;
+  bool MergePartialFromCodedStream(
+      ::google::protobuf::io::CodedInputStream* input);
+  void SerializeWithCachedSizes(
+      ::google::protobuf::io::CodedOutputStream* output) const;
+  ::google::protobuf::uint8* InternalSerializeWithCachedSizesToArray(
+      bool deterministic, ::google::protobuf::uint8* output) const;
+  ::google::protobuf::uint8* SerializeWithCachedSizesToArray(::google::protobuf::uint8* output) const {
+    return InternalSerializeWithCachedSizesToArray(false, output);
+  }
+  int GetCachedSize() const { return _cached_size_; }
+  private:
+  void SharedCtor();
+  void SharedDtor();
+  void SetCachedSize(int size) const;
+  void InternalSwap(Msg_LoginPlayer_Ack* other);
+  private:
+  inline ::google::protobuf::Arena* GetArenaNoVirtual() const {
+    return _internal_metadata_.arena();
+  }
+  inline void* MaybeArenaPtr() const {
+    return _internal_metadata_.raw_arena_ptr();
+  }
+  public:
+
+  ::google::protobuf::Metadata GetMetadata() const;
+
+  // nested types ----------------------------------------------------
+
+  // accessors -------------------------------------------------------
+
+  // optional int32 returncode = 1;
+  void clear_returncode();
+  static const int kReturncodeFieldNumber = 1;
+  ::google::protobuf::int32 returncode() const;
+  void set_returncode(::google::protobuf::int32 value);
+
+  // @@protoc_insertion_point(class_scope:Msg_LoginPlayer_Ack)
+ private:
+
+  ::google::protobuf::internal::InternalMetadataWithArena _internal_metadata_;
+  bool _is_default_instance_;
+  ::google::protobuf::int32 returncode_;
+  mutable int _cached_size_;
+  friend void  protobuf_AddDesc_player_2eproto();
+  friend void protobuf_AssignDesc_player_2eproto();
+  friend void protobuf_ShutdownFile_player_2eproto();
+
+  void InitAsDefaultInstance();
+  static Msg_LoginPlayer_Ack* default_instance_;
 };
 // -------------------------------------------------------------------
 
@@ -558,52 +734,148 @@ class Msg_LoginOff_Ack : public ::google::protobuf::Message /* @@protoc_insertio
 // ===================================================================
 
 #if !PROTOBUF_INLINE_NOT_IN_HEADERS
-// Msg_Login_Req
+// Msg_LoginAccount_Req
 
-// optional uint32 accountid = 1;
-inline void Msg_Login_Req::clear_accountid() {
-  accountid_ = 0u;
+// optional string username = 1;
+inline void Msg_LoginAccount_Req::clear_username() {
+  username_.ClearToEmptyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
 }
-inline ::google::protobuf::uint32 Msg_Login_Req::accountid() const {
-  // @@protoc_insertion_point(field_get:Msg_Login_Req.accountid)
-  return accountid_;
+inline const ::std::string& Msg_LoginAccount_Req::username() const {
+  // @@protoc_insertion_point(field_get:Msg_LoginAccount_Req.username)
+  return username_.GetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
 }
-inline void Msg_Login_Req::set_accountid(::google::protobuf::uint32 value) {
+inline void Msg_LoginAccount_Req::set_username(const ::std::string& value) {
   
-  accountid_ = value;
-  // @@protoc_insertion_point(field_set:Msg_Login_Req.accountid)
+  username_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), value);
+  // @@protoc_insertion_point(field_set:Msg_LoginAccount_Req.username)
+}
+inline void Msg_LoginAccount_Req::set_username(const char* value) {
+  
+  username_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), ::std::string(value));
+  // @@protoc_insertion_point(field_set_char:Msg_LoginAccount_Req.username)
+}
+inline void Msg_LoginAccount_Req::set_username(const char* value, size_t size) {
+  
+  username_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(),
+      ::std::string(reinterpret_cast<const char*>(value), size));
+  // @@protoc_insertion_point(field_set_pointer:Msg_LoginAccount_Req.username)
+}
+inline ::std::string* Msg_LoginAccount_Req::mutable_username() {
+  
+  // @@protoc_insertion_point(field_mutable:Msg_LoginAccount_Req.username)
+  return username_.MutableNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+}
+inline ::std::string* Msg_LoginAccount_Req::release_username() {
+  // @@protoc_insertion_point(field_release:Msg_LoginAccount_Req.username)
+  
+  return username_.ReleaseNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+}
+inline void Msg_LoginAccount_Req::set_allocated_username(::std::string* username) {
+  if (username != NULL) {
+    
+  } else {
+    
+  }
+  username_.SetAllocatedNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), username);
+  // @@protoc_insertion_point(field_set_allocated:Msg_LoginAccount_Req.username)
 }
 
-// optional uint32 roleid = 2;
-inline void Msg_Login_Req::clear_roleid() {
-  roleid_ = 0u;
+// optional string password = 2;
+inline void Msg_LoginAccount_Req::clear_password() {
+  password_.ClearToEmptyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
 }
-inline ::google::protobuf::uint32 Msg_Login_Req::roleid() const {
-  // @@protoc_insertion_point(field_get:Msg_Login_Req.roleid)
-  return roleid_;
+inline const ::std::string& Msg_LoginAccount_Req::password() const {
+  // @@protoc_insertion_point(field_get:Msg_LoginAccount_Req.password)
+  return password_.GetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
 }
-inline void Msg_Login_Req::set_roleid(::google::protobuf::uint32 value) {
+inline void Msg_LoginAccount_Req::set_password(const ::std::string& value) {
   
-  roleid_ = value;
-  // @@protoc_insertion_point(field_set:Msg_Login_Req.roleid)
+  password_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), value);
+  // @@protoc_insertion_point(field_set:Msg_LoginAccount_Req.password)
+}
+inline void Msg_LoginAccount_Req::set_password(const char* value) {
+  
+  password_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), ::std::string(value));
+  // @@protoc_insertion_point(field_set_char:Msg_LoginAccount_Req.password)
+}
+inline void Msg_LoginAccount_Req::set_password(const char* value, size_t size) {
+  
+  password_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(),
+      ::std::string(reinterpret_cast<const char*>(value), size));
+  // @@protoc_insertion_point(field_set_pointer:Msg_LoginAccount_Req.password)
+}
+inline ::std::string* Msg_LoginAccount_Req::mutable_password() {
+  
+  // @@protoc_insertion_point(field_mutable:Msg_LoginAccount_Req.password)
+  return password_.MutableNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+}
+inline ::std::string* Msg_LoginAccount_Req::release_password() {
+  // @@protoc_insertion_point(field_release:Msg_LoginAccount_Req.password)
+  
+  return password_.ReleaseNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+}
+inline void Msg_LoginAccount_Req::set_allocated_password(::std::string* password) {
+  if (password != NULL) {
+    
+  } else {
+    
+  }
+  password_.SetAllocatedNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), password);
+  // @@protoc_insertion_point(field_set_allocated:Msg_LoginAccount_Req.password)
 }
 
 // -------------------------------------------------------------------
 
-// Msg_Login_Ack
+// Msg_LoginAccount_Ack
 
 // optional int32 returncode = 1;
-inline void Msg_Login_Ack::clear_returncode() {
+inline void Msg_LoginAccount_Ack::clear_returncode() {
   returncode_ = 0;
 }
-inline ::google::protobuf::int32 Msg_Login_Ack::returncode() const {
-  // @@protoc_insertion_point(field_get:Msg_Login_Ack.returncode)
+inline ::google::protobuf::int32 Msg_LoginAccount_Ack::returncode() const {
+  // @@protoc_insertion_point(field_get:Msg_LoginAccount_Ack.returncode)
   return returncode_;
 }
-inline void Msg_Login_Ack::set_returncode(::google::protobuf::int32 value) {
+inline void Msg_LoginAccount_Ack::set_returncode(::google::protobuf::int32 value) {
   
   returncode_ = value;
-  // @@protoc_insertion_point(field_set:Msg_Login_Ack.returncode)
+  // @@protoc_insertion_point(field_set:Msg_LoginAccount_Ack.returncode)
+}
+
+// -------------------------------------------------------------------
+
+// Msg_LoginPlayer_Req
+
+// optional uint64 roleid = 1;
+inline void Msg_LoginPlayer_Req::clear_roleid() {
+  roleid_ = GOOGLE_ULONGLONG(0);
+}
+inline ::google::protobuf::uint64 Msg_LoginPlayer_Req::roleid() const {
+  // @@protoc_insertion_point(field_get:Msg_LoginPlayer_Req.roleid)
+  return roleid_;
+}
+inline void Msg_LoginPlayer_Req::set_roleid(::google::protobuf::uint64 value) {
+  
+  roleid_ = value;
+  // @@protoc_insertion_point(field_set:Msg_LoginPlayer_Req.roleid)
+}
+
+// -------------------------------------------------------------------
+
+// Msg_LoginPlayer_Ack
+
+// optional int32 returncode = 1;
+inline void Msg_LoginPlayer_Ack::clear_returncode() {
+  returncode_ = 0;
+}
+inline ::google::protobuf::int32 Msg_LoginPlayer_Ack::returncode() const {
+  // @@protoc_insertion_point(field_get:Msg_LoginPlayer_Ack.returncode)
+  return returncode_;
+}
+inline void Msg_LoginPlayer_Ack::set_returncode(::google::protobuf::int32 value) {
+  
+  returncode_ = value;
+  // @@protoc_insertion_point(field_set:Msg_LoginPlayer_Ack.returncode)
 }
 
 // -------------------------------------------------------------------
@@ -723,6 +995,10 @@ inline void Msg_LoginOff_Ack::set_returncode(::google::protobuf::int32 value) {
 }
 
 #endif  // !PROTOBUF_INLINE_NOT_IN_HEADERS
+// -------------------------------------------------------------------
+
+// -------------------------------------------------------------------
+
 // -------------------------------------------------------------------
 
 // -------------------------------------------------------------------

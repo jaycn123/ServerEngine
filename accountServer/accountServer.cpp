@@ -82,11 +82,6 @@ void AccountServer::Run()
 
 bool AccountServer::DispatchPacket(CNetPacket* pNetPacket)
 {
-	OnForwardNetPack(pNetPacket);
-// 	switch (pNetPacket->messId)
-// 	{
-// 		PROCESS_MESSAGE_ITEMEX(1, OnMsgWatchHeartBeatReq)
-// 	}
 
 }
 
@@ -157,7 +152,7 @@ void AccountServer::OnNewConnect(Connection* pConnection)
 
 void AccountServer::InitMsg()
 {
-	
+	AccountManager::GetInstancePtr()->InitMsg();
 }
 
 bool AccountServer::OnForwardNetPack(CNetPacket* pNetPacket)

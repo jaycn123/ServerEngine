@@ -39,11 +39,6 @@ struct DB_Base
 
 	void Release();
 
-	void Lock();
-
-	void UnLock();
-
-	std::mutex                              m_mutex;
 };
 
 #endif

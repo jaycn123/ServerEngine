@@ -46,14 +46,20 @@ enum MessageID {
   MSGID_HEARTBEAT_ACK = 2,
   MSGID_CONNETC_NOTICE = 3,
   MSGID_CONNETC_INFO = 4,
-  MSGID_GAMEMSG_BEGIN = 1000000,
-  MSGID_CREATEPLAYER_REQ = 1000001,
-  MSGID_CREATEPLAYER_ACK = 1000002,
-  MSGID_LOGIN_REQ = 1000003,
-  MSGID_LOGIN_ACK = 1000004,
-  MSGID_LOGINOFF_REQ = 1000005,
-  MSGID_LOGINOFF_ACK = 1000006,
-  MSGID_GAMEMSG_END = 2000000,
+  MSGID_LOGINMSG_BEGIN = 1000000,
+  MSGID_LOGINACCOUNT_REQ = 1000001,
+  MSGID_LOGINACCOUNT_ACK = 1000002,
+  MSGID_REGISTERACCOUNT_REQ = 1000003,
+  MSGID_REGISTERACCOUNT_ACK = 1000004,
+  MSGID_LOGINMSG_END = 1999999,
+  MSGID_GAMEMSG_BEGIN = 2000000,
+  MSGID_CREATEPLAYER_REQ = 2000001,
+  MSGID_CREATEPLAYER_ACK = 2000002,
+  MSGID_LOGINPLAYER_REQ = 2000003,
+  MSGID_LOGINPLAYER_ACK = 2000004,
+  MSGID_LOGINOFF_REQ = 2000005,
+  MSGID_LOGINOFF_ACK = 2000006,
+  MSGID_GAMEMSG_END = 2999999,
   MessageID_INT_MIN_SENTINEL_DO_NOT_USE_ = ::google::protobuf::kint32min,
   MessageID_INT_MAX_SENTINEL_DO_NOT_USE_ = ::google::protobuf::kint32max
 };
@@ -71,6 +77,30 @@ inline bool MessageID_Parse(
     const ::std::string& name, MessageID* value) {
   return ::google::protobuf::internal::ParseNamedEnum<MessageID>(
     MessageID_descriptor(), name, value);
+}
+enum ErrorID {
+  Succeed = 0,
+  PasswordError = 1,
+  UserRepetition = 2,
+  UserIllegal = 3,
+  UserNotFound = 4,
+  ErrorID_INT_MIN_SENTINEL_DO_NOT_USE_ = ::google::protobuf::kint32min,
+  ErrorID_INT_MAX_SENTINEL_DO_NOT_USE_ = ::google::protobuf::kint32max
+};
+bool ErrorID_IsValid(int value);
+const ErrorID ErrorID_MIN = Succeed;
+const ErrorID ErrorID_MAX = UserNotFound;
+const int ErrorID_ARRAYSIZE = ErrorID_MAX + 1;
+
+const ::google::protobuf::EnumDescriptor* ErrorID_descriptor();
+inline const ::std::string& ErrorID_Name(ErrorID value) {
+  return ::google::protobuf::internal::NameOfEnum(
+    ErrorID_descriptor(), value);
+}
+inline bool ErrorID_Parse(
+    const ::std::string& name, ErrorID* value) {
+  return ::google::protobuf::internal::ParseNamedEnum<ErrorID>(
+    ErrorID_descriptor(), name, value);
 }
 enum ServerType {
   ST_Client = 0,
@@ -158,11 +188,18 @@ class Msg_Heartbeat_Req : public ::google::protobuf::Message /* @@protoc_inserti
 
   // accessors -------------------------------------------------------
 
+  // optional uint64 index = 1;
+  void clear_index();
+  static const int kIndexFieldNumber = 1;
+  ::google::protobuf::uint64 index() const;
+  void set_index(::google::protobuf::uint64 value);
+
   // @@protoc_insertion_point(class_scope:Msg_Heartbeat_Req)
  private:
 
   ::google::protobuf::internal::InternalMetadataWithArena _internal_metadata_;
   bool _is_default_instance_;
+  ::google::protobuf::uint64 index_;
   mutable int _cached_size_;
   friend void  protobuf_AddDesc_msgId_2eproto();
   friend void protobuf_AssignDesc_msgId_2eproto();
@@ -233,11 +270,18 @@ class Msg_Heartbeat_Ack : public ::google::protobuf::Message /* @@protoc_inserti
 
   // accessors -------------------------------------------------------
 
+  // optional uint64 index = 1;
+  void clear_index();
+  static const int kIndexFieldNumber = 1;
+  ::google::protobuf::uint64 index() const;
+  void set_index(::google::protobuf::uint64 value);
+
   // @@protoc_insertion_point(class_scope:Msg_Heartbeat_Ack)
  private:
 
   ::google::protobuf::internal::InternalMetadataWithArena _internal_metadata_;
   bool _is_default_instance_;
+  ::google::protobuf::uint64 index_;
   mutable int _cached_size_;
   friend void  protobuf_AddDesc_msgId_2eproto();
   friend void protobuf_AssignDesc_msgId_2eproto();
@@ -409,6 +453,17 @@ class Msg_Connetc_Info : public ::google::protobuf::Message /* @@protoc_insertio
   ::google::protobuf::int32 serverid() const;
   void set_serverid(::google::protobuf::int32 value);
 
+  // optional string name = 3;
+  void clear_name();
+  static const int kNameFieldNumber = 3;
+  const ::std::string& name() const;
+  void set_name(const ::std::string& value);
+  void set_name(const char* value);
+  void set_name(const char* value, size_t size);
+  ::std::string* mutable_name();
+  ::std::string* release_name();
+  void set_allocated_name(::std::string* name);
+
   // @@protoc_insertion_point(class_scope:Msg_Connetc_Info)
  private:
 
@@ -416,6 +471,7 @@ class Msg_Connetc_Info : public ::google::protobuf::Message /* @@protoc_insertio
   bool _is_default_instance_;
   int stype_;
   ::google::protobuf::int32 serverid_;
+  ::google::protobuf::internal::ArenaStringPtr name_;
   mutable int _cached_size_;
   friend void  protobuf_AddDesc_msgId_2eproto();
   friend void protobuf_AssignDesc_msgId_2eproto();
@@ -432,9 +488,37 @@ class Msg_Connetc_Info : public ::google::protobuf::Message /* @@protoc_insertio
 #if !PROTOBUF_INLINE_NOT_IN_HEADERS
 // Msg_Heartbeat_Req
 
+// optional uint64 index = 1;
+inline void Msg_Heartbeat_Req::clear_index() {
+  index_ = GOOGLE_ULONGLONG(0);
+}
+inline ::google::protobuf::uint64 Msg_Heartbeat_Req::index() const {
+  // @@protoc_insertion_point(field_get:Msg_Heartbeat_Req.index)
+  return index_;
+}
+inline void Msg_Heartbeat_Req::set_index(::google::protobuf::uint64 value) {
+  
+  index_ = value;
+  // @@protoc_insertion_point(field_set:Msg_Heartbeat_Req.index)
+}
+
 // -------------------------------------------------------------------
 
 // Msg_Heartbeat_Ack
+
+// optional uint64 index = 1;
+inline void Msg_Heartbeat_Ack::clear_index() {
+  index_ = GOOGLE_ULONGLONG(0);
+}
+inline ::google::protobuf::uint64 Msg_Heartbeat_Ack::index() const {
+  // @@protoc_insertion_point(field_get:Msg_Heartbeat_Ack.index)
+  return index_;
+}
+inline void Msg_Heartbeat_Ack::set_index(::google::protobuf::uint64 value) {
+  
+  index_ = value;
+  // @@protoc_insertion_point(field_set:Msg_Heartbeat_Ack.index)
+}
 
 // -------------------------------------------------------------------
 
@@ -500,6 +584,50 @@ inline void Msg_Connetc_Info::set_serverid(::google::protobuf::int32 value) {
   // @@protoc_insertion_point(field_set:Msg_Connetc_Info.serverid)
 }
 
+// optional string name = 3;
+inline void Msg_Connetc_Info::clear_name() {
+  name_.ClearToEmptyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+}
+inline const ::std::string& Msg_Connetc_Info::name() const {
+  // @@protoc_insertion_point(field_get:Msg_Connetc_Info.name)
+  return name_.GetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+}
+inline void Msg_Connetc_Info::set_name(const ::std::string& value) {
+  
+  name_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), value);
+  // @@protoc_insertion_point(field_set:Msg_Connetc_Info.name)
+}
+inline void Msg_Connetc_Info::set_name(const char* value) {
+  
+  name_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), ::std::string(value));
+  // @@protoc_insertion_point(field_set_char:Msg_Connetc_Info.name)
+}
+inline void Msg_Connetc_Info::set_name(const char* value, size_t size) {
+  
+  name_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(),
+      ::std::string(reinterpret_cast<const char*>(value), size));
+  // @@protoc_insertion_point(field_set_pointer:Msg_Connetc_Info.name)
+}
+inline ::std::string* Msg_Connetc_Info::mutable_name() {
+  
+  // @@protoc_insertion_point(field_mutable:Msg_Connetc_Info.name)
+  return name_.MutableNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+}
+inline ::std::string* Msg_Connetc_Info::release_name() {
+  // @@protoc_insertion_point(field_release:Msg_Connetc_Info.name)
+  
+  return name_.ReleaseNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+}
+inline void Msg_Connetc_Info::set_allocated_name(::std::string* name) {
+  if (name != NULL) {
+    
+  } else {
+    
+  }
+  name_.SetAllocatedNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), name);
+  // @@protoc_insertion_point(field_set_allocated:Msg_Connetc_Info.name)
+}
+
 #endif  // !PROTOBUF_INLINE_NOT_IN_HEADERS
 // -------------------------------------------------------------------
 
@@ -518,6 +646,11 @@ template <> struct is_proto_enum< ::MessageID> : ::google::protobuf::internal::t
 template <>
 inline const EnumDescriptor* GetEnumDescriptor< ::MessageID>() {
   return ::MessageID_descriptor();
+}
+template <> struct is_proto_enum< ::ErrorID> : ::google::protobuf::internal::true_type {};
+template <>
+inline const EnumDescriptor* GetEnumDescriptor< ::ErrorID>() {
+  return ::ErrorID_descriptor();
 }
 template <> struct is_proto_enum< ::ServerType> : ::google::protobuf::internal::true_type {};
 template <>

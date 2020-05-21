@@ -35,7 +35,6 @@ public:
 public:
 
 
-
 public:
 
 	//*********************消息处理定义开始******************************
@@ -57,11 +56,11 @@ protected:
 
 	void HeartBeat();
 
-
-
 private:
 
 	int32   m_GameConnID = 0;
+
+	uint64_t m_heartIndex = 0;
 
 };
 
