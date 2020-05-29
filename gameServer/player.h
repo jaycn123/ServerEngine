@@ -3,7 +3,8 @@
 
 #include "../lib/type_define.h"
 
-class Player
+
+class Player //: public DB_Player
 {
 
 public:
@@ -20,11 +21,7 @@ public:
 
 private: 
 
-	uint32 m_roleID = 0;
-
 	uint32 m_connID = 0;
-
-	std::string m_name = "";
 
 };
 

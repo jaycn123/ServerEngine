@@ -13,6 +13,11 @@ PlayerManager::~PlayerManager(void)
 }
 
 
+void PlayerManager::Init(MysqlControl* pMysql)
+{
+	m_pMysql = pMysql;
+}
+
 PlayerManager* PlayerManager::GetInstancePtr()
 {
 	static PlayerManager m_playerManager;
@@ -70,6 +75,13 @@ void PlayerManager::OnPlayerOnline(CNetPacket* pNetPacket)
 
 void PlayerManager::OnPlayerOffline(CNetPacket* pNetPacket)
 {
+
+}
+
+void PlayerManager::InitPlayer()
+{
+	
+
 
 }
 

@@ -42,8 +42,191 @@ class Msg_LoginOff_Ack;
 class Msg_LoginOff_Req;
 class Msg_LoginPlayer_Ack;
 class Msg_LoginPlayer_Req;
+class Msg_RegisterAccount_Ack;
+class Msg_RegisterAccount_Req;
 
 // ===================================================================
+
+class Msg_RegisterAccount_Req : public ::google::protobuf::Message /* @@protoc_insertion_point(class_definition:Msg_RegisterAccount_Req) */ {
+ public:
+  Msg_RegisterAccount_Req();
+  virtual ~Msg_RegisterAccount_Req();
+
+  Msg_RegisterAccount_Req(const Msg_RegisterAccount_Req& from);
+
+  inline Msg_RegisterAccount_Req& operator=(const Msg_RegisterAccount_Req& from) {
+    CopyFrom(from);
+    return *this;
+  }
+
+  static const ::google::protobuf::Descriptor* descriptor();
+  static const Msg_RegisterAccount_Req& default_instance();
+
+  void Swap(Msg_RegisterAccount_Req* other);
+
+  // implements Message ----------------------------------------------
+
+  inline Msg_RegisterAccount_Req* New() const { return New(NULL); }
+
+  Msg_RegisterAccount_Req* New(::google::protobuf::Arena* arena) const;
+  void CopyFrom(const ::google::protobuf::Message& from);
+  void MergeFrom(const ::google::protobuf::Message& from);
+  void CopyFrom(const Msg_RegisterAccount_Req& from);
+  void MergeFrom(const Msg_RegisterAccount_Req& from);
+  void Clear();
+  bool IsInitialized() const;
+
+  int ByteSize() const;
+  bool MergePartialFromCodedStream(
+      ::google::protobuf::io::CodedInputStream* input);
+  void SerializeWithCachedSizes(
+      ::google::protobuf::io::CodedOutputStream* output) const;
+  ::google::protobuf::uint8* InternalSerializeWithCachedSizesToArray(
+      bool deterministic, ::google::protobuf::uint8* output) const;
+  ::google::protobuf::uint8* SerializeWithCachedSizesToArray(::google::protobuf::uint8* output) const {
+    return InternalSerializeWithCachedSizesToArray(false, output);
+  }
+  int GetCachedSize() const { return _cached_size_; }
+  private:
+  void SharedCtor();
+  void SharedDtor();
+  void SetCachedSize(int size) const;
+  void InternalSwap(Msg_RegisterAccount_Req* other);
+  private:
+  inline ::google::protobuf::Arena* GetArenaNoVirtual() const {
+    return _internal_metadata_.arena();
+  }
+  inline void* MaybeArenaPtr() const {
+    return _internal_metadata_.raw_arena_ptr();
+  }
+  public:
+
+  ::google::protobuf::Metadata GetMetadata() const;
+
+  // nested types ----------------------------------------------------
+
+  // accessors -------------------------------------------------------
+
+  // optional string username = 1;
+  void clear_username();
+  static const int kUsernameFieldNumber = 1;
+  const ::std::string& username() const;
+  void set_username(const ::std::string& value);
+  void set_username(const char* value);
+  void set_username(const char* value, size_t size);
+  ::std::string* mutable_username();
+  ::std::string* release_username();
+  void set_allocated_username(::std::string* username);
+
+  // optional string password = 2;
+  void clear_password();
+  static const int kPasswordFieldNumber = 2;
+  const ::std::string& password() const;
+  void set_password(const ::std::string& value);
+  void set_password(const char* value);
+  void set_password(const char* value, size_t size);
+  ::std::string* mutable_password();
+  ::std::string* release_password();
+  void set_allocated_password(::std::string* password);
+
+  // @@protoc_insertion_point(class_scope:Msg_RegisterAccount_Req)
+ private:
+
+  ::google::protobuf::internal::InternalMetadataWithArena _internal_metadata_;
+  bool _is_default_instance_;
+  ::google::protobuf::internal::ArenaStringPtr username_;
+  ::google::protobuf::internal::ArenaStringPtr password_;
+  mutable int _cached_size_;
+  friend void  protobuf_AddDesc_player_2eproto();
+  friend void protobuf_AssignDesc_player_2eproto();
+  friend void protobuf_ShutdownFile_player_2eproto();
+
+  void InitAsDefaultInstance();
+  static Msg_RegisterAccount_Req* default_instance_;
+};
+// -------------------------------------------------------------------
+
+class Msg_RegisterAccount_Ack : public ::google::protobuf::Message /* @@protoc_insertion_point(class_definition:Msg_RegisterAccount_Ack) */ {
+ public:
+  Msg_RegisterAccount_Ack();
+  virtual ~Msg_RegisterAccount_Ack();
+
+  Msg_RegisterAccount_Ack(const Msg_RegisterAccount_Ack& from);
+
+  inline Msg_RegisterAccount_Ack& operator=(const Msg_RegisterAccount_Ack& from) {
+    CopyFrom(from);
+    return *this;
+  }
+
+  static const ::google::protobuf::Descriptor* descriptor();
+  static const Msg_RegisterAccount_Ack& default_instance();
+
+  void Swap(Msg_RegisterAccount_Ack* other);
+
+  // implements Message ----------------------------------------------
+
+  inline Msg_RegisterAccount_Ack* New() const { return New(NULL); }
+
+  Msg_RegisterAccount_Ack* New(::google::protobuf::Arena* arena) const;
+  void CopyFrom(const ::google::protobuf::Message& from);
+  void MergeFrom(const ::google::protobuf::Message& from);
+  void CopyFrom(const Msg_RegisterAccount_Ack& from);
+  void MergeFrom(const Msg_RegisterAccount_Ack& from);
+  void Clear();
+  bool IsInitialized() const;
+
+  int ByteSize() const;
+  bool MergePartialFromCodedStream(
+      ::google::protobuf::io::CodedInputStream* input);
+  void SerializeWithCachedSizes(
+      ::google::protobuf::io::CodedOutputStream* output) const;
+  ::google::protobuf::uint8* InternalSerializeWithCachedSizesToArray(
+      bool deterministic, ::google::protobuf::uint8* output) const;
+  ::google::protobuf::uint8* SerializeWithCachedSizesToArray(::google::protobuf::uint8* output) const {
+    return InternalSerializeWithCachedSizesToArray(false, output);
+  }
+  int GetCachedSize() const { return _cached_size_; }
+  private:
+  void SharedCtor();
+  void SharedDtor();
+  void SetCachedSize(int size) const;
+  void InternalSwap(Msg_RegisterAccount_Ack* other);
+  private:
+  inline ::google::protobuf::Arena* GetArenaNoVirtual() const {
+    return _internal_metadata_.arena();
+  }
+  inline void* MaybeArenaPtr() const {
+    return _internal_metadata_.raw_arena_ptr();
+  }
+  public:
+
+  ::google::protobuf::Metadata GetMetadata() const;
+
+  // nested types ----------------------------------------------------
+
+  // accessors -------------------------------------------------------
+
+  // optional int32 returncode = 1;
+  void clear_returncode();
+  static const int kReturncodeFieldNumber = 1;
+  ::google::protobuf::int32 returncode() const;
+  void set_returncode(::google::protobuf::int32 value);
+
+  // @@protoc_insertion_point(class_scope:Msg_RegisterAccount_Ack)
+ private:
+
+  ::google::protobuf::internal::InternalMetadataWithArena _internal_metadata_;
+  bool _is_default_instance_;
+  ::google::protobuf::int32 returncode_;
+  mutable int _cached_size_;
+  friend void  protobuf_AddDesc_player_2eproto();
+  friend void protobuf_AssignDesc_player_2eproto();
+  friend void protobuf_ShutdownFile_player_2eproto();
+
+  void InitAsDefaultInstance();
+  static Msg_RegisterAccount_Ack* default_instance_;
+};
+// -------------------------------------------------------------------
 
 class Msg_LoginAccount_Req : public ::google::protobuf::Message /* @@protoc_insertion_point(class_definition:Msg_LoginAccount_Req) */ {
  public:
@@ -734,6 +917,116 @@ class Msg_LoginOff_Ack : public ::google::protobuf::Message /* @@protoc_insertio
 // ===================================================================
 
 #if !PROTOBUF_INLINE_NOT_IN_HEADERS
+// Msg_RegisterAccount_Req
+
+// optional string username = 1;
+inline void Msg_RegisterAccount_Req::clear_username() {
+  username_.ClearToEmptyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+}
+inline const ::std::string& Msg_RegisterAccount_Req::username() const {
+  // @@protoc_insertion_point(field_get:Msg_RegisterAccount_Req.username)
+  return username_.GetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+}
+inline void Msg_RegisterAccount_Req::set_username(const ::std::string& value) {
+  
+  username_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), value);
+  // @@protoc_insertion_point(field_set:Msg_RegisterAccount_Req.username)
+}
+inline void Msg_RegisterAccount_Req::set_username(const char* value) {
+  
+  username_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), ::std::string(value));
+  // @@protoc_insertion_point(field_set_char:Msg_RegisterAccount_Req.username)
+}
+inline void Msg_RegisterAccount_Req::set_username(const char* value, size_t size) {
+  
+  username_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(),
+      ::std::string(reinterpret_cast<const char*>(value), size));
+  // @@protoc_insertion_point(field_set_pointer:Msg_RegisterAccount_Req.username)
+}
+inline ::std::string* Msg_RegisterAccount_Req::mutable_username() {
+  
+  // @@protoc_insertion_point(field_mutable:Msg_RegisterAccount_Req.username)
+  return username_.MutableNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+}
+inline ::std::string* Msg_RegisterAccount_Req::release_username() {
+  // @@protoc_insertion_point(field_release:Msg_RegisterAccount_Req.username)
+  
+  return username_.ReleaseNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+}
+inline void Msg_RegisterAccount_Req::set_allocated_username(::std::string* username) {
+  if (username != NULL) {
+    
+  } else {
+    
+  }
+  username_.SetAllocatedNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), username);
+  // @@protoc_insertion_point(field_set_allocated:Msg_RegisterAccount_Req.username)
+}
+
+// optional string password = 2;
+inline void Msg_RegisterAccount_Req::clear_password() {
+  password_.ClearToEmptyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+}
+inline const ::std::string& Msg_RegisterAccount_Req::password() const {
+  // @@protoc_insertion_point(field_get:Msg_RegisterAccount_Req.password)
+  return password_.GetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+}
+inline void Msg_RegisterAccount_Req::set_password(const ::std::string& value) {
+  
+  password_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), value);
+  // @@protoc_insertion_point(field_set:Msg_RegisterAccount_Req.password)
+}
+inline void Msg_RegisterAccount_Req::set_password(const char* value) {
+  
+  password_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), ::std::string(value));
+  // @@protoc_insertion_point(field_set_char:Msg_RegisterAccount_Req.password)
+}
+inline void Msg_RegisterAccount_Req::set_password(const char* value, size_t size) {
+  
+  password_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(),
+      ::std::string(reinterpret_cast<const char*>(value), size));
+  // @@protoc_insertion_point(field_set_pointer:Msg_RegisterAccount_Req.password)
+}
+inline ::std::string* Msg_RegisterAccount_Req::mutable_password() {
+  
+  // @@protoc_insertion_point(field_mutable:Msg_RegisterAccount_Req.password)
+  return password_.MutableNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+}
+inline ::std::string* Msg_RegisterAccount_Req::release_password() {
+  // @@protoc_insertion_point(field_release:Msg_RegisterAccount_Req.password)
+  
+  return password_.ReleaseNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+}
+inline void Msg_RegisterAccount_Req::set_allocated_password(::std::string* password) {
+  if (password != NULL) {
+    
+  } else {
+    
+  }
+  password_.SetAllocatedNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), password);
+  // @@protoc_insertion_point(field_set_allocated:Msg_RegisterAccount_Req.password)
+}
+
+// -------------------------------------------------------------------
+
+// Msg_RegisterAccount_Ack
+
+// optional int32 returncode = 1;
+inline void Msg_RegisterAccount_Ack::clear_returncode() {
+  returncode_ = 0;
+}
+inline ::google::protobuf::int32 Msg_RegisterAccount_Ack::returncode() const {
+  // @@protoc_insertion_point(field_get:Msg_RegisterAccount_Ack.returncode)
+  return returncode_;
+}
+inline void Msg_RegisterAccount_Ack::set_returncode(::google::protobuf::int32 value) {
+  
+  returncode_ = value;
+  // @@protoc_insertion_point(field_set:Msg_RegisterAccount_Ack.returncode)
+}
+
+// -------------------------------------------------------------------
+
 // Msg_LoginAccount_Req
 
 // optional string username = 1;
@@ -995,6 +1288,10 @@ inline void Msg_LoginOff_Ack::set_returncode(::google::protobuf::int32 value) {
 }
 
 #endif  // !PROTOBUF_INLINE_NOT_IN_HEADERS
+// -------------------------------------------------------------------
+
+// -------------------------------------------------------------------
+
 // -------------------------------------------------------------------
 
 // -------------------------------------------------------------------

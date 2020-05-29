@@ -1,5 +1,16 @@
 syntax = "proto3";
 
+message Msg_RegisterAccount_Req
+{
+	string username = 1;
+	string password = 2;
+}
+
+message Msg_RegisterAccount_Ack
+{
+	int32 returncode = 1;
+}
+
 message Msg_LoginAccount_Req
 {
 	string username = 1;

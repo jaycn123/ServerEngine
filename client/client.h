@@ -42,6 +42,9 @@ public:
 
 	void OnLoginAck(CNetPacket* pNetPacket);
 
+	void RegistAck(CNetPacket* pNetPacket);
+
+
 	//*********************消息处理定义结束******************************
 
 public:
@@ -49,6 +52,8 @@ public:
 	//*************************** Tets ***********************
 
 	void Login();
+
+	void RegisterAccount();
 
 protected:
 
@@ -62,6 +67,9 @@ private:
 
 	uint64_t m_heartIndex = 0;
 
+	std::string m_account = "";
+
+	std::string m_passwd = "";
 };
 
 #endif

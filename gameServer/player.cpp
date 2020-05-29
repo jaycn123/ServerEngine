@@ -2,7 +2,8 @@
 
 uint32 Player::GetRoleID()
 {
-	return m_roleID;
+	//return m_id;
+	return 0;
 }
 
 uint32 Player::GetConnID()
@@ -17,11 +18,11 @@ void Player::SetConnID(uint32 connid)
 
 void Player::SetName(std::string& name)
 {
-	m_name = name;
+	//m_name = name;
 }
 
 std::string Player::GetName()
 {
-	return m_name;
+	//return m_name;
 }
 

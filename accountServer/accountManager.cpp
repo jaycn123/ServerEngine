@@ -32,7 +32,7 @@ bool AccountManager::Init(MysqlControl* pMysql)
 
 	m_pMysql = pMysql;
 
-	GetAllAccount();
+	InitlAccount();
 
 	return true;
 }
@@ -45,6 +45,7 @@ void AccountManager::Uninit()
 
 void AccountManager::InitMsg()
 {
+	ServiceBase::GetInstancePtr()->RegisterMsg(MessageID::MSGID_REGISTERACCOUNT_REQ, std::bind(&AccountManager::OnCreateAccount, this, std::placeholders::_1));
 	ServiceBase::GetInstancePtr()->RegisterMsg(MessageID::MSGID_LOGINACCOUNT_REQ, std::bind(&AccountManager::OnLoginAccount, this, std::placeholders::_1));
 }
 
@@ -55,14 +56,11 @@ void AccountManager::OnSecondTimer()
 
 void AccountManager::OnLoginAccount(CNetPacket* pNetPacket)
 {
-	std::cout << "OnLoginAccount" << std::endl;
 	Msg_LoginAccount_Req Req;
 	Req.ParsePartialFromArray(pNetPacket->m_pData, pNetPacket->m_len);
 
 	Msg_LoginAccount_Ack Ack;
 	Ack.set_returncode(ErrorID::Succeed);
-
-
 
 	do 
 	{
@@ -83,25 +81,41 @@ void AccountManager::OnLoginAccount(CNetPacket* pNetPacket)
 
 	ServiceBase::GetInstancePtr()->SendMsgProtoBuf(pNetPacket,MessageID::MSGID_LOGINACCOUNT_ACK, Ack);
 
-	
-	static int id = 1;
-	DB_Account* pAccount = new DB_Account();
-	pAccount->ctype = CT_Add;
-	pAccount->id = id++;
-	pAccount->user = "wangmingxing_" + std::to_string(id);
-	pAccount->password = std::to_string(id);
-	
-	pAccount->Save();
-	
+
 	return;
 }
 
 void AccountManager::OnCreateAccount(CNetPacket* pNetPacket)
 {
+	Msg_RegisterAccount_Req Req;
+	Req.ParsePartialFromArray(pNetPacket->m_pData, pNetPacket->m_len);
 
+	Msg_RegisterAccount_Ack Ack;
+	Ack.set_returncode(ErrorID::Succeed);
+
+	do 
+	{
+		auto it = m_accountMap.find(Req.username());
+		if (it != m_accountMap.end())
+		{
+			Ack.set_returncode(ErrorID::UserRepetition);
+			break;
+		}
+
+		DB_Account* pAccount = new DB_Account();
+		pAccount->ctype = CT_Add;
+		pAccount->id = ++m_MaxAccountId;
+		pAccount->user = Req.username();
+		pAccount->password = Req.password();
+		pAccount->Save();
+		m_accountMap[pAccount->user] = pAccount;
+
+	} while (false);
+
+	ServiceBase::GetInstancePtr()->SendMsgProtoBuf(pNetPacket, MessageID::MSGID_REGISTERACCOUNT_ACK, Ack);
 }
 
-bool AccountManager::GetAllAccount()
+bool AccountManager::InitlAccount()
 {
 	std::string sql = "select * from account;";
 	if (m_pMysql->QueryAndStore(sql) == -1)
@@ -120,6 +134,11 @@ bool AccountManager::GetAllAccount()
 		pAccount->user = arr.GetValue(i, fieldMap["user"]).GetString();
 		pAccount->password = arr.GetValue(i, fieldMap["password"]).GetString();
 		m_accountMap[pAccount->user] = pAccount;
+
+		if (pAccount->id > m_MaxAccountId)
+		{
+			m_MaxAccountId = pAccount->id;
+		}
 	}
 
 	return true;

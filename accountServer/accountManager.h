@@ -37,7 +37,7 @@ public:
 
 protected:
 
-	bool          GetAllAccount();
+	bool          InitlAccount();
 	 
 	DB_Account*   AddAccount(int32_t id , std::string& user, std::string& password);
 
@@ -46,6 +46,8 @@ private:
 	MysqlControl* m_pMysql = nullptr;
 
 	std::map<std::string, DB_Account*> m_accountMap;
+
+	uint32_t m_MaxAccountId = 0;
 };
 
 #endif

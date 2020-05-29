@@ -173,10 +173,6 @@ bool AccountServer::OnMsgWatchHeartBeatReq(CNetPacket* pNetPacket)
 	HeartBeatReq Req;
 	Req.ParsePartialFromArray(pNetPacket->m_pData, pNetPacket->m_len);
 
-	std::cout << "OnMsgWatchHeartBeatReq : " << Req.connid() << std::endl;
-
-	//std::cout << "MsgFrom : " << pNetPacket->m_connId << std::endl << std::endl;
-
 	testSendProtobuf(pNetPacket->m_connId, Req.connid());
 }
 

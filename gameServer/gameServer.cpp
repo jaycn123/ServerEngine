@@ -25,7 +25,6 @@ GameServer* GameServer::GetInstancePtr()
 
 void GameServer::Init()
 {
-
 	if (!CLog::GetInstancePtr()->StartLog("gameServer", "log"))
 	{
 		std::cout << "error can not create log" << std::endl;
@@ -48,6 +47,23 @@ void GameServer::Init()
 	std::cout << "port : " << port << " maxcon : " << maxcon << std::endl;
 
 	ServiceBase::GetInstancePtr()->StartNetWork(ip, port, maxcon,this);
+
+
+	std::string mysqlip = CConfigFile::GetInstancePtr()->GetStringValue("mysql_game_svr_ip");
+	uint32_t mysqlport = CConfigFile::GetInstancePtr()->GetIntValue("mysql_game_svr_port");
+	std::string dbname = CConfigFile::GetInstancePtr()->GetStringValue("mysql_game_svr_db_name");
+
+	std::string user = CConfigFile::GetInstancePtr()->GetStringValue("mysql_game_svr_user");
+	std::string password = CConfigFile::GetInstancePtr()->GetStringValue("mysql_game_svr_pwd");
+
+	m_pMysql = new MysqlControl();
+	if (m_pMysql->RealConnect(mysqlip.c_str(), user.c_str(), password.c_str(), dbname.c_str()) == false)
+	{
+		CLog::GetInstancePtr()->LogError("conncetion mysql fail!");
+		return;
+	}
+	ServiceBase::GetInstancePtr()->SetMysqlControl(m_pMysql);
+	PlayerManager::GetInstancePtr()->Init(m_pMysql);
 
 }
 

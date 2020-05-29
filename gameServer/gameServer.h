@@ -50,7 +50,8 @@ public:
 
 private:
 
-	
+	MysqlControl* m_pMysql = nullptr;
+
 	uint32_t m_GateServerConnId = 0;
 
 };

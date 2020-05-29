@@ -7,7 +7,6 @@
 #include "../protoFiles/player.pb.h"
 
 
-
 class PlayerManager 
 {
 private:
@@ -17,6 +16,8 @@ private:
 	virtual ~PlayerManager(void);
 
 public:
+
+	void Init(MysqlControl* pMysql);
 
 	static PlayerManager* GetInstancePtr();
 
@@ -38,12 +39,15 @@ public:
 
 	void OnPlayerOffline(CNetPacket* pNetPacket);
 
-	 
+	void InitPlayer();
+
 private:
 
-	std::map<int32_t, Player*> m_PlayerMap;
-
 	std::map<int32_t, int32_t> m_ConnectMap;
+
+	MysqlControl* m_pMysql = nullptr;
+
+	std::map < uint32_t, Player* > m_PlayerMap;
 
 };
 

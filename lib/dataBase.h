@@ -39,6 +39,8 @@ struct DB_Base
 
 	void Release();
 
+	uint64_t m_create_time = 0;
+
 };
 
 #endif

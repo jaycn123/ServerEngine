@@ -64,7 +64,7 @@ void Client::OnSecondTimer()
 	if (m_GameConnID == 0)
 	{
 		ConnectionGame();
-		Login();
+		RegisterAccount();
 		return;
 	}
 
@@ -84,6 +84,7 @@ void Client::OnNewConnect(Connection* pConnection)
 void Client::RegisterMsg()
 {
 	ServiceBase::GetInstancePtr()->RegisterMsg(MessageID::MSGID_HEARTBEAT_ACK, std::bind(&Client::OnHeartBeatAck, this, std::placeholders::_1));
+	ServiceBase::GetInstancePtr()->RegisterMsg(MessageID::MSGID_REGISTERACCOUNT_ACK, std::bind(&Client::RegistAck, this, std::placeholders::_1));
 	ServiceBase::GetInstancePtr()->RegisterMsg(MessageID::MSGID_LOGINACCOUNT_ACK, std::bind(&Client::OnLoginAck, this, std::placeholders::_1));
 }
 
@@ -122,7 +123,14 @@ void Client::OnLoginAck(CNetPacket* pNetPacket)
 	Msg_LoginAccount_Ack Ack;
 	Ack.ParsePartialFromArray(pNetPacket->m_pData, pNetPacket->m_len);
 	std::cout << Ack.returncode() << std::endl;
+}
 
+void Client::RegistAck(CNetPacket* pNetPacket)
+{
+	std::cout << "RegistAck" << std::endl;
+	Msg_RegisterAccount_Ack Ack;
+	Ack.ParsePartialFromArray(pNetPacket->m_pData, pNetPacket->m_len);
+	std::cout << Ack.returncode() << std::endl;
 	Login();
 }
 
@@ -139,6 +147,14 @@ void Client::Login()
 	Req.set_username("wangmingxing");
 	Req.set_password("123456");
 	ServiceBase::GetInstancePtr()->SendMsgProtoBuf(m_GameConnID, MessageID::MSGID_LOGINACCOUNT_REQ, Req);
+}
+
+void Client::RegisterAccount()
+{
+	Msg_RegisterAccount_Req Req;
+	Req.set_username("wangmingxing");
+	Req.set_password("123456");
+	ServiceBase::GetInstancePtr()->SendMsgProtoBuf(m_GameConnID, MessageID::MSGID_REGISTERACCOUNT_REQ, Req);
 }
 
 int main()
