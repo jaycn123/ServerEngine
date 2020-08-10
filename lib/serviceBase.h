@@ -18,6 +18,15 @@
 		Func(pNetPacket);}break;
 
 
+struct SqlData
+{
+	uint32_t m_len = 0;
+	uint32_t m_datanum = 0;
+	uint32_t m_optype = 0;
+	uint64_t m_gmid = 0;
+	char     m_sql[0];
+};
+
 class ServiceBase : public IDataHandler
 {
 	typedef std::function<void(CNetPacket*)> msgfunc;
@@ -59,7 +68,11 @@ public:
 
 	void   ChangeDB(std::string &sql);
 
+	void   ChangeDB(SqlData* sqldata);
+
 	void   SetMysqlControl(MysqlControl* pMysql);
+
+	void   WriteDataBase();
 
 protected:
 
@@ -92,6 +105,12 @@ private:
 	MysqlControl*                           m_pMysqlControl = nullptr;
 
 	std::vector<std::string>                m_DataBaseVec;
+
+	int32 m_pipe[2];
+
+	char* m_sqlCache = nullptr;
+
+	std::vector<std::map<uint64_t,std::map<uint32_t,std::string>>> m_SqlDataVec;
 
 };
 

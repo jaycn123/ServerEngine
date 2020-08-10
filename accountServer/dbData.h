@@ -3,9 +3,12 @@
 
 struct DB_Account : public DB_Base
 {
-	uint32_t id = 0;
-	std::string user = "";
-	std::string password = "";
+	DB_Account(uint64_t gmid = 0)
+	{
+		m_dataNum = DTN_Account;
+
+		m_gmid = gmid;
+	}
 
 	void Insert()
 	{
@@ -40,4 +43,8 @@ struct DB_Account : public DB_Base
 	{
 
 	}
+
+	uint32_t id = 0;
+	std::string user = "";
+	std::string password = "";
 };

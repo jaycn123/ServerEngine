@@ -3,7 +3,7 @@
 
 void DB_Base::Save()
 {
-	switch (ctype)
+	switch (m_optype)
 	{
 	case CT_NoChange:
 		break;
@@ -22,8 +22,17 @@ void DB_Base::Save()
 	default:
 		break;
 	}
-	std::cout << m_sql << std::endl;
-	ServiceBase::GetInstancePtr()->ChangeDB(m_sql);
+
+	uint32_t datalen = m_sql.length() + sizeof(SqlData);
+	SqlData* sqldata = (SqlData*)MemoryManager::GetInstancePtr()->GetFreeMemory(datalen);
+	sqldata->m_len = datalen;
+	sqldata->m_optype = m_optype;
+	sqldata->m_datanum = m_dataNum;
+	sqldata->m_gmid = m_gmid;
+	strcpy(sqldata->m_sql, m_sql.c_str());
+
+	ServiceBase::GetInstancePtr()->ChangeDB(sqldata);
+	MemoryManager::GetInstancePtr()->FreeMemory(datalen, (char*)sqldata);
 }
 
 void DB_Base::Run(MysqlControl* pMysql)
@@ -33,7 +42,7 @@ void DB_Base::Run(MysqlControl* pMysql)
 		return;
 	}
 	m_pMysql = pMysql;
-	switch (ctype)
+	switch (m_optype)
 	{
 	case CT_NoChange:
 		break;

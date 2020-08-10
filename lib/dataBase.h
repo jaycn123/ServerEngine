@@ -7,11 +7,19 @@
 enum ChangeType
 {
 	CT_NoChange = 0,
-	CT_Add = 1,
-	CT_Delete =2,
-	CT_Modify = 3,
+	CT_Add     = 1,
+	CT_Modify  = 2,
+	CT_Delete  = 3,
 	CT_Reverse = 4,
 };
+
+enum DB_DataNum
+{
+	DTN_Start = 0,
+	DTN_Account = 1,
+	DTN_Max,
+};
+
 
 struct DB_Base
 {
@@ -19,27 +27,39 @@ struct DB_Base
 	{
 
 	}
+
 	virtual ~DB_Base()
 	{
 
 	}
 
-	ChangeType ctype = CT_NoChange;
-	MysqlControl* m_pMysql = nullptr;
-	std::string m_sql = "";
+	void    Save();
+		    
+	void    Run(MysqlControl* pMysql);
+		    
+	void    Release();
+
 	virtual void Insert() = 0;
+
 	virtual void Delete() = 0;
+
 	virtual void Modify() = 0;
+
 	virtual void Reverse() = 0;
+
 	virtual void Query(uint32_t parameter = 0) = 0;
 
-	void Save();
+	ChangeType      m_optype = CT_NoChange;
 
-	void Run(MysqlControl* pMysql);
+	uint32_t        m_dataNum = 0;
 
-	void Release();
+	MysqlControl*   m_pMysql = nullptr;
 
-	uint64_t m_create_time = 0;
+	std::string     m_sql = "";
+
+	uint64_t        m_gmid = 0;
+
+	uint64_t        m_create_time = 0;
 
 };
 

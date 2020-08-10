@@ -102,9 +102,10 @@ void AccountManager::OnCreateAccount(CNetPacket* pNetPacket)
 			break;
 		}
 
-		DB_Account* pAccount = new DB_Account();
-		pAccount->ctype = CT_Add;
-		pAccount->id = ++m_MaxAccountId;
+		auto id = ++m_MaxAccountId;;
+		DB_Account* pAccount = new DB_Account(id);
+		pAccount->m_optype = CT_Add;
+		pAccount->id = id;
 		pAccount->user = Req.username();
 		pAccount->password = Req.password();
 		pAccount->Save();
@@ -128,8 +129,8 @@ bool AccountManager::InitlAccount()
 	std::map<std::string, int> fieldMap = m_pMysql->GetField();
 	for (size_t i = 0; i < arr.GetRowCount(); i++)
 	{
-		DB_Account* pAccount = new DB_Account();
-		pAccount->ctype = CT_NoChange;
+		DB_Account* pAccount = new DB_Account(pAccount->id);
+		pAccount->m_optype = CT_NoChange;
 		pAccount->id = arr.GetValue(i, fieldMap["id"]).GetInt32();
 		pAccount->user = arr.GetValue(i, fieldMap["user"]).GetString();
 		pAccount->password = arr.GetValue(i, fieldMap["password"]).GetString();
@@ -153,8 +154,8 @@ DB_Account* AccountManager::AddAccount(int32_t id, std::string& user, std::strin
 		return nullptr;
 	}
 
-	DB_Account* pAccount = new DB_Account();
-	pAccount->ctype = CT_Add;
+	DB_Account* pAccount = new DB_Account(id);
+	pAccount->m_optype = CT_Add;
 	pAccount->id = id;
 	pAccount->user = user;
 	pAccount->password = password;

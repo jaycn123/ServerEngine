@@ -163,7 +163,7 @@ void ConnectionManager::Run()
 				struct sockaddr_in client_address;
 				socklen_t client_addrLength = sizeof(struct sockaddr_in);
 				int clientfd = -1;
-				while ((clientfd = accept(m_listener, (struct sockaddr*)&client_address, &client_addrLength)) > 0)
+				while ((clientfd = accept(m_listener, (struct sockaddr*) & client_address, &client_addrLength)) > 0)
 				{
 					if (clientfd < 0)
 					{
@@ -175,7 +175,7 @@ void ConnectionManager::Run()
 					//printf("Add new clientfd = %d to epoll\n", clientfd);
 
 					AddNewConn(clientfd);
-				
+
 					if (clientfd == -1)
 					{
 						if (errno != EAGAIN && errno != ECONNABORTED && errno != EPROTO && errno != EINTR)
@@ -188,7 +188,7 @@ void ConnectionManager::Run()
 				Connection* connTemp = (Connection*)(m_events[i].data.ptr);
 				//std::cout << "connid : " << connTemp->GetConnectionID() << std::endl;
 				auto fun = [&]() { epoll_ctl(m_epfd, EPOLL_CTL_DEL, connTemp->GetSocket(), &m_events[i]); FreeConnByConnid(connTemp->GetConnectionID()); close(connTemp->GetFd()); };
-				connTemp->EventCallBack(m_epfd, &(m_events[i]),fun);
+				connTemp->EventCallBack(m_epfd, &(m_events[i]), fun);
 			}
 		}
 	}
