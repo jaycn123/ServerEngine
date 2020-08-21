@@ -62,7 +62,7 @@ void AccountManager::OnLoginAccount(CNetPacket* pNetPacket)
 	Msg_LoginAccount_Ack Ack;
 	Ack.set_returncode(ErrorID::Succeed);
 
-	do 
+	do
 	{
 		auto it = m_accountMap.find(Req.username());
 		if (it == m_accountMap.end())
@@ -79,7 +79,7 @@ void AccountManager::OnLoginAccount(CNetPacket* pNetPacket)
 
 	} while (false);
 
-	ServiceBase::GetInstancePtr()->SendMsgProtoBuf(pNetPacket,MessageID::MSGID_LOGINACCOUNT_ACK, Ack);
+	ServiceBase::GetInstancePtr()->SendMsgProtoBuf(pNetPacket, MessageID::MSGID_LOGINACCOUNT_ACK, Ack);
 
 
 	return;
@@ -93,7 +93,7 @@ void AccountManager::OnCreateAccount(CNetPacket* pNetPacket)
 	Msg_RegisterAccount_Ack Ack;
 	Ack.set_returncode(ErrorID::Succeed);
 
-	do 
+	do
 	{
 		auto it = m_accountMap.find(Req.username());
 		if (it != m_accountMap.end())
@@ -106,8 +106,8 @@ void AccountManager::OnCreateAccount(CNetPacket* pNetPacket)
 		DB_Account* pAccount = new DB_Account(id);
 		pAccount->m_optype = CT_Add;
 		pAccount->id = id;
-		pAccount->user = Req.username();
-		pAccount->password = Req.password();
+		sprintf(pAccount->user, "%s", Req.username().c_str());
+		sprintf(pAccount->password, "%s", Req.password().c_str());
 		pAccount->Save();
 		m_accountMap[pAccount->user] = pAccount;
 
@@ -132,8 +132,10 @@ bool AccountManager::InitlAccount()
 		DB_Account* pAccount = new DB_Account(pAccount->id);
 		pAccount->m_optype = CT_NoChange;
 		pAccount->id = arr.GetValue(i, fieldMap["id"]).GetInt32();
-		pAccount->user = arr.GetValue(i, fieldMap["user"]).GetString();
-		pAccount->password = arr.GetValue(i, fieldMap["password"]).GetString();
+		std::string user = arr.GetValue(i, fieldMap["user"]).GetString();
+		std::string password = arr.GetValue(i, fieldMap["password"]).GetString();
+		sprintf(pAccount->user, "%s", user.c_str());
+		sprintf(pAccount->password, "%s", password.c_str());
 		m_accountMap[pAccount->user] = pAccount;
 
 		if (pAccount->id > m_MaxAccountId)
@@ -157,8 +159,9 @@ DB_Account* AccountManager::AddAccount(int32_t id, std::string& user, std::strin
 	DB_Account* pAccount = new DB_Account(id);
 	pAccount->m_optype = CT_Add;
 	pAccount->id = id;
-	pAccount->user = user;
-	pAccount->password = password;
+	sprintf(pAccount->user, "%s", user.c_str());
+	sprintf(pAccount->password, "%s", password.c_str());
+
 	pAccount->Save();
 	m_accountMap[pAccount->user] = pAccount;
 

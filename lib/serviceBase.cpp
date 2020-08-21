@@ -5,7 +5,6 @@
 ServiceBase::ServiceBase(void)
 {
 	m_pPacketDispatcher = nullptr;
-	m_SqlDataVec.reserve(DTN_Max);
 }
 
 ServiceBase::~ServiceBase(void)
@@ -92,10 +91,10 @@ bool ServiceBase::Run()
 	}
 	else
 	{
-		StartDBThread();
-
 		close(m_pipe[1]);
-		m_sqlCache = (char*)malloc(4096 * 16);
+		m_SqlDataVec.resize(DB_DataNum::DTN_Max);
+		StartDBThread();
+		m_sqlCache = (char*)malloc(PIPESIZE);
 		WriteDataBase();
 	}
 }
@@ -197,6 +196,19 @@ void ServiceBase::ChangeDB(SqlData* sqldata)
 	}
 }
 
+void ServiceBase::SendDataToDB(char* addr, uint32_t datalen)
+{
+	int len = write(m_pipe[1], addr, datalen);
+	if (len < datalen)
+	{
+		std::cout << "ChangeDB error" << std::endl;
+	}
+	else
+	{
+		std::cout << "SendDataToDB len : "<< len << std::endl;
+	}
+}
+
 void ServiceBase::SetMysqlControl(MysqlControl* pMysql)
 {
 	m_pMysqlControl = pMysql;
@@ -204,38 +216,44 @@ void ServiceBase::SetMysqlControl(MysqlControl* pMysql)
 
 void ServiceBase::WriteDataBase()
 {
-	int32_t recvindex = 0;
-	int32_t readindex = 0;
-
+	char sql[512] = { 0 };
 	while (true)
 	{
-		int len = read(m_pipe[0], m_sqlCache + recvindex, 4096);
-		recvindex += len;
-
-		while ((recvindex - readindex) > 0)
+		int32_t recvindex = 0;
+		int32_t readindex = 0;
+		memset(m_sqlCache, 0, PIPESIZE);
+		recvindex = read(m_pipe[0], m_sqlCache, PIPESIZE);
+		std::cout << "read recvindex : " << recvindex << std::endl;
+		if (recvindex <= 0)
 		{
-			SqlData* data = (SqlData*)m_sqlCache + readindex;
-			readindex += data->m_len;
-			auto sql = std::string(data->m_sql);
-			std::cout << data->m_len << " sql : " << sql << std::endl;
-
-			AUTOMUTEX
-			if(data->m_optype == CT_Delete)
+			continue;
+		}
+		while (readindex < recvindex)
+		{
+			DB_Base* data = (DB_Base*)(m_sqlCache + readindex);
+			readindex += data->m_datalen;
+			bzero(sql,512);
+			data->Read(sql);
+			std::cout << "read len : " << recvindex << std::endl;
+			std::cout << "read sql : " << sql << std::endl;
+			m_pMysqlControl->Query(sql);
+			if (data->m_optype == CT_Delete)
 			{
-				if (m_SqlDataVec[data->m_datanum][data->m_gmid].find(CT_Add) != m_SqlDataVec[data->m_datanum][data->m_gmid].end())
-				{
-					m_SqlDataVec[data->m_datanum][data->m_gmid].clear();
-				}
-				else
-				{
-					m_SqlDataVec[data->m_datanum][data->m_gmid][data->m_optype] = data->m_sql;
-					m_SqlDataVec[data->m_datanum][data->m_gmid].erase(CT_Modify);
-				}
+				AUTOMUTEX
+					if (m_SqlDataVec[data->m_dataNum][data->m_gmid].find(CT_Add) != m_SqlDataVec[data->m_dataNum][data->m_gmid].end())
+					{
+						m_SqlDataVec[data->m_dataNum][data->m_gmid].clear();
+					}
+					else
+					{
+						m_SqlDataVec[data->m_dataNum][data->m_gmid].erase(CT_Modify);
+						m_SqlDataVec[data->m_dataNum][data->m_gmid][data->m_optype] = sql;
+					}
 			}
 			else
 			{
-				m_SqlDataVec[data->m_datanum][data->m_gmid][data->m_optype] = data->m_sql;
-				std::cout << data->m_datanum << " " << data->m_gmid << " " << data->m_optype << std::endl;
+				AUTOMUTEX
+					m_SqlDataVec[data->m_dataNum][data->m_gmid][data->m_optype] = sql;
 			}
 		}
 	}
@@ -290,6 +308,7 @@ void ServiceBase::ChangeDateBase()
 	{
 		{
 			AUTOMUTEX
+				continue;
 			for (uint32_t i = 0; i < m_SqlDataVec.size(); i++)
 			{
 				for (auto iter = m_SqlDataVec[i].begin(); iter != m_SqlDataVec[i].end(); iter++)
@@ -299,6 +318,7 @@ void ServiceBase::ChangeDateBase()
 						m_pMysqlControl->Query(it->second);
 					}
 				}
+				m_SqlDataVec[i].clear();
 			}
 		}
 

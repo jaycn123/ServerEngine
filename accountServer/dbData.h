@@ -8,43 +8,29 @@ struct DB_Account : public DB_Base
 		m_dataNum = DTN_Account;
 
 		m_gmid = gmid;
+
+		m_datalen = sizeof(DB_Account);
 	}
 
-	void Insert()
+	void Insert(char sql[] = (char*)"")
 	{
-		m_sql = "INSERT INTO account (`id`, `user`, `password`) VALUES('" + std::to_string(id) + "','" + user + "', '" + password + " ');";
+		auto str = "INSERT INTO account (`id`, `user`, `password`) VALUES('" + std::to_string(id) + "','" + user + "', '" + password + " ');";
+		strcpy(sql, str.c_str());
 	}
 
-	void Delete()
+	void Delete(char sql[] = (char*)"")
 	{
-		m_sql = "DELETE FROM account WHERE id = " + std::to_string(id) + ";";
+		auto str = "DELETE FROM account WHERE id = " + std::to_string(id) + ";";
+		strcpy(sql, str.c_str());
 	}
 
-	void Modify()
+	void Modify(char sql[] = (char*)"")
 	{
-		m_sql = "Update account set `password` = '" + password + "' WHERE `user` = '" + user + "';";
-	}
-
-	void Reverse()
-	{
-		m_sql = "SELECT * FROM account where id = " + std::to_string(id) + ";";
-		DoubleDArray<Field> arr;
-		m_pMysql->QueryAndStore(m_sql);
-		m_pMysql->GetAllResult(arr);
-		std::map<std::string, int> fieldMap = m_pMysql->GetField();
-		for (size_t i = 0; i < arr.GetRowCount(); i++)
-		{
-			user = arr.GetValue(i, fieldMap["user"]).GetString();
-			password = arr.GetValue(i, fieldMap["password"]).GetString();
-		}
-	}
-
-	void Query(uint32_t parameter)
-	{
-
+		auto str = "Update account set `password` = '" + std::string(password) + "' WHERE `user` = '" + user + "';";
+		strcpy(sql, str.c_str());
 	}
 
 	uint32_t id = 0;
-	std::string user = "";
-	std::string password = "";
+	char user[64] = { 0 };
+	char password[64] = { 0 };
 };

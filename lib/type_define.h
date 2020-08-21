@@ -74,6 +74,8 @@ typedef std::string         xstring;
 
 typedef std::function<void(void)> func;
 
+#define PIPESIZE 65535
+
 #define SERVER_IP "127.0.0.1"
 
 //桥接后在同一网段即可选用以下地址

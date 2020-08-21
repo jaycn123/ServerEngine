@@ -68,6 +68,8 @@ public:
 
 	void   ChangeDB(std::string &sql);
 
+	void   SendDataToDB(char* addr, uint32_t datalen);
+
 	void   ChangeDB(SqlData* sqldata);
 
 	void   SetMysqlControl(MysqlControl* pMysql);
@@ -115,4 +117,4 @@ private:
 };
 
 
-#endif /*__SERVICE_BASE_H__*/
+#endif /*__SERVICE_BASE_H__*/	
